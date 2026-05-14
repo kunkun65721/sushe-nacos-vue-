@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sushepro.mapper.HabitQuestionnaireMapper">
+    
+    <resultMap id="habitQuestionnaireMap" type="HabitQuestionnaire">
+        <id column="id" property="id"/>
+        <result column="student_id" property="studentId"/>
+        <result column="sleep_time" property="sleepTime"/>
+        <result column="wake_up_time" property="wakeUpTime"/>
+        <result column="smoking" property="smoking"/>
+        <result column="drinking" property="drinking"/>
+        <result column="noise_tolerance" property="noiseTolerance"/>
+        <result column="cleanliness" property="cleanliness"/>
+        <result column="note" property="note"/>
+        <result column="create_time" property="createTime"/>
+        <result column="student_name" property="studentName"/>
+    </resultMap>
+    
+    <select id="findById" parameterType="Integer" resultMap="habitQuestionnaireMap">
+        SELECT * FROM habit_questionnaire WHERE id = #{id}
+    </select>
+    
+    <select id="findByStudentId" parameterType="Integer" resultMap="habitQuestionnaireMap">
+        SELECT * FROM habit_questionnaire WHERE student_id = #{studentId}
+    </select>
+    
+    <insert id="addHabitQuestionnaire" parameterType="HabitQuestionnaire" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO habit_questionnaire (student_id, sleep_time, wake_up_time, smoking, drinking, noise_tolerance, cleanliness, note, create_time)
+        VALUES (#{studentId}, #{sleepTime}, #{wakeUpTime}, #{smoking}, #{drinking}, #{noiseTolerance}, #{cleanliness}, #{note}, #{createTime})
+    </insert>
+    
+    <update id="updateHabitQuestionnaire" parameterType="HabitQuestionnaire">
+        UPDATE habit_questionnaire SET
+            student_id = #{studentId},
+            sleep_time = #{sleepTime},
+            wake_up_time = #{wakeUpTime},
+            smoking = #{smoking},
+            drinking = #{drinking},
+            noise_tolerance = #{noiseTolerance},
+            cleanliness = #{cleanliness},
+            note = #{note},
+            create_time = #{createTime}
+        WHERE id = #{id}
+    </update>
+    
+    <delete id="deleteHabitQuestionnaire" parameterType="Integer">
+        DELETE FROM habit_questionnaire WHERE id = #{id}
+    </delete>
+
+    <select id="countPending" resultType="int">
+        SELECT COUNT(*) FROM student s
+        LEFT JOIN habit_questionnaire hq ON s.id = hq.student_id
+        WHERE hq.id IS NULL
+    </select>
+
+    <select id="findRecent" resultMap="habitQuestionnaireMap">
+        SELECT hq.*, s.name AS student_name
+        FROM habit_questionnaire hq
+        LEFT JOIN student s ON hq.student_id = s.id
+        ORDER BY hq.create_time DESC
+        LIMIT #{limit}
+    </select>
+
+</mapper>

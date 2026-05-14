@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./mvnw compile *)",
+      "Bash(mvn compile *)",
+      "Bash(pip3 install *)",
+      "Bash(python \"D:\\\\IntelliJ IDEA 2025.1.2\\\\xiangmu\\\\sushepro\\\\ppt\\\\generate_ppt.py\")",
+      "WebFetch(domain:github.com)",
+      "Bash(gh repo *)",
+      "Bash(mkdir -p ~/.claude/skills)",
+      "Bash(mv ~/.claude/html-ppt-skill ~/.claude/skills/html-ppt)",
+      "Bash(cp -r \"D:/IntelliJ IDEA 2025.1.2/xiangmu/sushepro - 副本/src/main/java/com/sushepro/pojo\" \"D:/IntelliJ IDEA 2025.1.2/xiangmu/sushepro - 副本/sushepro-backend/src/main/java/com/sushepro/\")",
+      "Bash(cp -r \"D:/IntelliJ IDEA 2025.1.2/xiangmu/sushepro - 副本/src/main/java/com/sushepro/mapper\" \"D:/IntelliJ IDEA 2025.1.2/xiangmu/sushepro - 副本/sushepro-backend/src/main/java/com/sushepro/\")",
+      "Bash(cp -r \"D:/IntelliJ IDEA 2025.1.2/xiangmu/sushepro - 副本/src/main/java/com/sushepro/service\" \"D:/IntelliJ IDEA 2025.1.2/xiangmu/sushepro - 副本/sushepro-backend/src/main/java/com/sushepro/\")",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(npm run *)",
+      "Bash(mvn spring-boot:run)",
+      "Bash(netstat -ano)",
+      "Bash(tasklist /FI \"PID eq 27832\")",
+      "Bash(curl -s http://localhost:8080/api/auth/me)",
+      "Bash(curl -s http://localhost:5175)",
+      "Bash(curl -s http://localhost:8080/api/admin/index -o /dev/null -w \"%{http_code}\")"
+    ]
+  }
+}

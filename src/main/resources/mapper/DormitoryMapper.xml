@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sushepro.mapper.DormitoryMapper">
+    
+    <resultMap id="dormitoryMap" type="Dormitory">
+        <id column="id" property="id"/>
+        <result column="dormitory_number" property="dormitoryNumber"/>
+        <result column="dormitory_type" property="dormitoryType"/>
+        <result column="capacity" property="capacity"/>
+        <result column="current_occupancy" property="currentOccupancy"/>
+        <result column="building" property="building"/>
+        <result column="status" property="status"/>
+    </resultMap>
+    
+    <select id="findById" parameterType="Integer" resultMap="dormitoryMap">
+        SELECT * FROM dormitory WHERE id = #{id}
+    </select>
+    
+    <select id="findAll" resultMap="dormitoryMap">
+        SELECT * FROM dormitory
+    </select>
+    
+    <insert id="addDormitory" parameterType="Dormitory" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO dormitory (dormitory_number, dormitory_type, capacity, current_occupancy, building, status)
+        VALUES (#{dormitoryNumber}, #{dormitoryType}, #{capacity}, #{currentOccupancy}, #{building}, #{status})
+    </insert>
+    
+    <update id="updateDormitory" parameterType="Dormitory">
+        UPDATE dormitory SET
+            dormitory_number = #{dormitoryNumber},
+            dormitory_type = #{dormitoryType},
+            capacity = #{capacity},
+            current_occupancy = #{currentOccupancy},
+            building = #{building},
+            status = #{status}
+        WHERE id = #{id}
+    </update>
+    
+    <delete id="deleteDormitory" parameterType="Integer">
+        DELETE FROM dormitory WHERE id = #{id}
+    </delete>
+    
+    <update id="updateCurrentOccupancy">
+        UPDATE dormitory SET
+            current_occupancy = #{currentOccupancy}
+        WHERE id = #{id}
+    </update>
+
+    <select id="countOccupancyStats" resultType="java.util.HashMap">
+        SELECT COALESCE(SUM(capacity), 0) as totalCapacity,
+               COALESCE(SUM(current_occupancy), 0) as totalOccupied
+        FROM dormitory WHERE status = 1
+    </select>
+
+    <select id="countDisabled" resultType="int">
+        SELECT COUNT(*) FROM dormitory WHERE status = 0
+    </select>
+
+</mapper>

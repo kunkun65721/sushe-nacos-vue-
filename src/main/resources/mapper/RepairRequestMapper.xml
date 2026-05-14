@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sushepro.mapper.RepairRequestMapper">
+
+    <resultMap id="repairRequestMap" type="RepairRequest">
+        <id column="id" property="id"/>
+        <result column="student_id" property="studentId"/>
+        <result column="dormitory_id" property="dormitoryId"/>
+        <result column="description" property="description"/>
+        <result column="image" property="image"/>
+        <result column="status" property="status"/>
+        <result column="admin_comment" property="adminComment"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <!-- Joined fields -->
+        <result column="student_name" property="studentName"/>
+        <result column="student_number" property="studentNumber"/>
+        <result column="dormitory_number" property="dormitoryNumber"/>
+        <result column="building" property="building"/>
+    </resultMap>
+
+    <select id="findById" parameterType="Integer" resultMap="repairRequestMap">
+        SELECT rr.*,
+               s.name AS student_name, s.student_id AS student_number,
+               d.dormitory_number, d.building
+        FROM repair_request rr
+        LEFT JOIN student s ON rr.student_id = s.id
+        LEFT JOIN dormitory d ON rr.dormitory_id = d.id
+        WHERE rr.id = #{id}
+    </select>
+
+    <select id="findByStudentId" parameterType="Integer" resultMap="repairRequestMap">
+        SELECT rr.*,
+               s.name AS student_name, s.student_id AS student_number,
+               d.dormitory_number, d.building
+        FROM repair_request rr
+        LEFT JOIN student s ON rr.student_id = s.id
+        LEFT JOIN dormitory d ON rr.dormitory_id = d.id
+        WHERE rr.student_id = #{studentId}
+        ORDER BY rr.create_time DESC
+    </select>
+
+    <select id="findAll" resultMap="repairRequestMap">
+        SELECT rr.*,
+               s.name AS student_name, s.student_id AS student_number,
+               d.dormitory_number, d.building
+        FROM repair_request rr
+        LEFT JOIN student s ON rr.student_id = s.id
+        LEFT JOIN dormitory d ON rr.dormitory_id = d.id
+        ORDER BY rr.create_time DESC
+    </select>
+
+    <select id="findByStatus" parameterType="Integer" resultMap="repairRequestMap">
+        SELECT rr.*,
+               s.name AS student_name, s.student_id AS student_number,
+               d.dormitory_number, d.building
+        FROM repair_request rr
+        LEFT JOIN student s ON rr.student_id = s.id
+        LEFT JOIN dormitory d ON rr.dormitory_id = d.id
+        WHERE rr.status = #{status}
+        ORDER BY rr.create_time DESC
+    </select>
+
+    <insert id="insert" parameterType="RepairRequest" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO repair_request (student_id, dormitory_id, description, image)
+        VALUES (#{studentId}, #{dormitoryId}, #{description}, #{image})
+    </insert>
+
+    <update id="update" parameterType="RepairRequest">
+        UPDATE repair_request SET
+            status = #{status},
+            admin_comment = #{adminComment},
+            update_time = #{updateTime}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="Integer">
+        DELETE FROM repair_request WHERE id = #{id}
+    </delete>
+
+    <select id="countPending" resultType="int">
+        SELECT COUNT(*) FROM repair_request WHERE status = 0
+    </select>
+
+</mapper>

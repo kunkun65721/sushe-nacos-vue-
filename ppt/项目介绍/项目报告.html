@@ -1,0 +1,1968 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-deck-id="sushepro-white-tech">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>宿舍管理系统 SushePro - 项目介绍</title>
+  <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=clash-display@600,700&display=swap" rel="stylesheet">
+  <style>
+    /* === RESET & BASE === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow-x: hidden; }
+    html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+    :root {
+      --font-display: 'Clash Display', sans-serif;
+      --font-body: 'Satoshi', sans-serif;
+      /* WHITE TECH theme */
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8fafc;
+      --bg-card: #ffffff;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --accent-blue: #2563eb;
+      --accent-cyan: #0891b2;
+      --accent-dark: #1e40af;
+      --accent-light: #dbeafe;
+      --border-light: #e2e8f0;
+      --border-medium: #cbd5e1;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 30px rgba(0,0,0,0.1);
+      /* Typography */
+      --title-size: clamp(1.8rem, 5vw, 3.5rem);
+      --h2-size: clamp(1.4rem, 3vw, 2.2rem);
+      --h3-size: clamp(1.1rem, 2vw, 1.5rem);
+      --body-size: clamp(0.8rem, 1.3vw, 1rem);
+      --small-size: clamp(0.7rem, 0.9vw, 0.85rem);
+      /* Spacing */
+      --slide-padding: clamp(1.5rem, 4vw, 3.5rem);
+      --section-gap: clamp(1rem, 2.5vw, 2rem);
+      --card-radius: 12px;
+      /* Deck chrome */
+      --deck-chrome-bg: rgba(15, 23, 42, 0.94);
+      --deck-chrome-border: rgba(255, 255, 255, 0.12);
+      --deck-chrome-text: #e2e8f0;
+      --deck-chrome-muted: #94a3b8;
+      --deck-chrome-accent: #2563eb;
+      --deck-chrome-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+      --deck-chrome-surface: rgba(30, 41, 59, 0.92);
+    }
+
+    /* === SLIDE BASE === */
+    .slide {
+      width: 100vw; height: 100vh; height: 100dvh; overflow: hidden; scroll-snap-align: start;
+      display: flex; flex-direction: column; position: relative;
+      background: var(--bg-primary);
+    }
+    .slide-content {
+      flex: 1; display: flex; flex-direction: column; justify-content: center;
+      max-height: 100%; overflow: hidden; padding: var(--slide-padding);
+    }
+    .slide-alt { background: var(--bg-secondary); }
+
+    /* === TYPOGRAPHY === */
+    h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; color: var(--text-primary); line-height: 1.2; }
+    p, li, span { font-family: var(--font-body); color: var(--text-secondary); }
+    .text-gradient { background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .text-muted { color: var(--text-muted); }
+
+    /* === SECTIONS === */
+    .section-label {
+      font-size: var(--small-size); font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em;
+      color: var(--accent-blue); margin-bottom: 0.5em;
+    }
+
+    /* === GRID SYSTEMS === */
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--section-gap); }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--section-gap); }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(0.75rem, 1.5vw, 1.25rem); }
+    @media (max-width: 900px) { .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+
+    /* === CARDS === */
+    .card {
+      background: var(--bg-card); border: 1px solid var(--border-light);
+      border-radius: var(--card-radius); padding: clamp(1.25rem, 2vw, 1.75rem);
+      box-shadow: var(--shadow-sm); transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+    .card-blue { background: linear-gradient(135deg, #eff6ff, #f0f9ff); border-color: #bfdbfe; }
+    .card-dark { background: var(--text-primary); border-color: var(--text-primary); }
+    .card-dark h4, .card-dark p { color: #f1f5f9; }
+
+    /* === BADGES & PILLS === */
+    .badge {
+      display: inline-flex; align-items: center; gap: 0.4em;
+      padding: 0.35em 0.9em; border-radius: 20px;
+      font-size: var(--small-size); font-weight: 600;
+    }
+    .badge-blue { background: var(--accent-light); color: var(--accent-blue); }
+    .badge-dark { background: var(--text-primary); color: white; }
+    .badge-line { border: 1.5px solid var(--border-medium); color: var(--text-secondary); }
+
+    /* === DIVIDERS === */
+    .divider { width: 50px; height: 3px; background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)); border-radius: 2px; }
+    .divider-full { width: 100%; height: 1px; background: var(--border-light); margin: 1.5rem 0; }
+
+    /* === LISTS === */
+    .check-list { list-style: none; }
+    .check-list li { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.6rem 0; }
+    .check-list li::before { content: '✓'; color: var(--accent-blue); font-weight: 700; flex-shrink: 0; }
+
+    /* === STATS === */
+    .stat-row { display: flex; justify-content: center; gap: clamp(2rem, 6vw, 5rem); flex-wrap: wrap; }
+    .stat-item { text-align: center; }
+    .stat-item .num { font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--accent-blue); line-height: 1; }
+    .stat-item .label { font-size: var(--small-size); color: var(--text-muted); margin-top: 0.5rem; text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* === TECH PILLS ROW === */
+    .tech-pills { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
+    .tech-pill {
+      padding: 0.5em 1.2em; border-radius: 8px; font-size: var(--small-size); font-weight: 600;
+      border: 1.5px solid var(--border-medium); color: var(--text-secondary);
+      background: white; transition: all 0.2s;
+    }
+    .tech-pill:hover { border-color: var(--accent-blue); color: var(--accent-blue); box-shadow: var(--shadow-sm); }
+    .tech-pill.active { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
+
+    /* === ARCHITECTURE === */
+    .arch-tier {
+      display: grid; grid-template-columns: 110px 1fr; gap: clamp(0.75rem, 1.5vw, 1.25rem); align-items: center;
+      padding: clamp(0.75rem, 1.5vw, 1rem); background: var(--bg-secondary);
+      border-radius: 10px; border: 1px solid var(--border-light);
+    }
+    .arch-tier-label {
+      padding: 0.6em; border-radius: 8px; font-size: var(--small-size); font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; text-align: center;
+    }
+    .arch-tier:nth-child(1) .arch-tier-label { background: var(--accent-light); color: var(--accent-blue); }
+    .arch-tier:nth-child(2) .arch-tier-label { background: #f0fdf4; color: #16a34a; }
+    .arch-tier:nth-child(3) .arch-tier-label { background: #fef3c7; color: #d97706; }
+    .arch-tier:nth-child(4) .arch-tier-label { background: #f3e8ff; color: #9333ea; }
+    .arch-cells { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 0.5rem; }
+    .arch-cell { text-align: center; padding: 0.75rem 0.5rem; }
+    .arch-cell .icon { font-size: clamp(1.3rem, 2vw, 1.75rem); display: block; margin-bottom: 0.3rem; }
+    .arch-cell h5 { font-size: clamp(0.65rem, 0.85vw, 0.8rem); color: var(--text-primary); margin: 0; }
+    .arch-cell span { font-size: clamp(0.55rem, 0.7vw, 0.65rem); color: var(--text-muted); }
+
+    /* === FLOW STEPS === */
+    .flow-row { display: flex; align-items: center; justify-content: center; gap: clamp(0.5rem, 1.5vw, 1.25rem); flex-wrap: wrap; }
+    .flow-step {
+      position: relative; background: white; border: 1.5px solid var(--border-medium);
+      border-radius: 12px; padding: clamp(1rem, 1.5vw, 1.5rem) clamp(1.25rem, 2vw, 2rem);
+      text-align: center; min-width: 130px; flex: 1; max-width: 190px;
+      box-shadow: var(--shadow-sm);
+    }
+    .flow-step .badge { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); }
+    .flow-step .icon { font-size: clamp(1.5rem, 2.5vw, 2rem); display: block; margin: 0.5rem 0; }
+    .flow-step h5 { font-size: clamp(0.8rem, 1vw, 0.9rem); color: var(--text-primary); margin: 0 0 0.3rem; }
+    .flow-step span { font-size: clamp(0.65rem, 0.8vw, 0.75rem); color: var(--text-muted); }
+    .flow-arrow { font-size: clamp(1.25rem, 2vw, 1.5rem); color: var(--accent-blue); flex-shrink: 0; }
+
+    /* === FEATURE CARDS === */
+    .feat-card { text-align: center; padding: clamp(1.25rem, 2vw, 2rem); }
+    .feat-card .icon { font-size: clamp(2rem, 3.5vw, 2.75rem); display: block; margin-bottom: 0.75rem; }
+    .feat-card h4 { font-size: clamp(0.95rem, 1.2vw, 1.1rem); color: var(--text-primary); margin: 0 0 0.5rem; }
+    .feat-card p { font-size: clamp(0.75rem, 0.9vw, 0.85rem); color: var(--text-muted); margin: 0; line-height: 1.6; }
+
+    /* === TIMELINE === */
+    .timeline { position: relative; padding-left: 2rem; }
+    .timeline::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--border-light); }
+    .timeline-item { position: relative; padding-bottom: 1.5rem; }
+    .timeline-item::before { content: ''; position: absolute; left: calc(-2rem + -4px); top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent-blue); border: 2px solid white; box-shadow: 0 0 0 2px var(--accent-blue); }
+    .timeline-item h5 { font-size: clamp(0.85rem, 1vw, 0.95rem); color: var(--text-primary); margin: 0 0 0.3rem; }
+    .timeline-item p { font-size: clamp(0.75rem, 0.85vw, 0.8rem); color: var(--text-muted); margin: 0; }
+
+    /* === CENTER LAYOUT === */
+    .center-flex { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+
+    /* === SCREENSHOT PLACEHOLDER === */
+    .screenshot-placeholder {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border: 2px dashed var(--border-medium);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 180px;
+      gap: 0.75rem;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .screenshot-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(37, 99, 235, 0.03) 10px,
+        rgba(37, 99, 235, 0.03) 20px
+      );
+    }
+    .screenshot-placeholder .placeholder-icon {
+      font-size: clamp(2rem, 4vw, 3rem);
+      opacity: 0.5;
+      position: relative;
+    }
+    .screenshot-placeholder .placeholder-text {
+      font-size: var(--small-size);
+      color: var(--text-muted);
+      font-weight: 500;
+      text-align: center;
+      position: relative;
+    }
+    .screenshot-placeholder .placeholder-hint {
+      font-size: clamp(0.65rem, 0.8vw, 0.75rem);
+      color: var(--text-muted);
+      opacity: 0.7;
+      position: relative;
+    }
+
+    /* === ANIMATIONS === */
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+    .slide.visible .reveal:nth-child(1) { transition-delay: 0.05s; }
+    .slide.visible .reveal:nth-child(2) { transition-delay: 0.12s; }
+    .slide.visible .reveal:nth-child(3) { transition-delay: 0.2s; }
+    .slide.visible .reveal:nth-child(4) { transition-delay: 0.28s; }
+    .slide.visible .reveal:nth-child(5) { transition-delay: 0.36s; }
+    .slide.visible .reveal:nth-child(6) { transition-delay: 0.44s; }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; } html { scroll-behavior: auto; } }
+    @media (max-height: 700px) { :root { --slide-padding: clamp(1rem, 3vw, 2rem); } }
+
+    /* === DECK CHROME === */
+    .progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--accent-blue), #0891b2); width: 0%; z-index: 8000; pointer-events: none; }
+    .nav-dots { position: fixed; bottom: clamp(0.5rem, 2vh, 1.25rem); left: 50%; transform: translateX(-50%); display: flex; gap: 0.45rem; z-index: 8000; }
+    .nav-dots button { width: 8px; height: 8px; border-radius: 50%; border: none; padding: 0; background: var(--border-medium); cursor: pointer; transition: all 0.2s; }
+    .nav-dots button.active { background: var(--accent-blue); transform: scale(1.2); }
+    .deck-left-hover-anchor { position: fixed; top: 0; left: 0; z-index: 10000; padding: clamp(0.35rem, 1vh, 0.5rem) clamp(0.5rem, 1.2vw, 0.65rem); display: flex; flex-direction: column; align-items: flex-start; gap: clamp(0.35rem, 1vh, 0.5rem); min-width: min(280px, 72vw); min-height: 44px; pointer-events: auto; background: transparent; }
+    .deck-left-row { display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; gap: clamp(0.3rem, 0.9vw, 0.45rem); }
+    .deck-left-row--tools { flex-wrap: nowrap; max-width: min(100vw - 1rem, 420px); overflow-x: auto; scrollbar-width: thin; }
+    .deck-edit-chrome { display: none; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 10px; border: 1px solid var(--deck-chrome-border); background: var(--deck-chrome-bg); box-shadow: var(--deck-chrome-shadow); opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
+    body.deck-edit-mode .deck-edit-chrome { display: flex; }
+    body.deck-edit-mode .deck-edit-chrome.show { opacity: 1; pointer-events: auto; }
+    .deck-edit-chrome button { flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0; border-radius: 8px; border: 1px solid var(--deck-chrome-border); background: var(--deck-chrome-surface); color: var(--deck-chrome-text); cursor: pointer; }
+    .deck-edit-chrome button:hover:not(:disabled) { background: color-mix(in srgb, var(--deck-chrome-accent) 18%, var(--deck-chrome-surface)); }
+    .deck-edit-chrome button:disabled { opacity: 0.35; cursor: not-allowed; }
+    .deck-edit-chrome .deck-btn-done { width: auto; padding: 0 12px; font-size: clamp(0.75rem, 1.2vw, 0.875rem); font-weight: 600; color: white; background: var(--deck-chrome-accent); border-color: var(--deck-chrome-accent); }
+    .deck-edit-chrome svg { width: 18px; height: 18px; fill: currentColor; }
+    .edit-toggle, .sidebar-pages-toggle, .deck-btn-save { position: relative; z-index: 10001; border: 1px solid var(--deck-chrome-border); background: var(--deck-chrome-bg); color: var(--deck-chrome-text); border-radius: 10px; padding: 8px 12px; font-size: clamp(0.7rem, 1.1vw, 0.875rem); cursor: pointer; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; white-space: nowrap; }
+    .deck-btn-save { display: none; }
+    body.deck-edit-mode .deck-btn-save { display: inline-flex; align-items: center; justify-content: center; }
+    .edit-toggle.show, .edit-toggle.active, .sidebar-pages-toggle.show, .sidebar-pages-toggle.active, body.deck-edit-mode .deck-btn-save.show { opacity: 1; pointer-events: auto; }
+    .slide-sidebar { position: fixed; top: 0; right: 0; bottom: 0; width: min(200px, 28vw); background: var(--deck-chrome-bg); border-left: 1px solid var(--deck-chrome-border); z-index: 9500; transform: translateX(100%); transition: transform 0.28s ease; display: flex; flex-direction: column; padding: 10px 8px; gap: 8px; box-shadow: -8px 0 32px rgba(0,0,0,0.3); }
+    body.deck-sidebar-open .slide-sidebar { transform: translateX(0); }
+    body.deck-sidebar-open .slides-offset { padding-right: min(200px, 28vw); }
+    .slide-sidebar h3 { font-size: clamp(0.65rem, 1.2vw, 0.8rem); text-transform: uppercase; letter-spacing: 0.08em; color: var(--deck-chrome-muted); margin: 0 4px 4px; }
+    .filmstrip-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+    .filmstrip-item { position: relative; border-radius: 8px; border: 2px solid transparent; background: color-mix(in srgb, var(--deck-chrome-surface) 80%, transparent); padding: 6px; cursor: grab; touch-action: none; }
+    .filmstrip-item.is-current { border-color: var(--deck-chrome-accent); }
+    .filmstrip-item.dragging { opacity: 0.55; }
+    .filmstrip-item .filmstrip-drop-line { display: none; height: 3px; background: #a78bfa; border-radius: 2px; margin: 4px 0; }
+    .filmstrip-item.drop-before .filmstrip-drop-line-before { display: block; }
+    .filmstrip-item.drop-after .filmstrip-drop-line-after { display: block; }
+    .filmstrip-thumb-host { width: 100%; aspect-ratio: 16/9; overflow: hidden; border-radius: 6px; background: #f1f5f9; }
+    .filmstrip-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; gap: 4px; }
+    .filmstrip-actions button { font-size: 11px; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--deck-chrome-border); background: var(--deck-chrome-surface); color: var(--deck-chrome-text); cursor: pointer; }
+    .filmstrip-actions button:hover { filter: brightness(1.12); }
+    .filmstrip-num { font-size: 11px; color: var(--deck-chrome-muted); }
+    .slide-edit-layer { position: absolute; inset: 0; z-index: 6; pointer-events: none; }
+    body.deck-edit-mode .slide-edit-layer { pointer-events: none; }
+    body.deck-edit-mode .slide { cursor: default; }
+    .slide-object { position: absolute; box-sizing: border-box; pointer-events: auto; outline: 1px dashed transparent; border-radius: 4px; }
+    body.deck-edit-mode .slide-object { outline-color: rgba(71, 85, 105, 0.4); }
+    .slide-object.is-selected { outline: 2px solid var(--deck-chrome-accent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--deck-chrome-accent) 25%, transparent); }
+    .slide-object-move { position: absolute; left: -22px; top: 4px; width: 20px; height: 28px; border: 1px solid var(--deck-chrome-border); border-radius: 6px; background: var(--deck-chrome-bg); color: var(--deck-chrome-muted); font-size: 12px; line-height: 1; padding: 0; cursor: grab; display: none; align-items: center; justify-content: center; z-index: 2; }
+    body.deck-edit-mode .slide-object-move { display: flex; }
+    .slide-object-resize { position: absolute; right: -7px; bottom: -7px; width: 14px; height: 14px; border-radius: 3px; background: var(--deck-chrome-accent); cursor: nwse-resize; display: none; z-index: 4; border: 1px solid var(--deck-chrome-border); padding: 0; box-sizing: border-box; }
+    body.deck-edit-mode .slide-object.is-selected .slide-object-resize { display: block; }
+    .slide-object-text { min-height: 1.2em; outline: none; font-size: var(--body-size); width: 100%; box-sizing: border-box; overflow-wrap: anywhere; word-break: break-word; }
+    .slide-object[data-object-type="text"] .slide-object-text { cursor: text; }
+    .slide-object-graphic { width: 100%; height: 100%; box-sizing: border-box; }
+    .snap-line-v, .snap-line-h { position: absolute; background: #f472b6; pointer-events: none; z-index: 7; opacity: 0.85; }
+    .snap-line-v { width: 1px; top: 0; bottom: 0; }
+    .snap-line-h { height: 1px; left: 0; right: 0; }
+    .rte-toolbar { position: fixed; z-index: 9600; display: none; flex-wrap: wrap; gap: 4px; padding: 6px; background: var(--deck-chrome-bg); border: 1px solid var(--deck-chrome-border); border-radius: 10px; box-shadow: var(--deck-chrome-shadow); }
+    .rte-toolbar.visible { display: flex; }
+    .rte-toolbar button { border: 1px solid var(--deck-chrome-border); background: var(--deck-chrome-surface); color: var(--deck-chrome-text); border-radius: 6px; padding: 4px 8px; font-size: 12px; cursor: pointer; }
+    .rte-toolbar button.is-active { outline: 2px solid var(--deck-chrome-accent); outline-offset: 1px; }
+    .rte-toolbar-group { display: inline-flex; align-items: center; gap: 4px; padding-left: 2px; border-left: 1px solid color-mix(in srgb, var(--deck-chrome-border) 70%, transparent); margin-left: 2px; }
+    .rte-toolbar-group:first-of-type { border-left: 0; margin-left: 0; padding-left: 0; }
+    .rte-toolbar-meta { font-size: 11px; color: var(--deck-chrome-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    body.deck-edit-mode.slide-anim-paused .reveal { transition: none !important; }
+  </style>
+</head>
+<body>
+
+<!-- Deck Controls -->
+<div class="deck-left-hover-anchor" id="deckLeftHover" aria-label="Deck controls">
+  <div class="deck-left-row">
+    <button type="button" class="edit-toggle" id="editToggle" title="Edit mode (E)">Edit</button>
+    <button type="button" class="sidebar-pages-toggle" id="pagesToggle" title="Pages sidebar">Pages</button>
+    <button type="button" class="deck-btn-save" id="btnSave" title="Save (Ctrl+S)">Save</button>
+  </div>
+  <div class="deck-edit-chrome deck-left-row deck-left-row--tools" id="deckEditChrome" data-deck-chrome-surface="" role="toolbar" aria-label="Editing">
+    <button type="button" id="btnUndo" aria-label="Undo" title="Undo (Ctrl+Z)"><svg viewBox="0 0 24 24"><path d="M9 14l-4-4 4-4M5 10h8a5 5 0 010 10h-2"/></svg></button>
+    <button type="button" id="btnRedo" aria-label="Redo" title="Redo (Ctrl+Y)"><svg viewBox="0 0 24 24"><path d="M15 14l4-4-4-4M19 10h-8a5 5 0 000 10h2"/></svg></button>
+    <button type="button" class="deck-btn-done" id="btnDoneEdit">Done</button>
+  </div>
+</div>
+<div class="progress-bar" id="progressBar"></div>
+<nav class="nav-dots" id="navDots" aria-label="Slides"></nav>
+<aside class="slide-sidebar" id="slideSidebar" aria-label="Slide pages">
+  <h3>Slides</h3>
+  <div class="filmstrip-list" id="filmstripList"></div>
+  <div class="filmstrip-actions" style="margin-top:auto;"><button type="button" id="btnExport">Export HTML</button></div>
+</aside>
+<div class="rte-toolbar" id="rteToolbar" role="toolbar" aria-label="Text format">
+  <button type="button" data-cmd="bold"><strong>B</strong></button>
+  <button type="button" data-cmd="italic"><em>I</em></button>
+  <span class="rte-toolbar-group" aria-label="Font family"><span class="rte-toolbar-meta">Font</span><button type="button" data-font="var(--font-body)">Body</button><button type="button" data-font="var(--font-display)">Display</button></span>
+  <span class="rte-toolbar-group" aria-label="Font size"><span class="rte-toolbar-meta">Size</span><button type="button" data-size="0.85">S</button><button type="button" data-size="1">M</button><button type="button" data-size="1.2">L</button><button type="button" data-size="1.45">XL</button></span>
+</div>
+
+<div class="slides-offset">
+
+  <!-- SLIDE 1: COVER -->
+  <section class="slide" id="slide-0">
+    <div class="slide-content center-flex">
+      <div class="reveal"><p class="section-label">PROJECT OVERVIEW · 2026</p></div>
+      <div class="reveal"><h1 style="font-size:var(--title-size);margin:0.2em 0;">宿舍管理系统</h1></div>
+      <div class="reveal"><p class="text-gradient" style="font-size:clamp(1.5rem,3vw,2.5rem);font-weight:700;margin:0;">SushePro</p></div>
+      <div class="reveal" style="max-width:550px;margin-top:1.5em;">
+        <p style="font-size:var(--body-size);color:var(--text-secondary);">基于 SSM 框架 + DeepSeek AI 的智能化宿舍管理解决方案</p>
+      </div>
+      <div class="tech-pills reveal" style="margin-top:2em;">
+        <span class="tech-pill active">Spring</span>
+        <span class="tech-pill active">SpringMVC</span>
+        <span class="tech-pill active">MyBatis</span>
+        <span class="tech-pill active">MySQL</span>
+        <span class="tech-pill active">DeepSeek AI</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 2: CONTENTS -->
+  <section class="slide slide-alt" id="slide-1">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">CONTENTS</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1.5em;">目录</h2></div>
+      <div class="grid-2 reveal" style="max-width:800px;">
+        <div class="card" style="display:flex;align-items:center;gap:1em;">
+          <span style="font-size:2rem;font-weight:800;color:var(--accent-blue);font-family:var(--font-display);">01</span>
+          <div><h4 style="font-size:1rem;margin:0;">项目背景</h4><p style="font-size:0.8rem;margin:0;">痛点与目标</p></div>
+        </div>
+        <div class="card" style="display:flex;align-items:center;gap:1em;">
+          <span style="font-size:2rem;font-weight:800;color:var(--accent-blue);font-family:var(--font-display);">02</span>
+          <div><h4 style="font-size:1rem;margin:0;">技术架构</h4><p style="font-size:0.8rem;margin:0;">SSM + AI</p></div>
+        </div>
+        <div class="card" style="display:flex;align-items:center;gap:1em;">
+          <span style="font-size:2rem;font-weight:800;color:var(--accent-blue);font-family:var(--font-display);">03</span>
+          <div><h4 style="font-size:1rem;margin:0;">核心功能</h4><p style="font-size:0.8rem;margin:0;">6大模块详解</p></div>
+        </div>
+        <div class="card" style="display:flex;align-items:center;gap:1em;">
+          <span style="font-size:2rem;font-weight:800;color:var(--accent-blue);font-family:var(--font-display);">04</span>
+          <div><h4 style="font-size:1rem;margin:0;">AI智能推荐</h4><p style="font-size:0.8rem;margin:0;">DeepSeek驱动</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 3: BACKGROUND PAIN POINTS -->
+  <section class="slide" id="slide-2">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">BACKGROUND</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:0.3em;">行业痛点</h2></div>
+      <div class="reveal"><p style="color:var(--text-muted);margin-bottom:1.5em;">传统宿舍管理面临的挑战</p></div>
+      <div class="grid-3 reveal">
+        <div class="card">
+          <span style="font-size:2.5rem;">📈</span>
+          <h4 style="margin:0.75em 0 0.5em;">规模扩大</h4>
+          <p style="font-size:0.85rem;">高校规模持续扩大，宿舍管理复杂度指数级增加</p>
+        </div>
+        <div class="card">
+          <span style="font-size:2.5rem;">📋</span>
+          <h4 style="margin:0.75em 0 0.5em;">效率低下</h4>
+          <p style="font-size:0.85rem;">传统纸质/Excel管理效率低，信息更新不及时</p>
+        </div>
+        <div class="card">
+          <span style="font-size:2.5rem;">👥</span>
+          <h4 style="margin:0.75em 0 0.5em;">信息分散</h4>
+          <p style="font-size:0.85rem;">学生信息、宿舍数据分离，缺乏统一管理平台</p>
+        </div>
+        <div class="card">
+          <span style="font-size:2.5rem;">🤝</span>
+          <h4 style="margin:0.75em 0 0.5em;">分配困难</h4>
+          <p style="font-size:0.85rem;">宿舍分配依赖人工经验，难以保证公平合理</p>
+        </div>
+        <div class="card">
+          <span style="font-size:2.5rem;">🔧</span>
+          <h4 style="margin:0.75em 0 0.5em;">流程繁琐</h4>
+          <p style="font-size:0.85rem;">报修流程复杂，状态跟踪困难，处理周期长</p>
+        </div>
+        <div class="card">
+          <span style="font-size:2.5rem;">📊</span>
+          <h4 style="margin:0.75em 0 0.5em;">数据缺失</h4>
+          <p style="font-size:0.85rem;">缺乏数据分析支撑，无法进行科学决策</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 4: BACKGROUND SOLUTION -->
+  <section class="slide slide-alt" id="slide-3">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">SOLUTION</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1.5em;">解决方案</h2></div>
+      <div class="card card-blue reveal" style="max-width:900px;margin:0 auto;">
+        <div class="grid-2" style="align-items:center;">
+          <div>
+            <h3 style="font-size:var(--h3-size);margin:0 0 1em;color:var(--accent-dark);">数字化宿舍管理平台</h3>
+            <ul class="check-list">
+              <li style="padding:0.5em 0;"><span>一站式管理学生、宿舍、报修等核心数据</span></li>
+              <li style="padding:0.5em 0;"><span>AI智能算法赋能，科学分配宿舍</span></li>
+              <li style="padding:0.5em 0;"><span>全流程线上化，提升管理效率</span></li>
+              <li style="padding:0.5em 0;"><span>数据可视化，辅助科学决策</span></li>
+            </ul>
+          </div>
+          <div style="text-align:center;">
+            <span style="font-size:5rem;">🏢</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 5: PROJECT GOALS -->
+  <section class="slide" id="slide-4">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">GOALS</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1.5em;">项目目标</h2></div>
+      <div class="grid-2 reveal">
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:1em;margin-bottom:1em;">
+            <span style="font-size:1.5rem;">🎯</span>
+            <h4 style="margin:0;">核心目标</h4>
+          </div>
+          <ul class="check-list">
+            <li><span>构建统一的数字化管理平台</span></li>
+            <li><span>实现学生与宿舍信息的集中管理</span></li>
+            <li><span>引入AI技术实现智能宿舍推荐</span></li>
+          </ul>
+        </div>
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:1em;margin-bottom:1em;">
+            <span style="font-size:1.5rem;">⚡</span>
+            <h4 style="margin:0;">效率目标</h4>
+          </div>
+          <ul class="check-list">
+            <li><span>优化报修流程，缩短处理周期</span></li>
+            <li><span>简化宿舍调换审批流程</span></li>
+            <li><span>提供简洁易用的操作界面</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="stat-row reveal" style="margin-top:2.5em;">
+        <div class="stat-item">
+          <div class="num">6</div>
+          <div class="label">功能模块</div>
+        </div>
+        <div class="stat-item">
+          <div class="num">2</div>
+          <div class="label">用户角色</div>
+        </div>
+        <div class="stat-item">
+          <div class="num">1</div>
+          <div class="label">AI引擎</div>
+        </div>
+        <div class="stat-item">
+          <div class="num">0</div>
+          <div class="label">纸质流程</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 6: TECH OVERVIEW -->
+  <section class="slide slide-alt" id="slide-5">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">ARCHITECTURE</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:0.5em;">技术架构</h2></div>
+      <div class="reveal"><p style="color:var(--text-muted);margin-bottom:1.5em;">基于成熟稳定的 SSM 框架构建</p></div>
+      <div class="tech-pills reveal" style="margin-bottom:2em;">
+        <span class="tech-pill active">JSP</span>
+        <span class="tech-pill active">Spring</span>
+        <span class="tech-pill active">SpringMVC</span>
+        <span class="tech-pill active">MyBatis</span>
+        <span class="tech-pill active">MySQL</span>
+        <span class="tech-pill active">DeepSeek API</span>
+      </div>
+      <div class="card reveal" style="max-width:800px;margin:0 auto;">
+        <h4 style="text-align:center;margin:0 0 1.5em;">系统架构分层</h4>
+        <div style="display:flex;flex-direction:column;gap:0.75rem;">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem 1rem;background:#eff6ff;border-radius:8px;border-left:4px solid #2563eb;">
+            <span style="font-weight:600;color:var(--accent-dark);">UI 层</span>
+            <span style="color:var(--text-muted);font-size:0.85rem;">JSP + CSS + AJAX</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem 1rem;background:#f0fdf4;border-radius:8px;border-left:4px solid #16a34a;">
+            <span style="font-weight:600;color:#16a34a;">Controller 层</span>
+            <span style="color:var(--text-muted);font-size:0.85rem;">SpringMVC</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem 1rem;background:#fef3c7;border-radius:8px;border-left:4px solid #d97706;">
+            <span style="font-weight:600;color:#d97706;">Service 层</span>
+            <span style="color:var(--text-muted);font-size:0.85rem;">Spring IoC + AI Service</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem 1rem;background:#f3e8ff;border-radius:8px;border-left:4px solid #9333ea;">
+            <span style="font-weight:600;color:#9333ea;">Data 层</span>
+            <span style="color:var(--text-muted);font-size:0.85rem;">MyBatis + MySQL</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 7: TECH FRONTEND -->
+  <section class="slide" id="slide-6">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">FRONTEND</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1.5em;">前端技术</h2></div>
+      <div class="grid-4 reveal">
+        <div class="card feat-card">
+          <span class="icon">🖥️</span>
+          <h4>JSP</h4>
+          <p>动态页面渲染，服务器端渲染模式</p>
+        </div>
+        <div class="card feat-card">
+          <span class="icon">🎨</span>
+          <h4>CSS</h4>
+          <p>Material Design风格，响应式布局</p>
+        </div>
+        <div class="card feat-card">
+          <span class="icon">📱</span>
+          <h4>Material</h4>
+          <p>Google Material Design组件库</p>
+        </div>
+        <div class="card feat-card">
+          <span class="icon">🔄</span>
+          <h4>AJAX</h4>
+          <p>异步无刷新交互，用户体验优化</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 8: TECH BACKEND -->
+  <section class="slide slide-alt" id="slide-7">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">BACKEND</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1.5em;">后端技术</h2></div>
+      <div class="grid-2 reveal">
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:1em;margin-bottom:1em;">
+            <span style="font-size:2rem;">🌿</span>
+            <h4 style="margin:0;">Spring Framework</h4>
+          </div>
+          <p style="font-size:0.9rem;line-height:1.7;">控制反转(IoC)和依赖注入(DI)，降低组件间耦合度，提升代码可维护性和可测试性。</p>
+        </div>
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:1em;margin-bottom:1em;">
+            <span style="font-size:2rem;">⚙️</span>
+            <h4 style="margin:0;">SpringMVC</h4>
+          </div>
+          <p style="font-size:0.9rem;line-height:1.7;">请求分发、参数绑定、视图解析，提供清晰的分层架构和灵活的扩展机制。</p>
+        </div>
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:1em;margin-bottom:1em;">
+            <span style="font-size:2rem;">🗄️</span>
+            <h4 style="margin:0;">MyBatis</h4>
+          </div>
+          <p style="font-size:0.9rem;line-height:1.7;">轻量级ORM框架，SQL映射配置化，复杂查询编写便捷，性能优异。</p>
+        </div>
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:1em;margin-bottom:1em;">
+            <span style="font-size:2rem;">🔗</span>
+            <h4 style="margin:0;">Druid</h4>
+          </div>
+          <p style="font-size:0.9rem;line-height:1.7;">阿里开源数据库连接池，监控功能强大，连接复用率高。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 9: SPRING IOC/DI -->
+  <section class="slide" id="slide-8b">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">SPRING CORE</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1em;">Spring IoC 与依赖注入</h2></div>
+      <div class="grid-2 reveal">
+        <div class="card">
+          <h4 style="margin:0 0 1em;">🎯 IoC 控制反转</h4>
+          <p style="font-size:0.85rem;line-height:1.8;margin:0 0 1em;">将对象创建权交给Spring容器，由容器控制对象之间的依赖关系，而非传统的手动new对象。</p>
+          <div style="background:#f8fafc;padding:1em;border-radius:8px;font-size:0.8rem;">
+            <div style="margin-bottom:0.5em;color:var(--text-muted);">传统方式:</div>
+            <code style="color:#dc2626;">UserService = new UserService();</code>
+            <div style="margin:0.75em 0 0.5em;color:var(--text-muted);">IoC方式:</div>
+            <code style="color:#16a34a;">@Autowired UserService userService;</code>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="margin:0 0 1em;">💉 DI 依赖注入</h4>
+          <p style="font-size:0.85rem;line-height:1.8;margin:0 0 1em;">Spring容器自动将依赖的对象注入到目标bean中，支持多种注入方式。</p>
+          <div style="display:flex;flex-direction:column;gap:0.5em;">
+            <div style="display:flex;align-items:center;gap:0.5em;">
+              <span class="badge badge-blue">构造器注入</span>
+              <span style="font-size:0.75rem;color:var(--text-muted);">推荐，不可变</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.5em;">
+              <span class="badge badge-line">Setter注入</span>
+              <span style="font-size:0.75rem;color:var(--text-muted);">可选依赖</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.5em;">
+              <span class="badge badge-line">字段注入</span>
+              <span style="font-size:0.75rem;color:var(--text-muted);">简洁但不推荐</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card reveal" style="margin-top:1.5em;">
+        <h4 style="margin:0 0 0.75em;">项目中的实际应用</h4>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1em;">
+          <div style="background:#f8fafc;padding:0.75em;border-radius:6px;text-align:center;">
+            <div style="font-size:0.75rem;color:var(--accent-blue);font-weight:600;">Service层</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.25em;">@Service注解</div>
+          </div>
+          <div style="background:#f8fafc;padding:0.75em;border-radius:6px;text-align:center;">
+            <div style="font-size:0.75rem;color:var(--accent-blue);font-weight:600;">DAO层</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.25em;">@Repository注解</div>
+          </div>
+          <div style="background:#f8fafc;padding:0.75em;border-radius:6px;text-align:center;">
+            <div style="font-size:0.75rem;color:var(--accent-blue);font-weight:600;">Controller层</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.25em;">@Controller注解</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 10: SPRINGMVC REQUEST FLOW -->
+  <section class="slide slide-alt" id="slide-8c">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">SPRINGMVC</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1em;">SpringMVC 请求处理流程</h2></div>
+      <div class="reveal" style="margin-bottom:1.5em;">
+        <p style="color:var(--text-secondary);">DispatcherServlet 作为前端控制器，统一处理所有请求</p>
+      </div>
+      <div class="flow-row reveal" style="margin-bottom:2em;">
+        <div class="flow-step" style="min-width:100px;">
+          <span class="badge badge-dark">1</span>
+          <span class="icon">🌐</span>
+          <h5>请求到达</h5>
+          <span>HTTP请求</span>
+        </div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step" style="min-width:100px;">
+          <span class="badge badge-dark">2</span>
+          <span class="icon">📡</span>
+          <h5>DispatcherServlet</h5>
+          <span>统一分发</span>
+        </div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step" style="min-width:100px;">
+          <span class="badge badge-dark">3</span>
+          <span class="icon">🧭</span>
+          <h5>HandlerMapping</h5>
+          <span>查找处理器</span>
+        </div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step" style="min-width:100px;">
+          <span class="badge badge-dark">4</span>
+          <span class="icon">⚡</span>
+          <h5>HandlerAdapter</h5>
+          <span>执行处理</span>
+        </div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step" style="min-width:100px;">
+          <span class="badge badge-dark">5</span>
+          <span class="icon">🎨</span>
+          <h5>ViewResolver</h5>
+          <span>视图解析</span>
+        </div>
+      </div>
+      <div class="grid-2 reveal">
+        <div class="card">
+          <h4 style="margin:0 0 0.75em;">核心组件</h4>
+          <ul class="check-list">
+            <li><span>DispatcherServlet - 前端控制器</span></li>
+            <li><span>HandlerMapping - 映射处理器</span></li>
+            <li><span>HandlerAdapter - 处理器适配器</span></li>
+            <li><span>ViewResolver - 视图解析器</span></li>
+          </ul>
+        </div>
+        <div class="card card-blue">
+          <h4 style="color:var(--accent-dark);margin:0 0 0.75em;">项目中的应用</h4>
+          <ul class="check-list">
+            <li><span>@Controller 标记控制器</span></li>
+            <li><span>@RequestMapping 映射URL</span></li>
+            <li><span>@ResponseBody JSON响应</span></li>
+            <li><span>@SessionAttributes 会话数据</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 11: MYBATIS ORM -->
+  <section class="slide" id="slide-8d">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">MYBATIS</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1em;">MyBatis ORM 映射机制</h2></div>
+      <div class="grid-2 reveal">
+        <div class="card">
+          <h4 style="margin:0 0 1em;">🗂️ Mapper XML 配置</h4>
+          <p style="font-size:0.85rem;line-height:1.7;margin:0 0 1em;">SQL语句与Java方法映射，编写原生SQL获得最大灵活性</p>
+          <div style="background:#1e293b;color:#e2e8f0;padding:1em;border-radius:8px;font-size:0.7rem;font-family:monospace;overflow-x:auto;">
+<pre style="margin:0;"><span style="color:#94a3b8;">&lt;mapper namespace="..."&gt;</span>
+  <span style="color:#f472b6;">&lt;select</span> <span style="color:#7dd3fc;">id="findById"</span>
+          <span style="color:#7dd3fc;">resultMap="StudentMap"&gt;</span>
+    SELECT * FROM student
+    WHERE id = #{id}
+  <span style="color:#f472b6;">&lt;/select&gt;</span>
+<span style="color:#94a3b8;">&lt;/mapper&gt;</span></pre>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="margin:0 0 1em;">🔗 ResultMap 映射</h4>
+          <p style="font-size:0.85rem;line-height:1.7;margin:0 0 1em;">将查询结果自动映射为Java对象，支持嵌套查询</p>
+          <div style="background:#1e293b;color:#e2e8f0;padding:1em;border-radius:8px;font-size:0.7rem;font-family:monospace;overflow-x:auto;">
+<pre style="margin:0;"><span style="color:#f472b6;">&lt;resultMap</span> <span style="color:#7dd3fc;">id="StudentMap"</span>
+         <span style="color:#7dd3fc;">type="Student"&gt;</span>
+  <span style="color:#f472b6;">&lt;id</span>     <span style="color:#7dd3fc;">property="id"</span>
+          <span style="color:#7dd3fc;">column="id"/&gt;</span>
+  <span style="color:#f472b6;">&lt;result</span> <span style="color:#7dd3fc;">property="name"</span>
+          <span style="color:#7dd3fc;">column="name"/&gt;</span>
+<span style="color:#f472b6;">&lt;/resultMap&gt;</span></pre>
+          </div>
+        </div>
+      </div>
+      <div class="card reveal" style="margin-top:1.5em;">
+        <h4 style="margin:0 0 1em;">MyBatis 优势</h4>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1em;">
+          <div style="text-align:center;">
+            <div style="font-size:1.5rem;">📝</div>
+            <div style="font-size:0.8rem;font-weight:600;margin:0.5em 0 0.25em;">SQL可控</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);">编写原生SQL</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:1.5rem;">⚡</div>
+            <div style="font-size:0.8rem;font-weight:600;margin:0.5em 0 0.25em;">性能优异</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);">连接池复用</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:1.5rem;">🔧</div>
+            <div style="font-size:0.8rem;font-weight:600;margin:0.5em 0 0.25em;">配置灵活</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);">XML/注解</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:1.5rem;">🧩</div>
+            <div style="font-size:0.8rem;font-weight:600;margin:0.5em 0 0.25em;">易于集成</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);">Spring无缝整合</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 12: DATABASE DETAIL -->
+  <section class="slide slide-alt" id="slide-8e">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">DATABASE</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1em;">数据库表设计详解</h2></div>
+      <div class="grid-2 reveal" style="gap:1rem;">
+        <div class="card" style="padding:1rem;">
+          <h4 style="margin:0 0 0.75em;font-size:0.95rem;">📋 学生表 Student</h4>
+          <table style="width:100%;font-size:0.7rem;border-collapse:collapse;">
+            <tr style="background:var(--accent-light);"><th style="padding:0.4em;text-align:left;">字段</th><th style="padding:0.4em;text-align:left;">类型</th><th style="padding:0.4em;text-align:left;">说明</th></tr>
+            <tr><td style="padding:0.3em;">id</td><td style="padding:0.3em;">BIGINT PK</td><td style="padding:0.3em;">主键</td></tr>
+            <tr style="background:#f8fafc;"><td style="padding:0.3em;">student_no</td><td style="padding:0.3em;">VARCHAR(20)</td><td style="padding:0.3em;">学号</td></tr>
+            <tr><td style="padding:0.3em;">name</td><td style="padding:0.3em;">VARCHAR(50)</td><td style="padding:0.3em;">姓名</td></tr>
+            <tr style="background:#f8fafc;"><td style="padding:0.3em;">class_id</td><td style="padding:0.3em;">INT</td><td style="padding:0.3em;">班级</td></tr>
+            <tr><td style="padding:0.3em;">phone</td><td style="padding:0.3em;">VARCHAR(20)</td><td style="padding:0.3em;">电话</td></tr>
+          </table>
+        </div>
+        <div class="card" style="padding:1rem;">
+          <h4 style="margin:0 0 0.75em;font-size:0.95rem;">🏠 宿舍表 Dormitory</h4>
+          <table style="width:100%;font-size:0.7rem;border-collapse:collapse;">
+            <tr style="background:var(--accent-light);"><th style="padding:0.4em;text-align:left;">字段</th><th style="padding:0.4em;text-align:left;">类型</th><th style="padding:0.4em;text-align:left;">说明</th></tr>
+            <tr><td style="padding:0.3em;">id</td><td style="padding:0.3em;">BIGINT PK</td><td style="padding:0.3em;">主键</td></tr>
+            <tr style="background:#f8fafc;"><td style="padding:0.3em;">building</td><td style="padding:0.3em;">VARCHAR(50)</td><td style="padding:0.3em;">楼号</td></tr>
+            <tr><td style="padding:0.3em;">room_no</td><td style="padding:0.3em;">VARCHAR(10)</td><td style="padding:0.3em;">房间号</td></tr>
+            <tr style="background:#f8fafc;"><td style="padding:0.3em;">capacity</td><td style="padding:0.3em;">INT</td><td style="padding:0.3em;">床位数</td></tr>
+            <tr><td style="padding:0.3em;">current_num</td><td style="padding:0.3em;">INT</td><td style="padding:0.3em;">当前人数</td></tr>
+          </table>
+        </div>
+        <div class="card" style="padding:1rem;">
+          <h4 style="margin:0 0 0.75em;font-size:0.95rem;">📝 问卷表 Habit</h4>
+          <table style="width:100%;font-size:0.7rem;border-collapse:collapse;">
+            <tr style="background:var(--accent-light);"><th style="padding:0.4em;text-align:left;">字段</th><th style="padding:0.4em;text-align:left;">类型</th><th style="padding:0.4em;text-align:left;">说明</th></tr>
+            <tr><td style="padding:0.3em;">id</td><td style="padding:0.3em;">BIGINT PK</td><td style="padding:0.3em;">主键</td></tr>
+            <tr style="background:#f8fafc;"><td style="padding:0.3em;">student_id</td><td style="padding:0.3em;">BIGINT FK</td><td style="padding:0.3em;">学生ID</td></tr>
+            <tr><td style="padding:0.3em;">sleep_time</td><td style="padding:0.3em;">TINYINT</td><td style="padding:0.3em;">作息(1-3)</td></tr>
+            <tr style="background:#f8fafc;"><td style="padding:0.3em;">noise_level</td><td style="padding:0.3em;">TINYINT</td><td style="padding:0.3em;">噪音(1-3)</td></tr>
+            <tr><td style="padding:0.3em;">clean_level</td><td style="padding:0.3em;">TINYINT</td><td style="padding:0.3em;">整洁(1-3)</td></tr>
+          </table>
+        </div>
+        <div class="card" style="padding:1rem;">
+          <h4 style="margin:0 0 0.75em;font-size:0.95rem;">🔧 报修表 Repair</h4>
+          <table style="width:100%;font-size:0.7rem;border-collapse:collapse;">
+            <tr style="background:var(--accent-light);"><th style="padding:0.4em;text-align:left;">字段</th><th style="padding:0.4em;text-align:left;">类型</th><th style="padding:0.4em;text-align:left;">说明</th></tr>
+            <tr><td style="padding:0.3em;">id</td><td style="padding:0.3em;">BIGINT PK</td><td style="padding:0.3em;">主键</td></tr>
+            <tr style="background:#f8fafc;"><td style="padding:0.3em;">dormitory_id</td><td style="padding:0.3em;">BIGINT FK</td><td style="padding:0.3em;">宿舍ID</td></tr>
+            <tr><td style="padding:0.3em;">status</td><td style="padding:0.3em;">TINYINT</td><td style="padding:0.3em;">状态</td></tr>
+            <tr style="background:#f8fafc;"><td style="padding:0.3em;">description</td><td style="padding:0.3em;">TEXT</td><td style="padding:0.3em;">描述</td></tr>
+            <tr><td style="padding:0.3em;">create_time</td><td style="padding:0.3em;">DATETIME</td><td style="padding:0.3em;">创建时间</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 13: RESTFUL API -->
+  <section class="slide" id="slide-8f">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">API DESIGN</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1em;">RESTful API 设计规范</h2></div>
+      <div class="card reveal" style="margin-bottom:1.5em;">
+        <h4 style="margin:0 0 1em;">接口设计示例</h4>
+        <div style="display:flex;flex-direction:column;gap:0.5em;font-size:0.85rem;">
+          <div style="display:flex;align-items:center;gap:1em;">
+            <span class="badge" style="background:#16a34a;color:white;min-width:60px;">GET</span>
+            <code style="color:var(--text-primary);">/api/students</code>
+            <span style="color:var(--text-muted);">获取学生列表</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:1em;">
+            <span class="badge" style="background:#2563eb;color:white;min-width:60px;">POST</span>
+            <code style="color:var(--text-primary);">/api/students</code>
+            <span style="color:var(--text-muted);">创建学生</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:1em;">
+            <span class="badge" style="background:#d97706;color:white;min-width:60px;">PUT</span>
+            <code style="color:var(--text-primary);">/api/students/{id}</code>
+            <span style="color:var(--text-muted);">更新学生</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:1em;">
+            <span class="badge" style="background:#dc2626;color:white;min-width:60px;">DELETE</span>
+            <code style="color:var(--text-primary);">/api/students/{id}</code>
+            <span style="color:var(--text-muted);">删除学生</span>
+          </div>
+        </div>
+      </div>
+      <div class="grid-3 reveal">
+        <div class="card" style="text-align:center;">
+          <div style="font-size:1.75rem;margin-bottom:0.5em;">📦</div>
+          <h4 style="font-size:0.9rem;margin:0 0 0.5em;">统一响应格式</h4>
+          <p style="font-size:0.75rem;margin:0;">{code, message, data}</p>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div style="font-size:1.75rem;margin-bottom:0.5em;">🔒</div>
+          <h4 style="font-size:0.9rem;margin:0 0 0.5em;">Session认证</h4>
+          <p style="font-size:0.75rem;margin:0;">登录后使用Session</p>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div style="font-size:1.75rem;margin-bottom:0.5em;">📊</div>
+          <h4 style="font-size:0.9rem;margin:0 0 0.5em;">分页支持</h4>
+          <p style="font-size:0.75rem;margin:0;">page, size参数</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 14: AJAX INTERACTION -->
+  <section class="slide slide-alt" id="slide-8g">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">FRONTEND</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1em;">AJAX 前后端交互</h2></div>
+      <div class="reveal" style="margin-bottom:1.5em;">
+        <p style="color:var(--text-secondary);">异步无刷新交互，提升用户体验</p>
+      </div>
+      <div class="card reveal" style="margin-bottom:1.5em;">
+        <h4 style="margin:0 0 1em;">AJAX 交互流程</h4>
+        <div style="display:flex;align-items:center;justify-content:center;gap:1.5em;flex-wrap:wrap;">
+          <div style="text-align:center;">
+            <div style="width:50px;height:50px;background:#eff6ff;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 0.5em;">🌐</div>
+            <div style="font-size:0.75rem;">浏览器</div>
+          </div>
+          <span style="font-size:1.5rem;color:var(--accent-blue);">⇄</span>
+          <div style="text-align:center;">
+            <div style="width:50px;height:50px;background:#fef3c7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 0.5em;">⚡</div>
+            <div style="font-size:0.75rem;">AJAX异步</div>
+          </div>
+          <span style="font-size:1.5rem;color:var(--accent-blue);">⇄</span>
+          <div style="text-align:center;">
+            <div style="width:50px;height:50px;background:#f0fdf4;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 0.5em;">🖥️</div>
+            <div style="font-size:0.75rem;">服务器</div>
+          </div>
+          <span style="font-size:1.5rem;color:var(--accent-blue);">⇄</span>
+          <div style="text-align:center;">
+            <div style="width:50px;height:50px;background:#f3e8ff;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 0.5em;">💾</div>
+            <div style="font-size:0.75rem;">数据库</div>
+          </div>
+        </div>
+      </div>
+      <div class="grid-2 reveal">
+        <div class="card">
+          <h4 style="margin:0 0 0.75em;">$.ajax 示例</h4>
+          <div style="background:#1e293b;color:#e2e8f0;padding:0.75em;border-radius:6px;font-size:0.65rem;font-family:monospace;">
+<pre style="margin:0;color:#7dd3fc;">$.ajax({
+  url: "/api/students",
+  type: "GET",
+  success: function(data) {
+    // 更新页面
+  }
+});</pre>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="margin:0 0 0.75em;">优势</h4>
+          <ul class="check-list" style="font-size:0.85rem;">
+            <li><span>无页面刷新，响应更快</span></li>
+            <li><span>减轻服务器负担</span></li>
+            <li><span>异步并行加载</span></li>
+            <li><span>更好的用户体验</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 15: PROJECT STRUCTURE -->
+  <section class="slide" id="slide-8h">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">PROJECT</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1em;">项目目录结构</h2></div>
+      <div class="grid-2 reveal">
+        <div class="card">
+          <h4 style="margin:0 0 0.75em;">后端结构 src/main/java</h4>
+          <div style="background:#1e293b;color:#e2e8f0;padding:1em;border-radius:8px;font-size:0.7rem;font-family:monospace;">
+<pre style="margin:0;line-height:1.6;"><span style="color:#94a3b8;">├── com/sushe/</span>
+<span style="color:#94a3b8;">│   ├── controller/</span>   <span style="color:#7dd3fc;"># 控制层</span>
+<span style="color:#94a3b8;">│   ├── service/</span>      <span style="color:#7dd3fc;"># 业务层</span>
+<span style="color:#94a3b8;">│   ├── mapper/</span>       <span style="color:#7dd3fc;"># DAO层</span>
+<span style="color:#94a3b8;">│   ├── entity/</span>       <span style="color:#7dd3fc;"># 实体类</span>
+<span style="color:#94a3b8;">│   └── config/</span>       <span style="color:#7dd3fc;"># 配置类</span>
+<span style="color:#94a3b8;">├── resources/</span>
+<span style="color:#94a3b8;">│   ├── mapper/</span>        <span style="color:#7dd3fc;"># XML映射</span>
+<span style="color:#94a3b8;">│   └── application.yml</span></pre>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="margin:0 0 0.75em;">前端结构 src/main/webapp</h4>
+          <div style="background:#1e293b;color:#e2e8f0;padding:1em;border-radius:8px;font-size:0.7rem;font-family:monospace;">
+<pre style="margin:0;line-height:1.6;"><span style="color:#94a3b8;">├── WEB-INF/</span>
+<span style="color:#94a3b8;">│   ├── views/</span>         <span style="color:#7dd3fc;"># JSP页面</span>
+<span style="color:#94a3b8;">│   └── web.xml</span>
+<span style="color:#94a3b8;">├── static/</span>
+<span style="color:#94a3b8;">│   ├── css/</span>           <span style="color:#7dd3fc;"># 样式文件</span>
+<span style="color:#94a3b8;">│   ├── js/</span>            <span style="color:#7dd3fc;"># JS脚本</span>
+<span style="color:#94a3b8;">│   └── images/</span>        <span style="color:#7dd3fc;"># 图片资源</span>
+<span style="color:#94a3b8;">└── index.jsp</span></pre>
+          </div>
+        </div>
+      </div>
+      <div class="card reveal" style="margin-top:1.5em;">
+        <h4 style="margin:0 0 0.75em;">SSM 整合配置</h4>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1em;font-size:0.8rem;">
+          <div style="text-align:center;padding:0.75em;background:#eff6ff;border-radius:6px;">
+            <div style="font-weight:600;color:var(--accent-dark);">spring-dao.xml</div>
+            <div style="color:var(--text-muted);font-size:0.7rem;">数据源 + MyBatis</div>
+          </div>
+          <div style="text-align:center;padding:0.75em;background:#f0fdf4;border-radius:6px;">
+            <div style="font-weight:600;color:#16a34a;">spring-service.xml</div>
+            <div style="color:var(--text-muted);font-size:0.7rem;">Bean管理 + 事务</div>
+          </div>
+          <div style="text-align:center;padding:0.75em;background:#fef3c7;border-radius:6px;">
+            <div style="font-weight:600;color:#d97706;">spring-mvc.xml</div>
+            <div style="color:var(--text-muted);font-size:0.7rem;">视图解析 + 扫描</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 16: DEV TOOLS -->
+  <section class="slide slide-alt" id="slide-8i">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">TOOLS</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1em;">开发工具链</h2></div>
+      <div class="grid-4 reveal">
+        <div class="card feat-card">
+          <span class="icon">☕</span>
+          <h4>JDK 17</h4>
+          <p style="font-size:0.75rem;">Java开发环境</p>
+        </div>
+        <div class="card feat-card">
+          <span class="icon">🔧</span>
+          <h4>IDEA</h4>
+          <p style="font-size:0.75rem;">IntelliJ集成开发环境</p>
+        </div>
+        <div class="card feat-card">
+          <span class="icon">🗄️</span>
+          <h4>MySQL 8</h4>
+          <p style="font-size:0.75rem;">关系型数据库</p>
+        </div>
+        <div class="card feat-card">
+          <span class="icon">🌐</span>
+          <h4>Tomcat 9</h4>
+          <p style="font-size:0.75rem;">Java Web服务器</p>
+        </div>
+        <div class="card feat-card">
+          <span class="icon">📋</span>
+          <h4>Maven</h4>
+          <p style="font-size:0.75rem;">依赖管理 + 构建</p>
+        </div>
+        <div class="card feat-card">
+          <span class="icon">🔀</span>
+          <h4>Git</h4>
+          <p style="font-size:0.75rem;">版本控制系统</p>
+        </div>
+        <div class="card feat-card">
+          <span class="icon">🌿</span>
+          <h4>Navicat</h4>
+          <p style="font-size:0.75rem;">数据库可视化</p>
+        </div>
+        <div class="card feat-card">
+          <span class="icon">📮</span>
+          <h4>Postman</h4>
+          <p style="font-size:0.75rem;">API接口测试</p>
+        </div>
+      </div>
+      <div class="card reveal" style="margin-top:1.5em;">
+        <h4 style="margin:0 0 0.75em;">项目构建流程</h4>
+        <div style="display:flex;align-items:center;justify-content:center;gap:1em;flex-wrap:wrap;font-size:0.85rem;">
+          <span><code style="background:#f1f5f9;padding:0.3em 0.6em;border-radius:4px;">mvn clean</code></span>
+          <span style="color:var(--text-muted);">→</span>
+          <span><code style="background:#f1f5f9;padding:0.3em 0.6em;border-radius:4px;">mvn compile</code></span>
+          <span style="color:var(--text-muted);">→</span>
+          <span><code style="background:#f1f5f9;padding:0.3em 0.6em;border-radius:4px;">mvn test</code></span>
+          <span style="color:var(--text-muted);">→</span>
+          <span><code style="background:#f1f5f9;padding:0.3em 0.6em;border-radius:4px;">mvn package</code></span>
+          <span style="color:var(--text-muted);">→</span>
+          <span><code style="background:#f1f5f9;padding:0.3em 0.6em;border-radius:4px;">tomcat:run</code></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 17: EXCEPTION HANDLING -->
+  <section class="slide" id="slide-8j">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">EXCEPTION</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1em;">异常处理与日志</h2></div>
+      <div class="grid-2 reveal">
+        <div class="card">
+          <h4 style="margin:0 0 1em;">🛠️ 异常处理机制</h4>
+          <div style="display:flex;flex-direction:column;gap:0.5em;">
+            <div style="display:flex;align-items:center;gap:0.5em;padding:0.5em;background:#f8fafc;border-radius:6px;">
+              <span class="badge badge-blue">Controller</span>
+              <span style="font-size:0.8rem;">@ExceptionHandler 统一处理</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.5em;padding:0.5em;background:#f8fafc;border-radius:6px;">
+              <span class="badge badge-line">Service</span>
+              <span style="font-size:0.8rem;">业务异常抛出</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.5em;padding:0.5em;background:#f8fafc;border-radius:6px;">
+              <span class="badge badge-line">DAO</span>
+              <span style="font-size:0.8rem;">数据访问异常</span>
+            </div>
+          </div>
+          <div style="margin-top:1em;padding:0.75em;background:#fef3c7;border-radius:6px;font-size:0.8rem;">
+            <code>@RestControllerAdvice</code> 全局异常拦截
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="margin:0 0 1em;">📝 日志管理</h4>
+          <div style="display:flex;flex-direction:column;gap:0.5em;font-size:0.85rem;">
+            <div style="padding:0.5em;background:#f8fafc;border-radius:6px;">
+              <code style="color:#2563eb;">@Slf4j</code> Lombok日志注解
+            </div>
+            <div style="padding:0.5em;background:#f8fafc;border-radius:6px;">
+              <code style="color:#16a34a;">log.info("用户登录:{}", username)</code>
+            </div>
+            <div style="padding:0.5em;background:#f8fafc;border-radius:6px;">
+              <code style="color:#dc2626;">log.error("异常:{}", e)</code>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card reveal" style="margin-top:1.5em;">
+        <h4 style="margin:0 0 0.75em;">统一响应结构</h4>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1em;">
+          <div style="background:#1e293b;color:#e2e8f0;padding:1em;border-radius:8px;font-size:0.75rem;font-family:monospace;">
+<pre style="margin:0;"><span style="color:#94a3b8;">// 成功响应</span>
+{
+  <span style="color:#7dd3fc;">"code"</span>: <span style="color:#a5f3fc;">200</span>,
+  <span style="color:#7dd3fc;">"message"</span>: <span style="color:#a5f3fc;">"success"</span>,
+  <span style="color:#7dd3fc;">"data"</span>: { ... }
+}</pre>
+          </div>
+          <div style="background:#1e293b;color:#e2e8f0;padding:1em;border-radius:8px;font-size:0.75rem;font-family:monospace;">
+<pre style="margin:0;"><span style="color:#94a3b8;">// 异常响应</span>
+{
+  <span style="color:#7dd3fc;">"code"</span>: <span style="color:#a5f3fc;">500</span>,
+  <span style="color:#7dd3fc;">"message"</span>: <span style="color:#a5f3fc;">"系统错误"</span>,
+  <span style="color:#7dd3fc;">"data"</span>: <span style="color:#a5f3fc;">null</span>
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 18: TRANSACTION -->
+  <section class="slide slide-alt" id="slide-8k">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">TRANSACTION</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1em;">事务管理机制</h2></div>
+      <div class="reveal" style="margin-bottom:1.5em;">
+        <p style="color:var(--text-secondary);">保证数据一致性的核心机制</p>
+      </div>
+      <div class="grid-2 reveal">
+        <div class="card">
+          <h4 style="margin:0 0 1em;">🔄 编程式事务</h4>
+          <p style="font-size:0.85rem;margin:0 0 1em;">通过TransactionTemplate手动控制</p>
+          <div style="background:#1e293b;color:#e2e8f0;padding:0.75em;border-radius:6px;font-size:0.7rem;font-family:monospace;">
+<pre style="margin:0;"><span style="color:#7dd3fc;">transactionTemplate</span>.<span style="color:#a5f3fc;">execute</span>(status -> {
+  studentMapper.insert(s);
+  allocationMapper.insert(a);
+  <span style="color:#7dd3fc;">return</span> <span style="color:#a5f3fc;">true</span>;
+});</pre>
+          </div>
+        </div>
+        <div class="card card-blue">
+          <h4 style="color:var(--accent-dark);margin:0 0 1em;">📌 声明式事务</h4>
+          <p style="font-size:0.85rem;margin:0 0 1em;">通过@Transactional注解简化事务控制</p>
+          <div style="background:#1e293b;color:#e2e8f0;padding:0.75em;border-radius:6px;font-size:0.7rem;font-family:monospace;">
+<pre style="margin:0;"><span style="color:#f472b6;">@Transactional</span>(rollbackFor = Exception.class)
+<span style="color:#7dd3fc;">public void allocate</span>(Student s, Dormitory d) {
+  studentMapper.update(s);
+  dormitoryMapper.update(d);
+}</pre>
+          </div>
+        </div>
+      </div>
+      <div class="card reveal" style="margin-top:1.5em;">
+        <h4 style="margin:0 0 0.75em;">事务传播行为</h4>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.75em;font-size:0.8rem;">
+          <div style="text-align:center;padding:0.5em;background:#eff6ff;border-radius:6px;">
+            <div style="font-weight:600;color:var(--accent-blue);">REQUIRED</div>
+            <div style="color:var(--text-muted);font-size:0.7rem;">默认，有则加入</div>
+          </div>
+          <div style="text-align:center;padding:0.5em;background:#f0fdf4;border-radius:6px;">
+            <div style="font-weight:600;color:#16a34a;">REQUIRES_NEW</div>
+            <div style="color:var(--text-muted);font-size:0.7rem;">创建新事务</div>
+          </div>
+          <div style="text-align:center;padding:0.5em;background:#fef3c7;border-radius:6px;">
+            <div style="font-weight:600;color:#d97706;">NESTED</div>
+            <div style="color:var(--text-muted);font-size:0.7rem;">嵌套事务</div>
+          </div>
+          <div style="text-align:center;padding:0.5em;background:#f3e8ff;border-radius:6px;">
+            <div style="font-weight:600;color:#9333ea;">READ_ONLY</div>
+            <div style="color:var(--text-muted);font-size:0.7rem;">只读事务</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 19: VALIDATION -->
+  <section class="slide" id="slide-8l">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">VALIDATION</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1em;">数据验证与规范化</h2></div>
+      <div class="grid-2 reveal">
+        <div class="card">
+          <h4 style="margin:0 0 1em;">✅ 后端验证</h4>
+          <div style="display:flex;flex-direction:column;gap:0.5em;">
+            <div style="display:flex;align-items:center;gap:0.75em;">
+              <span class="badge badge-blue">@NotNull</span>
+              <span style="font-size:0.8rem;">非空验证</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.75em;">
+              <span class="badge badge-blue">@Size</span>
+              <span style="font-size:0.8rem;">字符串长度</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.75em;">
+              <span class="badge badge-blue">@Pattern</span>
+              <span style="font-size:0.8rem;">正则表达式</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.75em;">
+              <span class="badge badge-blue">@Email</span>
+              <span style="font-size:0.8rem;">邮箱格式</span>
+            </div>
+          </div>
+        </div>
+        <div class="card card-blue">
+          <h4 style="color:var(--accent-dark);margin:0 0 1em;">📋 学生信息验证示例</h4>
+          <div style="background:#1e293b;color:#e2e8f0;padding:0.75em;border-radius:6px;font-size:0.7rem;font-family:monospace;">
+<pre style="margin:0;"><span style="color:#f472b6;">@NotBlank</span>(message=<span style="color:#a5f3fc;">"学号不能为空"</span>)
+<span style="color:#f472b6;">@Size</span>(min=10, max=10,
+     message=<span style="color:#a5f3fc;">"学号10位"</span>)
+<span style="color:#f472b6;">@Pattern</span>(regexp=<span style="color:#a5f3fc;">"\\d+"</span>,
+     message=<span style="color:#a5f3fc;">"学号仅数字"</span>)
+<span style="color:#7dd3fc;">private String</span> studentNo;</pre>
+          </div>
+        </div>
+      </div>
+      <div class="card reveal" style="margin-top:1.5em;">
+        <h4 style="margin:0 0 0.75em;">统一验证处理</h4>
+        <div style="display:flex;align-items:center;gap:1em;font-size:0.85rem;flex-wrap:wrap;">
+          <code style="background:#1e293b;color:#7dd3fc;padding:0.5em 1em;border-radius:4px;">@Valid</code>
+          <span style="color:var(--text-muted);">→</span>
+          <span>BindingResult接收错误</span>
+          <span style="color:var(--text-muted);">→</span>
+          <span>统一返回验证失败信息</span>
+          <span style="color:var(--text-muted);">→</span>
+          <span class="badge" style="background:#fef3c7;color:#d97706;">前端显式提示</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 9: TECH DATABASE -->
+  <section class="slide" id="slide-8">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">DATABASE</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1.5em;">数据库设计</h2></div>
+      <div class="grid-3 reveal">
+        <div class="card">
+          <span style="font-size:2rem;">💾</span>
+          <h4 style="margin:0.75em 0 0.5em;">MySQL 8.0</h4>
+          <p style="font-size:0.85rem;">关系型数据库，稳定可靠，广泛使用</p>
+        </div>
+        <div class="card">
+          <span style="font-size:2rem;">📐</span>
+          <h4 style="margin:0.75em 0 0.5em;">ER图设计</h4>
+          <p style="font-size:0.85rem;">规范化设计，避免数据冗余</p>
+        </div>
+        <div class="card">
+          <span style="font-size:2rem;">🔍</span>
+          <h4 style="margin:0.75em 0 0.5em;">索引优化</h4>
+          <p style="font-size:0.85rem;">查询性能优化，响应速度提升</p>
+        </div>
+      </div>
+      <div class="card reveal" style="margin-top:1.5em;">
+        <h4 style="margin:0 0 1em;">核心数据表</h4>
+        <div style="display:flex;flex-wrap:wrap;gap:0.75em;">
+          <span class="badge badge-line">学生表 (Student)</span>
+          <span class="badge badge-line">用户表 (User)</span>
+          <span class="badge badge-line">宿舍表 (Dormitory)</span>
+          <span class="badge badge-line">宿舍分配表 (Allocation)</span>
+          <span class="badge badge-line">生活习惯问卷 (Habit)</span>
+          <span class="badge badge-line">宿舍调换表 (Transfer)</span>
+          <span class="badge badge-line">报修表 (Repair)</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 10: TECH AI -->
+  <section class="slide slide-alt" id="slide-9">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">AI POWER</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1.5em;">AI 能力</h2></div>
+      <div class="grid-2 reveal">
+        <div class="card card-blue">
+          <h3 style="color:var(--accent-dark);margin:0 0 1em;">🤖 DeepSeek API</h3>
+          <p style="font-size:0.9rem;line-height:1.8;margin:0;">基于大规模语言模型，能够理解学生生活习惯的细微差异，综合考量多维因素，生成个性化推荐理由。</p>
+        </div>
+        <div class="card">
+          <h4 style="margin:0 0 1em;">技术支撑</h4>
+          <ul class="check-list">
+            <li><span>HttpClient5 异步HTTP通信</span></li>
+            <li><span>FastJSON 高效JSON处理</span></li>
+            <li><span>流式响应支持</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="tech-pills reveal" style="margin-top:2em;">
+        <span class="tech-pill active">DeepSeek</span>
+        <span class="tech-pill active">LLM</span>
+        <span class="tech-pill active">HttpClient5</span>
+        <span class="tech-pill active">FastJSON</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 11: SESSION MANAGEMENT -->
+  <section class="slide" id="slide-10a">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">SESSION</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1em;">Session 会话管理</h2></div>
+      <div class="grid-2 reveal">
+        <div class="card">
+          <h4 style="margin:0 0 1em;">🔐 认证流程</h4>
+          <div style="display:flex;flex-direction:column;gap:0.75em;">
+            <div style="display:flex;align-items:center;gap:0.75em;">
+              <span class="badge badge-blue">1</span>
+              <span style="font-size:0.85rem;">用户登录 → 验证用户名密码</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.75em;">
+              <span class="badge badge-blue">2</span>
+              <span style="font-size:0.85rem;">验证成功 → 创建Session</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.75em;">
+              <span class="badge badge-blue">3</span>
+              <span style="font-size:0.85rem;">存储用户信息到Session</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.75em;">
+              <span class="badge badge-blue">4</span>
+              <span style="font-size:0.85rem;">返回Session ID给客户端</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="margin:0 0 1em;">🎯 权限控制</h4>
+          <div style="display:flex;flex-direction:column;gap:0.5em;font-size:0.85rem;">
+            <div style="display:flex;justify-content:space-between;padding:0.5em;background:#f8fafc;border-radius:6px;">
+              <span>管理员</span>
+              <span class="badge badge-blue">所有权限</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:0.5em;background:#f8fafc;border-radius:6px;">
+              <span>学生</span>
+              <span class="badge badge-line">查看/申请/报修</span>
+            </div>
+          </div>
+          <div style="margin-top:1em;padding:0.75em;background:#fef3c7;border-radius:6px;font-size:0.8rem;">
+            <code>@SessionAttributes("user")</code> 标注会话属性
+          </div>
+        </div>
+      </div>
+      <div class="card reveal" style="margin-top:1.5em;">
+        <h4 style="margin:0 0 0.75em;">拦截器验证</h4>
+        <div style="display:flex;align-items:center;gap:1em;flex-wrap:wrap;font-size:0.85rem;">
+          <code style="background:#1e293b;color:#7dd3fc;padding:0.5em 1em;border-radius:4px;">LoginInterceptor</code>
+          <span style="color:var(--text-muted);">→</span>
+          <span>检查Session中是否存在用户信息</span>
+          <span style="color:var(--text-muted);">→</span>
+          <span class="badge" style="background:#f0fdf4;color:#16a34a;">未登录重定向登录页</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 12: SECURITY -->
+  <section class="slide slide-alt" id="slide-10b">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">SECURITY</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1em;">系统安全机制</h2></div>
+      <div class="grid-3 reveal">
+        <div class="card">
+          <span style="font-size:2rem;">🛡️</span>
+          <h4 style="margin:0.75em 0 0.5em;">输入验证</h4>
+          <p style="font-size:0.85rem;">前后端双重验证，防止非法参数</p>
+        </div>
+        <div class="card">
+          <span style="font-size:2rem;">💉</span>
+          <h4 style="margin:0.75em 0 0.5em;">SQL注入防护</h4>
+          <p style="font-size:0.85rem;">MyBatis预编译，参数化查询</p>
+        </div>
+        <div class="card">
+          <span style="font-size:2rem;">🚫</span>
+          <h4 style="margin:0.75em 0 0.5em;">XSS防护</h4>
+          <p style="font-size:0.85rem;">HTML转义，防止脚本注入</p>
+        </div>
+        <div class="card">
+          <span style="font-size:2rem;">🔑</span>
+          <h4 style="margin:0.75em 0 0.5em;">密码加密</h4>
+          <p style="font-size:0.85rem;">MD5/SHA单向加密存储</p>
+        </div>
+        <div class="card">
+          <span style="font-size:2rem;">⏰</span>
+          <h4 style="margin:0.75em 0 0.5em;">会话超时</h4>
+          <p style="font-size:0.85rem;">Session超时验证，自动登出</p>
+        </div>
+        <div class="card">
+          <span style="font-size:2rem;">📝</span>
+          <h4 style="margin:0.75em 0 0.5em;">操作日志</h4>
+          <p style="font-size:0.85rem;">记录关键操作，便于审计</p>
+        </div>
+      </div>
+      <div class="card reveal" style="margin-top:1.5em;">
+        <h4 style="margin:0 0 0.75em;">MyBatis #{} vs ${}</h4>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1em;font-size:0.85rem;">
+          <div style="padding:0.75em;background:#f0fdf4;border-radius:6px;">
+            <div style="font-weight:600;color:#16a34a;margin-bottom:0.5em;">#{} 安全</div>
+            <code style="font-size:0.8rem;">WHERE id = #{id}</code>
+            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.5em;">预编译，自动转义</div>
+          </div>
+          <div style="padding:0.75em;background:#fef3c7;border-radius:6px;">
+            <div style="font-weight:600;color:#d97706;margin-bottom:0.5em;">${} 危险</div>
+            <code style="font-size:0.8rem;">WHERE name = '${name}'</code>
+            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.5em;">直接拼接，禁止使用</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 13: AI ALGORITHM -->
+  <section class="slide" id="slide-10c">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">AI ALGORITHM</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1em;">AI 推荐算法设计</h2></div>
+      <div class="reveal" style="margin-bottom:1.5em;">
+        <p style="color:var(--text-secondary);">基于生活习惯问卷数据，计算学生与宿舍的匹配度</p>
+      </div>
+      <div class="grid-2 reveal">
+        <div class="card">
+          <h4 style="margin:0 0 1em;">📊 匹配度计算</h4>
+          <div style="display:flex;flex-direction:column;gap:0.75em;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:0.5em;background:#f8fafc;border-radius:6px;">
+              <span style="font-size:0.85rem;">作息相似度</span>
+              <span class="badge badge-blue">30%</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:0.5em;background:#f8fafc;border-radius:6px;">
+              <span style="font-size:0.85rem;">噪音容忍度匹配</span>
+              <span class="badge badge-blue">25%</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:0.5em;background:#f8fafc;border-radius:6px;">
+              <span style="font-size:0.85rem;">整洁习惯兼容</span>
+              <span class="badge badge-blue">25%</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:0.5em;background:#f8fafc;border-radius:6px;">
+              <span style="font-size:0.85rem;">宿舍空余床位</span>
+              <span class="badge badge-blue">20%</span>
+            </div>
+          </div>
+        </div>
+        <div class="card card-blue">
+          <h4 style="color:var(--accent-dark);margin:0 0 1em;">🤖 DeepSeek处理流程</h4>
+          <ol style="font-size:0.85rem;line-height:2;margin:0;padding-left:1.2em;">
+            <li>收集学生问卷数据</li>
+            <li>构建Prompt提示词</li>
+            <li>调用DeepSeek API</li>
+            <li>解析返回的推荐结果</li>
+            <li>存储并展示推荐理由</li>
+          </ol>
+        </div>
+      </div>
+      <div class="card reveal" style="margin-top:1.5em;">
+        <h4 style="margin:0 0 0.75em;">代码示例 - AI服务调用</h4>
+        <div style="background:#1e293b;color:#e2e8f0;padding:1em;border-radius:8px;font-size:0.7rem;font-family:monospace;">
+<pre style="margin:0;"><span style="color:#94a3b8;">// 构造Prompt</span>
+String prompt = String.<span style="color:#7dd3fc;">format</span>(
+  <span style="color:#a5f3fc;">"学生%s，作息%d..."</span>, name, sleepTime);
+
+<span style="color:#94a3b8;">// 调用DeepSeek</span>
+String result = deepSeekService.<span style="color:#7dd3fc;">generate</span>(prompt);</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 14: FEATURES OVERVIEW -->
+  <section class="slide slide-alt" id="slide-10d">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">FEATURES</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:0.5em;">核心功能模块</h2></div>
+      <div class="reveal"><p style="color:var(--text-muted);margin-bottom:2em;">覆盖宿舍管理全流程的6大核心模块</p></div>
+      <div class="grid-3 reveal">
+        <div class="card feat-card">
+          <span class="icon">👨‍🎓</span>
+          <h4>学生管理</h4>
+          <p>学生信息的增删改查</p>
+        </div>
+        <div class="card feat-card">
+          <span class="icon">🏠</span>
+          <h4>宿舍管理</h4>
+          <p>宿舍楼与房间管理</p>
+        </div>
+        <div class="card feat-card">
+          <span class="icon">📋</span>
+          <h4>生活习惯问卷</h4>
+          <p>收集作息习惯数据</p>
+        </div>
+        <div class="card feat-card">
+          <span class="icon">🛏️</span>
+          <h4>宿舍分配</h4>
+          <p>智能分配学生到宿舍</p>
+        </div>
+        <div class="card feat-card">
+          <span class="icon">🔄</span>
+          <h4>宿舍调换</h4>
+          <p>调换申请与审批</p>
+        </div>
+        <div class="card feat-card">
+          <span class="icon">🔧</span>
+          <h4>报修管理</h4>
+          <p>设施报修全流程</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 12: FEATURE STUDENT -->
+  <section class="slide slide-alt" id="slide-11">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">FEATURE 01</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1.5em;">学生管理</h2></div>
+      <div class="grid-3 reveal">
+        <div>
+          <p style="font-size:0.95rem;line-height:1.8;margin-bottom:1.5em;">对学生信息进行统一管理，包括学号、姓名、班级、联系方式等核心数据，支持新增、编辑、删除、查询等操作。</p>
+          <div class="timeline">
+            <div class="timeline-item"><h5>学生注册</h5><p>录入基本信息</p></div>
+            <div class="timeline-item"><h5>信息完善</h5><p>补充联系方式等</p></div>
+            <div class="timeline-item"><h5>宿舍分配</h5><p>系统自动分配</p></div>
+            <div class="timeline-item"><h5>离校注销</h5><p>毕业/退学处理</p></div>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="margin:0 0 1em;">功能清单</h4>
+          <ul class="check-list">
+            <li><span>学生列表展示与搜索</span></li>
+            <li><span>学生详情查看</span></li>
+            <li><span>新增学生信息</span></li>
+            <li><span>编辑学生信息</span></li>
+            <li><span>删除学生（软删除）</span></li>
+            <li><span>批量导入导出</span></li>
+          </ul>
+        </div>
+        <div class="screenshot-placeholder">
+          <span class="placeholder-icon">👥</span>
+          <span class="placeholder-text">学生管理界面截图</span>
+          <span class="placeholder-hint">点击编辑模式插入图片</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 13: FEATURE DORMITORY -->
+  <section class="slide" id="slide-12">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">FEATURE 02</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1.5em;">宿舍管理</h2></div>
+      <div class="grid-2 reveal">
+        <div>
+          <div class="card" style="margin-bottom:var(--section-gap);">
+            <h4 style="margin:0 0 1em;">宿舍信息维护</h4>
+            <ul class="check-list">
+              <li><span>宿舍楼信息管理</span></li>
+              <li><span>房间号、床位管理</span></li>
+              <li><span>房间类型设置</span></li>
+              <li><span>当前入住人数</span></li>
+              <li><span>宿舍状态监控</span></li>
+            </ul>
+          </div>
+          <div class="card card-blue">
+            <h4 style="color:var(--accent-dark);margin:0 0 1em;">房间类型</h4>
+            <div style="display:flex;flex-wrap:wrap;gap:0.75em;margin-bottom:1em;">
+              <span class="badge badge-blue">4人间</span>
+              <span class="badge badge-blue">6人间</span>
+              <span class="badge badge-blue">8人间</span>
+            </div>
+            <p style="font-size:0.85rem;">支持灵活配置不同类型宿舍，满足多样化需求</p>
+          </div>
+        </div>
+        <div class="screenshot-placeholder">
+          <span class="placeholder-icon">🖥️</span>
+          <span class="placeholder-text">宿舍管理界面截图</span>
+          <span class="placeholder-hint">点击编辑模式插入图片</span>
+        </div>
+      </div>
+      <div class="stat-row reveal" style="margin-top:2em;">
+        <div class="stat-item"><div class="num">100%</div><div class="label">数字化管理</div></div>
+        <div class="stat-item"><div class="num">实时</div><div class="label">状态更新</div></div>
+        <div class="stat-item"><div class="num">智能</div><div class="label">容量预警</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 14: FEATURE QUESTIONNAIRE -->
+  <section class="slide slide-alt" id="slide-13">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">FEATURE 03</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1.5em;">生活习惯问卷</h2></div>
+      <div class="reveal"><p style="color:var(--text-secondary);margin-bottom:2em;">收集学生作息习惯数据，为智能宿舍分配提供依据</p></div>
+      <div class="grid-3 reveal">
+        <div class="card">
+          <span style="font-size:2rem;">⏰</span>
+          <h4 style="margin:0.75em 0 0.5em;">作息时间</h4>
+          <p style="font-size:0.85rem;">早睡/正常/晚睡作息偏好</p>
+        </div>
+        <div class="card">
+          <span style="font-size:2rem;">🔇</span>
+          <h4 style="margin:0.75em 0 0.5em;">噪音容忍度</h4>
+          <p style="font-size:0.85rem;">安静/一般/嘈杂环境偏好</p>
+        </div>
+        <div class="card">
+          <span style="font-size:2rem;">✨</span>
+          <h4 style="margin:0.75em 0 0.5em;">整洁习惯</h4>
+          <p style="font-size:0.85rem;">洁癖/一般/随意类型</p>
+        </div>
+      </div>
+      <div class="grid-2 reveal" style="margin-top:1.5em;">
+        <div class="card">
+          <h4 style="margin:0 0 0.75em;">数据价值</h4>
+          <p style="font-size:0.9rem;margin:0;">问卷数据是AI智能推荐的核心输入，通过分析学生生活习惯的相似度，实现科学合理的宿舍分配。</p>
+        </div>
+        <div class="screenshot-placeholder">
+          <span class="placeholder-icon">📝</span>
+          <span class="placeholder-text">问卷调查界面截图</span>
+          <span class="placeholder-hint">点击编辑模式插入图片</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 15: FEATURE ALLOCATION -->
+  <section class="slide" id="slide-14">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">FEATURE 04</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1.5em;">宿舍分配</h2></div>
+      <div class="grid-3 reveal">
+        <div>
+          <h4 style="margin:0 0 1em;">两种分配模式</h4>
+          <div class="card" style="margin-bottom:1em;">
+            <div style="display:flex;align-items:center;gap:0.75em;margin-bottom:0.5em;">
+              <span style="font-size:1.5rem;">👆</span>
+              <h5 style="margin:0;">手动分配</h5>
+            </div>
+            <p style="font-size:0.85rem;margin:0;">管理员根据学生情况手动选择宿舍</p>
+          </div>
+          <div class="card card-blue">
+            <div style="display:flex;align-items:center;gap:0.75em;margin-bottom:0.5em;">
+              <span style="font-size:1.5rem;">🤖</span>
+              <h5 style="margin:0;color:var(--accent-dark);">AI智能分配</h5>
+            </div>
+            <p style="font-size:0.85rem;margin:0;">基于生活习惯问卷，AI自动推荐最佳宿舍</p>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="margin:0 0 1em;">分配流程</h4>
+          <ul class="check-list">
+            <li><span>选择待分配学生</span></li>
+            <li><span>查看AI推荐结果</span></li>
+            <li><span>确认或调整分配</span></li>
+            <li><span>系统自动更新</span></li>
+          </ul>
+        </div>
+        <div class="screenshot-placeholder">
+          <span class="placeholder-icon">🤖</span>
+          <span class="placeholder-text">AI分配界面截图</span>
+          <span class="placeholder-hint">点击编辑模式插入图片</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 16: FEATURE TRANSFER -->
+  <section class="slide slide-alt" id="slide-15">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">FEATURE 05</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1.5em;">宿舍调换</h2></div>
+      <div class="flow-row reveal" style="margin-bottom:2em;">
+        <div class="flow-step">
+          <span class="badge badge-blue">STEP 1</span>
+          <span class="icon">📝</span>
+          <h5>提交申请</h5>
+          <span>学生发起调换请求</span>
+        </div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">
+          <span class="badge badge-blue">STEP 2</span>
+          <span class="icon">👀</span>
+          <h5>管理员审核</h5>
+          <span>查看申请详情</span>
+        </div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">
+          <span class="badge badge-blue">STEP 3</span>
+          <span class="icon">✅</span>
+          <h5>审批通过</h5>
+          <span>确认调换目标</span>
+        </div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">
+          <span class="badge badge-blue">STEP 4</span>
+          <span class="icon">🔄</span>
+          <h5>自动更新</h5>
+          <span>系统更新分配记录</span>
+        </div>
+      </div>
+      <div class="grid-3 reveal">
+        <div class="card">
+          <h4 style="margin:0 0 1em;">学生端</h4>
+          <ul class="check-list">
+            <li><span>提交调换申请</span></li>
+            <li><span>填写调换理由</span></li>
+            <li><span>查看申请状态</span></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4 style="margin:0 0 1em;">管理端</h4>
+          <ul class="check-list">
+            <li><span>查看所有申请</span></li>
+            <li><span>审核批准/拒绝</span></li>
+            <li><span>添加审批意见</span></li>
+          </ul>
+        </div>
+        <div class="screenshot-placeholder">
+          <span class="placeholder-icon">🔄</span>
+          <span class="placeholder-text">调换申请界面截图</span>
+          <span class="placeholder-hint">点击编辑模式插入图片</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 17: FEATURE REPAIR -->
+  <section class="slide" id="slide-16">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">FEATURE 06</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1.5em;">报修管理</h2></div>
+      <div class="grid-3 reveal">
+        <div class="card">
+          <span style="font-size:2rem;">📝</span>
+          <h4 style="margin:0.75em 0 0.5em;">报修提交</h4>
+          <p style="font-size:0.85rem;">学生填写报修单，描述设施问题</p>
+        </div>
+        <div class="card">
+          <span style="font-size:2rem;">🔍</span>
+          <h4 style="margin:0.75em 0 0.5em;">状态跟踪</h4>
+          <p style="font-size:0.85rem;">实时查看报修处理进度</p>
+        </div>
+        <div class="card">
+          <span style="font-size:2rem;">✅</span>
+          <h4 style="margin:0.75em 0 0.5em;">维修完成</h4>
+          <p style="font-size:0.85rem;">确认维修结果，关闭工单</p>
+        </div>
+      </div>
+      <div class="grid-2 reveal" style="margin-top:1.5em;">
+        <div class="card">
+          <h4 style="margin:0 0 1em;">报修状态流转</h4>
+          <div style="display:flex;align-items:center;gap:1em;flex-wrap:wrap;">
+            <span class="badge badge-line">待处理</span>
+            <span style="color:var(--text-muted);">→</span>
+            <span class="badge badge-blue">处理中</span>
+            <span style="color:var(--text-muted);">→</span>
+            <span class="badge" style="background:#f0fdf4;color:#16a34a;border-color:#bbf7d0;">已完成</span>
+            <span style="color:var(--text-muted);">→</span>
+            <span class="badge" style="background:#fef3c7;color:#d97706;border-color:#fde68a;">已拒绝</span>
+          </div>
+        </div>
+        <div class="screenshot-placeholder">
+          <span class="placeholder-icon">🔧</span>
+          <span class="placeholder-text">报修管理界面截图</span>
+          <span class="placeholder-hint">点击编辑模式插入图片</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 18: AI RECOMMEND -->
+  <section class="slide slide-alt" id="slide-17">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">AI SMART</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1.5em;">AI 智能宿舍推荐</h2></div>
+      <div class="flow-row reveal" style="margin-bottom:2em;">
+        <div class="flow-step">
+          <span class="badge badge-dark">1</span>
+          <span class="icon">📝</span>
+          <h5>填写问卷</h5>
+          <span>作息/噪音/整洁</span>
+        </div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">
+          <span class="badge badge-dark">2</span>
+          <span class="icon">🔍</span>
+          <h5>AI分析</h5>
+          <span>DeepSeek引擎</span>
+        </div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">
+          <span class="badge badge-dark">3</span>
+          <span class="icon">🎯</span>
+          <h5>推荐结果</h5>
+          <span>最佳宿舍匹配</span>
+        </div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">
+          <span class="badge badge-dark">4</span>
+          <span class="icon">📊</span>
+          <h5>评分展示</h5>
+          <span>匹配度可视化</span>
+        </div>
+      </div>
+      <div class="grid-3 reveal">
+        <div class="card">
+          <h4 style="margin:0 0 1em;">推荐因素权重</h4>
+          <div style="display:flex;justify-content:space-between;padding:0.5em 0;border-bottom:1px solid var(--border-light);">
+            <span>作息时间相似度</span><span class="badge badge-blue">30%</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:0.5em 0;border-bottom:1px solid var(--border-light);">
+            <span>噪音容忍度匹配</span><span class="badge badge-blue">25%</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:0.5em 0;border-bottom:1px solid var(--border-light);">
+            <span>整洁习惯兼容性</span><span class="badge badge-blue">25%</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:0.5em 0;">
+            <span>宿舍空余床位</span><span class="badge badge-blue">20%</span>
+          </div>
+        </div>
+        <div class="card card-blue">
+          <h4 style="color:var(--accent-dark);margin:0 0 1em;">DeepSeek 优势</h4>
+          <p style="font-size:0.9rem;line-height:1.8;margin:0;">基于大规模语言模型，能够理解学生生活习惯的细微差异，生成个性化推荐理由，提升宿舍分配的合理性与学生满意度。</p>
+        </div>
+        <div class="screenshot-placeholder">
+          <span class="placeholder-icon">🎯</span>
+          <span class="placeholder-text">AI推荐结果截图</span>
+          <span class="placeholder-hint">点击编辑模式插入图片</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 19: HIGHLIGHTS -->
+  <section class="slide" id="slide-18">
+    <div class="slide-content">
+      <div class="reveal"><p class="section-label">HIGHLIGHTS</p></div>
+      <div class="reveal"><h2 style="font-size:var(--h2-size);margin-bottom:1.5em;">系统特色与优势</h2></div>
+      <div class="grid-3 reveal">
+        <div class="card feat-card">
+          <span class="icon">🏗️</span>
+          <h4>SSM 成熟架构</h4>
+          <p>Spring + SpringMVC + MyBatis 经典组合，稳定可靠</p>
+        </div>
+        <div class="card feat-card">
+          <span class="icon">🤖</span>
+          <h4>AI 技术赋能</h4>
+          <p>DeepSeek API 智能推荐，提升分配合理性</p>
+        </div>
+        <div class="card feat-card">
+          <span class="icon">👥</span>
+          <h4>双角色管理</h4>
+          <p>管理员与学生双重角色，权限分明</p>
+        </div>
+        <div class="card feat-card">
+          <span class="icon">⚡</span>
+          <h4>流程自动化</h4>
+          <p>宿舍分配到报修处理，全程线上化</p>
+        </div>
+        <div class="card feat-card">
+          <span class="icon">📊</span>
+          <h4>数据可视化</h4>
+          <p>仪表盘展示关键数据，实时统计</p>
+        </div>
+        <div class="card feat-card">
+          <span class="icon">🔒</span>
+          <h4>安全可靠</h4>
+          <p>Session权限控制，数据安全有保障</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 20: THANK YOU -->
+  <section class="slide slide-alt" id="slide-19">
+    <div class="slide-content center-flex">
+      <div class="reveal"><div class="divider" style="margin:0 auto 2rem;"></div></div>
+      <div class="reveal"><h1 style="font-size:clamp(3rem,7vw,5rem);margin:0;" class="text-gradient">Thanks</h1></div>
+      <div class="reveal"><p style="font-size:clamp(1rem,2vw,1.4rem);color:var(--text-secondary);margin:1rem 0 2em;">感谢观看</p></div>
+      <div class="tech-pills reveal">
+        <span class="tech-pill">SushePro</span>
+        <span class="tech-pill">2026</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+  const STORAGE_KEY='editable-deck:'+(document.documentElement.getAttribute('data-deck-id')||'default');
+  const SNAP_PX=8,MAX_HISTORY=60,RESIZE_MIN_FRAC=0.05;
+  function prefersReducedMotion(){return window.matchMedia('(prefers-reduced-motion:reduce)').matches;}
+  function isDeckChromeNode(node){if(!node||!node.closest)return false;return!!(node.closest('#deckEditChrome')||node.closest('#rteToolbar')||node.closest('#slideSidebar')||node.closest('.deck-edit-chrome')||node.closest('[data-deck-chrome-surface]'));}
+  class HistoryStack{constructor(onChange){this._u=[];this._r=[];this._onChange=typeof onChange==='function'?onChange:function(){}}
+    push(r){this._u.push(r);if(this._u.length>MAX_HISTORY)this._u.shift();this._r.length=0;this._onChange();}
+    undo(){const r=this._u.pop();if(r&&r.undo)r.undo();if(r)this._r.push(r);this._onChange();}
+    redo(){const r=this._r.pop();if(r&&r.redo)r.redo();if(r)this._u.push(r);this._onChange();}
+    canUndo(){return this._u.length>0;}canRedo(){return this._r.length>0;}}
+  class SlideDeck{constructor(){this.refreshSlides();this.current=0;this.onSlideChange=null;this._obs=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting)en.target.classList.add('visible');});},{threshold:0.35});this.slides.forEach(s=>this._obs.observe(s));this._onScroll=()=>this._syncCurrentFromScroll();window.addEventListener('scroll',this._onScroll,{passive:true});this._keys=this._keys.bind(this);window.addEventListener('keydown',this._keys);this._wheel=this._wheel.bind(this);window.addEventListener('wheel',this._wheel,{passive:false});this._syncCurrentFromScroll();}
+    refreshSlides(){const root=document.querySelector('.slides-offset');this.slides=root?Array.from(root.querySelectorAll(':scope>section.slide')):[];}
+    _syncCurrentFromScroll(){const h=window.innerHeight;let best=0,bestRatio=0;this.slides.forEach((s,i)=>{const r=s.getBoundingClientRect();const vis=Math.max(0,Math.min(r.bottom,h)-Math.max(r.top,0))/h;if(vis>bestRatio){bestRatio=vis;best=i;}});if(best!==this.current){this.current=best;this.onSlideChange&&this.onSlideChange(best);}this._updateChrome();}
+    goTo(i){this.refreshSlides();i=Math.max(0,Math.min(this.slides.length-1,i));this.slides[i].scrollIntoView({behavior:prefersReducedMotion()?'auto':'smooth'});this.current=i;this._updateChrome();this.onSlideChange&&this.onSlideChange(best);}
+    _updateChrome(){const n=this.slides.length;const p=n?((this.current+1)/n)*100:0;const bar=document.getElementById('progressBar');if(bar)bar.style.width=p+'%';const dots=document.getElementById('navDots');if(dots){dots.innerHTML='';for(let i=0;i<n;i++){const b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Go to slide '+(i+1));if(i===this.current)b.classList.add('active');b.addEventListener('click',()=>this.goTo(i));dots.appendChild(b);}}}
+    _keys(e){if(document.body.classList.contains('deck-edit-mode')){if(e.target.closest('.slide-object-text[contenteditable="true"]'))return;if(e.key==='ArrowDown'||e.key==='PageDown'||e.key===' '){e.preventDefault();this.goTo(this.current+1);}else if(e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();this.goTo(this.current-1);}}else{if(e.key==='ArrowDown'||e.key==='PageDown'||e.key===' '){e.preventDefault();this.goTo(this.current+1);}else if(e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();this.goTo(this.current-1);}}}
+    _wheel(e){if(document.body.classList.contains('deck-edit-mode'))return;if(Math.abs(e.deltaY)<8)return;e.preventDefault();if(e.deltaY>0)this.goTo(this.current+1);else this.goTo(this.current-1);}}
+  function ensureResizeHandles(root){const el=root||document;el.querySelectorAll('[data-slide-object]').forEach(obj=>{if(obj.querySelector('.slide-object-resize'))return;const btn=document.createElement('button');btn.type='button';btn.className='slide-object-resize';btn.setAttribute('aria-label','Resize');obj.appendChild(btn);});}
+  class SlideObjectEditor{constructor(deck,history){this.deck=deck;this.history=history;this.active=false;this.selected=new Set();this._dragState=null;this._resizeState=null;this._snapEls=[];this.toolbar=document.getElementById('rteToolbar');this._onDocPointerDown=this._onDocPointerDown.bind(this);this._onDocPointerMove=this._onDocPointerMove.bind(this);this._onDocPointerUp=this._onDocPointerUp.bind(this);this._onResizeMove=this._onResizeMove.bind(this);this._onResizeUp=this._onResizeUp.bind(this);this._onSelectionChange=this._onSelectionChange.bind(this);this._onFocusIn=this._onFocusIn.bind(this);}
+    setActive(on){this.active=!!on;document.body.classList.toggle('deck-edit-mode',on);document.body.classList.toggle('slide-anim-paused',on);if(on){ensureResizeHandles(document);}else{this.clearSelection();this.toolbar.classList.remove('visible');document.querySelectorAll('.slide-object-text[contenteditable="true"]').forEach(el=>{el.contentEditable='false';});}}
+    toggle(){this.setActive(!this.active);}
+    clearSelection(){this.selected.forEach(el=>el.classList.remove('is-selected'));this.selected.clear();}
+    _addSel(el){el.classList.add('is-selected');this.selected.add(el);}
+    _toggleSel(el){if(this.selected.has(el)){el.classList.remove('is-selected');this.selected.delete(el);}else this._addSel(el);}
+    _selectOnly(el){this.clearSelection();this._addSel(el);}
+    _closestObject(t){return t&&t.closest&&t.closest('[data-slide-object]');}
+    _onDocPointerDown(e){if(!this.active)return;if(isDeckChromeNode(e.target))return;const obj=this._closestObject(e.target);const slide=e.target.closest&&e.target.closest('section.slide');if(obj&&e.ctrlKey){e.preventDefault();this._toggleSel(obj);return;}if(obj&&!e.ctrlKey){const onResize=e.target.closest('.slide-object-resize');if(onResize){e.preventDefault();e.stopPropagation();if(!this.selected.has(obj))this._selectOnly(obj);if(this.selected.size===1)this._startResize(e,obj);return;}const isText=obj.getAttribute('data-object-type')==='text';const onMove=e.target.closest('.slide-object-move');const onText=e.target.closest('.slide-object-text');if(isText&&onText&&!onMove){this._selectOnly(obj);const te=obj.querySelector('.slide-object-text');if(te){if(te.dataset._deckHtmlBefore===undefined)te.dataset._deckHtmlBefore=te.innerHTML;te.contentEditable='true';te.focus();this._updateRteToolbar();}return;}if(!this.selected.has(obj))this._selectOnly(obj);if(onMove||!isText){e.preventDefault();this._startDrag(e,obj);}return;}if(slide&&!obj){this.clearSelection();document.querySelectorAll('.slide-object-text[contenteditable="true"]').forEach(el=>{el.contentEditable='false';});this.toolbar.classList.remove('visible');}}
+    _parsePct(el,prop){const v=getComputedStyle(el)[prop];if(v.endsWith('%'))return parseFloat(v)||0;return null;}
+    _positionPct(el,slide,axis){const prop=axis==='left'?'left':'top';const raw=el.style&&el.style[prop]?String(el.style[prop]).trim():'';if(raw.endsWith('%')){const p=parseFloat(raw);return Number.isFinite(p)?p:0;}const sr=this._slideRect(slide);const r=el.getBoundingClientRect();return axis==='left'?((r.left-sr.left)/sr.width)*100:((r.top-sr.top)/sr.height)*100;}
+    _setPct(el,leftPct,topPct){el.style.left=leftPct+'%';el.style.top=topPct+'%';}
+    _slideRect(slide){return slide.getBoundingClientRect();}
+    _startDrag(e,primary){const slide=primary.closest('section.slide');if(!slide)return;const sr=this._slideRect(slide);const moving=Array.from(this.selected).filter(o=>slide.contains(o));if(!moving.length)moving.push(primary);const starts=moving.map(o=>({el:o,l:this._positionPct(o,slide,'left'),t:this._positionPct(o,slide,'top'),w:o.offsetWidth,h:o.offsetHeight}));this._dragState={slide,sr,moving,startX:e.clientX,startY:e.clientY,primary};this._clearSnap();document.addEventListener('pointermove',this._onDocPointerMove);document.addEventListener('pointerup',this._onDocPointerUp);document.addEventListener('pointercancel',this._onDocPointerUp);try{e.target.setPointerCapture(e.pointerId);}catch(_){}}
+    _startResize(e,obj){const slide=obj.closest('section.slide');if(!slide)return;const sr=this._slideRect(slide);const r=obj.getBoundingClientRect();const wPct=this._parsePct(obj,'width');const hPct=this._parsePct(obj,'height');this._resizeState={slide,el:obj,sr,startX:e.clientX,startY:e.clientY,startW:r.width,startH:r.height,beforeW:obj.style.width,beforeH:obj.style.height,hadWidthPct:wPct!=null,hadHeightPct:hPct!=null};document.addEventListener('pointermove',this._onResizeMove);document.addEventListener('pointerup',this._onResizeUp);document.addEventListener('pointercancel',this._onResizeUp);try{e.target.setPointerCapture(e.pointerId);}catch(_){}}
+    _onResizeMove(e){if(!this._resizeState)return;const st=this._resizeState;const sr=st.sr;const dx=e.clientX-st.startX;const dy=e.clientY-st.startY;const minPx=Math.min(sr.width,sr.height)*RESIZE_MIN_FRAC;let nw=Math.max(minPx,st.startW+dx);let nh=Math.max(minPx,st.startH+dy);st.el.style.width=(nw/sr.width*100)+'%';st.el.style.height=(nh/sr.height*100)+'%';}
+    _onResizeUp(){if(!this._resizeState)return;const st=this._resizeState;const el=st.el;const afterW=el.style.width;const afterH=el.style.height;const beforeW=st.beforeW;const beforeH=st.beforeH;const changed=afterW!==beforeW||afterH!==beforeH;if(changed){this.history.push({undo:()=>{el.style.width=beforeW;el.style.height=beforeH;},redo:()=>{el.style.width=afterW;el.style.height=afterH;}});}this._resizeState=null;document.removeEventListener('pointermove',this._onResizeMove);document.removeEventListener('pointerup',this._onResizeUp);document.removeEventListener('pointercancel',this._onResizeUp);}
+    _otherObjects(slide,excludeSet){return Array.from(slide.querySelectorAll('[data-slide-object]')).filter(o=>!excludeSet.has(o));}
+    _snapLinesForSlide(slide,excludeSet){const sr=this._slideRect(slide);const linesV=[sr.width/2];const linesH=[sr.height/2];this._otherObjects(slide,excludeSet).forEach(o=>{const r=o.getBoundingClientRect();const left=r.left-sr.left;const top=r.top-sr.top;linesV.push(left,left+r.width/2,left+r.width);linesH.push(top,top+r.height/2,top+r.height);});return{linesV,linesH,sr};}
+    _applySnap(dx,dy,primaryStart,state){if(prefersReducedMotion()){return{dx,dy,lv:null,lh:null};}const{slide,moving,sr}=state;const exclude=new Set(moving.map(m=>m.el));const snap=this._snapLinesForSlide(slide,exclude);const pw=primaryStart.w;const ph=primaryStart.h;let pl=(primaryStart.l/100)*sr.width+dx;let pt=(primaryStart.t/100)*sr.height+dy;let bestVX=null,bestVd=SNAP_PX+1;snap.linesV.forEach(xv=>{[pl,pl+pw/2,pl+pw].forEach(edge=>{const d=xv-edge;if(Math.abs(d)<bestVd){bestVd=Math.abs(d);bestVX=xv-edge;}});});let bestHY=null,bestHd=SNAP_PX+1;snap.linesH.forEach(yh=>{[pt,pt+ph/2,pt+ph].forEach(edge=>{const d=yh-edge;if(Math.abs(d)<bestHd){bestHd=Math.abs(d);bestHY=yh-edge;}});});let ndx=dx,ndy=dy;if(bestVX!==null&&bestVd<=SNAP_PX)ndx+=bestVX;if(bestHY!==null&&bestHd<=SNAP_PX)ndy+=bestHY;let lv=null,lh=null;if(bestVX!==null&&bestVd<=SNAP_PX){const nx=pl+ndx-dx;lv={pos:nx+pw/2};}if(bestHY!==null&&bestHd<=SNAP_PX){const ny=pt+ndy-dy;lh={pos:ny+ph/2};}return{dx:ndx,dy:ndy,lv,lh,sr};}
+    _showSnap(lv,lh,sr,slide){this._clearSnap();const layer=slide.querySelector('.slide-edit-layer');if(!layer)return;if(lv){const d=document.createElement('div');d.className='snap-line-v';d.style.left=(lv.pos/sr.width*100)+'%';layer.appendChild(d);this._snapEls.push(d);}if(lh){const d=document.createElement('div');d.className='snap-line-h';d.style.top=(lh.pos/sr.height*100)+'%';layer.appendChild(d);this._snapEls.push(d);}}
+    _clearSnap(){this._snapEls.forEach(e=>e.remove());this._snapEls=[];}
+    _onDocPointerMove(e){if(!this._dragState)return;const st=this._dragState;const sr=st.sr;let dx=e.clientX-st.startX;let dy=e.clientY-st.startY;const primaryStart=st.moving.find(m=>m.el===st.primary)||st.moving[0];const snapped=this._applySnap(dx,dy,primaryStart,st);dx=snapped.dx;dy=snapped.dy;st.moving.forEach(m=>{const nl=m.l+(dx/sr.width)*100;const nt=m.t+(dy/sr.height)*100;const maxL=100-(m.w/sr.width)*100;const maxT=100-(m.h/sr.height)*100;this._setPct(m.el,Math.max(0,Math.min(maxL,nl)),Math.max(0,Math.min(maxT,nt)));});if(snapped.lv||snapped.lh)this._showSnap(snapped.lv,snapped.lh,sr,st.slide);else this._clearSnap();}
+    _onDocPointerUp(){if(!this._dragState)return;const st=this._dragState;const after=st.moving.map(m=>({el:m.el,l:this._positionPct(m.el,st.slide,'left'),t:this._positionPct(m.el,st.slide,'top')}));const before=st.moving.map(m=>({el:m.el,l:m.l,t:m.t}));const changed=after.some((a,i)=>a.l!==before[i].l||a.t!==before[i].t);if(changed){this.history.push({undo:()=>{before.forEach(b=>this._setPct(b.el,b.l,b.t));},redo:()=>{after.forEach(a=>this._setPct(a.el,a.l,a.t));}});}this._dragState=null;this._clearSnap();document.removeEventListener('pointermove',this._onDocPointerMove);document.removeEventListener('pointerup',this._onDocPointerUp);document.removeEventListener('pointercancel',this._onDocPointerUp);}
+    _syncRteButtons(){const boldBtn=this.toolbar.querySelector('button[data-cmd="bold"]');try{if(boldBtn)boldBtn.classList.toggle('is-active',document.queryCommandState('bold'));}catch(_){}const italicBtn=this.toolbar.querySelector('button[data-cmd="italic"]');try{if(italicBtn)italicBtn.classList.toggle('is-active',document.queryCommandState('italic'));}catch(_){}}
+    _activeTextEl(){const el=document.activeElement;if(el&&el.classList&&el.classList.contains('slide-object-text')&&el.getAttribute('contenteditable')==='true'){return el;}const sel=document.getSelection();if(!sel||!sel.rangeCount)return null;const n=sel.anchorNode;const p=n&&(n.nodeType===3?n.parentElement:n);const active=p&&p.closest&&p.closest('.slide-object-text[contenteditable="true"]');if(active)return active;if(this.toolbar.contains(document.activeElement)){return document.querySelector('.slide-object-text[contenteditable="true"]');}return null;}
+    _updateRteToolbar(){if(!this.active)return;const inside=this._activeTextEl();if(!inside){this.toolbar.classList.remove('visible');return;}const sel=document.getSelection();let rr=inside.getBoundingClientRect();if(sel&&sel.rangeCount){const r=sel.getRangeAt(0).getBoundingClientRect();if(r.width>1&&r.height>1)rr=r;}this.toolbar.classList.add('visible');this.toolbar.style.left=Math.min(window.innerWidth-this.toolbar.offsetWidth-8,Math.max(8,rr.left+window.scrollX))+'px';this.toolbar.style.top=(rr.top+window.scrollY-this.toolbar.offsetHeight-8)+'px';this._syncRteButtons();}
+    _onFocusIn(e){if(!this.active)return;const te=e.target.closest&&e.target.closest('.slide-object-text[contenteditable="true"]');if(te)this._updateRteToolbar();}
+    _onSelectionChange(){if(!this.active)return;this._updateRteToolbar();}
+    _applyInlineStyle(textEl,stylePatch){textEl.focus();const sel=window.getSelection();if(!sel||!sel.rangeCount)return false;const range=sel.getRangeAt(0);if(!textEl.contains(range.commonAncestorContainer))return false;const span=document.createElement('span');Object.keys(stylePatch).forEach(key=>{span.style[key]=stylePatch[key];});if(range.collapsed){span.appendChild(document.createTextNode('​'));range.insertNode(span);const nr=document.createRange();nr.setStart(span.firstChild,1);nr.collapse(true);sel.removeAllRanges();sel.addRange(nr);return true;}const contents=range.extractContents();span.appendChild(contents);range.insertNode(span);const nr=document.createRange();nr.selectNodeContents(span);sel.removeAllRanges();sel.addRange(nr);return true;}
+    _applyFontSizeFactor(textEl,fac){const fs='clamp('+(0.7*fac)+'rem,'+(1.2*fac)+'vw,'+(1.4*fac)+'rem)';return this._applyInlineStyle(textEl,{fontSize:fs});}
+    _applyFontFamily(textEl,fontExpr){return this._applyInlineStyle(textEl,{fontFamily:fontExpr});}
+    bind(){document.addEventListener('pointerdown',this._onDocPointerDown,true);document.addEventListener('focusin',this._onFocusIn,true);document.addEventListener('selectionchange',this._onSelectionChange);this.toolbar.querySelectorAll('button[data-cmd]').forEach(btn=>{btn.addEventListener('mousedown',ev=>ev.preventDefault());btn.addEventListener('click',()=>this._exec(btn.getAttribute('data-cmd')));});this.toolbar.querySelectorAll('button[data-size]').forEach(btn=>{btn.addEventListener('mousedown',ev=>ev.preventDefault());btn.addEventListener('click',()=>{const v=btn.getAttribute('data-size');if(!v)return;const textEl=this._activeTextEl();if(!textEl)return;const beforeHtml=textEl.innerHTML;const fac=parseFloat(v,10);this._applyFontSizeFactor(textEl,fac);const afterHtml=textEl.innerHTML;if(beforeHtml!==afterHtml){this.history.push({undo:()=>{textEl.innerHTML=beforeHtml;},redo:()=>{textEl.innerHTML=afterHtml;}});}this._updateRteToolbar();});});this.toolbar.querySelectorAll('button[data-font]').forEach(btn=>{btn.addEventListener('mousedown',ev=>ev.preventDefault());btn.addEventListener('click',()=>{const fontExpr=btn.getAttribute('data-font');if(!fontExpr)return;const textEl=this._activeTextEl();if(!textEl)return;const beforeHtml=textEl.innerHTML;this._applyFontFamily(textEl,fontExpr);const afterHtml=textEl.innerHTML;if(beforeHtml!==afterHtml){this.history.push({undo:()=>{textEl.innerHTML=beforeHtml;},redo:()=>{textEl.innerHTML=afterHtml;}});}this._updateRteToolbar();});});}
+    _exec(cmd){const textEl=this._activeTextEl();if(!textEl)return;textEl.focus();const before=textEl.innerHTML;document.execCommand(cmd,false,null);const after=textEl.innerHTML;if(before!==after){this.history.push({undo:()=>{textEl.innerHTML=before;},redo:()=>{textEl.innerHTML=after;}});}this._syncRteButtons();this._updateRteToolbar();}}
+  class SlideSidebar{constructor(deck,history){this.deck=deck;this.history=history;this.list=document.getElementById('filmstripList');this.open=false;this._dragFilm=null;}
+    setOpen(on){this.open=!!on;document.body.classList.toggle('deck-sidebar-open',on);document.getElementById('pagesToggle').classList.toggle('active',on);if(on)this.refresh();}
+    toggle(){this.setOpen(!this.open);}
+    refresh(){this.list.innerHTML='';this.deck.refreshSlides();this.deck.slides.forEach((slide,idx)=>{const item=document.createElement('div');item.className='filmstrip-item';item.dataset.slideIndex=String(idx);if(idx===this.deck.current)item.classList.add('is-current');const lineTop=document.createElement('div');lineTop.className='filmstrip-drop-line filmstrip-drop-line-before';const host=document.createElement('div');host.className='filmstrip-thumb-host';const lineBot=document.createElement('div');lineBot.className='filmstrip-drop-line filmstrip-drop-line-after';const actions=document.createElement('div');actions.className='filmstrip-actions';const num=document.createElement('span');num.className='filmstrip-num';num.textContent='Slide '+(idx+1);const del=document.createElement('button');del.type='button';del.textContent='Delete';del.addEventListener('click',ev=>{ev.stopPropagation();this._deleteSlide(idx);});actions.appendChild(num);actions.appendChild(del);item.appendChild(lineTop);item.appendChild(host);item.appendChild(lineBot);item.appendChild(actions);item.addEventListener('click',ev=>{if(ev.target.closest('button'))return;this.deck.goTo(idx);this.refresh();});this._fillThumb(slide,host);item.addEventListener('pointerdown',ev=>{if(ev.target.closest('button'))return;this._startFilmDrag(ev,item,idx);});this.list.appendChild(item);});}
+    _fillThumb(slideEl,host){host.innerHTML='';const wrap=document.createElement('div');wrap.style.cssText='position:relative;width:100%;height:100%;overflow:hidden;border-radius:6px;';const sc=document.createElement('div');sc.style.cssText='position:absolute;left:0;top:0;transform-origin:0 0;';const cl=slideEl.cloneNode(true);cl.querySelectorAll('[id]').forEach(n=>n.removeAttribute('id'));cl.querySelectorAll('script').forEach(n=>n.remove());cl.querySelectorAll('[data-slide-object]').forEach(n=>{n.removeAttribute('data-slide-object');n.removeAttribute('data-oid');n.removeAttribute('data-object-type');n.classList.remove('is-selected');});cl.querySelectorAll('.slide-object-move,.slide-object-resize').forEach(n=>n.remove());cl.querySelectorAll('[contenteditable]').forEach(n=>n.setAttribute('contenteditable','false'));const w=slideEl.offsetWidth||window.innerWidth;const h=slideEl.offsetHeight||window.innerHeight;cl.style.width=w+'px';cl.style.height=h+'px';sc.appendChild(cl);wrap.appendChild(sc);host.appendChild(wrap);requestAnimationFrame(()=>{const bw=host.clientWidth;const bh=host.clientHeight;const s=Math.min(bw/w,bh/h);sc.style.transform='scale('+s+')';});}
+    _startFilmDrag(ev,item,fromIndex){if(ev.button!==0)return;ev.preventDefault();item.classList.add('dragging');this._dragFilm={fromIndex,item,lastX:ev.clientX,lastY:ev.clientY,targetIndex:null,before:true};const move=e=>{this._dragFilm.lastX=e.clientX;this._dragFilm.lastY=e.clientY;const el=document.elementFromPoint(e.clientX,e.clientY);const target=el&&el.closest&&el.closest('.filmstrip-item');this.list.querySelectorAll('.filmstrip-item').forEach(it=>{it.classList.remove('drop-before','drop-after');});if(!target||target===item)return;const r=target.getBoundingClientRect();const before=e.clientY<r.top+r.height/2;target.classList.add(before?'drop-before':'drop-after');this._dragFilm.targetIndex=parseInt(target.dataset.slideIndex,10);this._dragFilm.before=before;};const up=()=>{item.classList.remove('dragging');this.list.querySelectorAll('.filmstrip-item').forEach(it=>{it.classList.remove('drop-before','drop-after');});document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);if(this._dragFilm){const{fromIndex,targetIndex,before}=this._dragFilm;this._dragFilm=null;if(targetIndex!==null&&targetIndex!==undefined){this._reorderFilmstrip(fromIndex,targetIndex,before);}}};document.addEventListener('pointermove',move);document.addEventListener('pointerup',up);}
+    _reorderFilmstrip(fromIndex,targetIndex,before){this.deck.refreshSlides();const slides=[...this.deck.slides];const n=slides.length;if(fromIndex<0||fromIndex>=n)return;if(targetIndex<0||targetIndex>=n)return;const beforeIds=slides.map(s=>s.id);const[el]=slides.splice(fromIndex,1);let to;if(before){to=fromIndex<targetIndex?targetIndex-1:targetIndex;}else{to=fromIndex<=targetIndex?targetIndex:targetIndex+1;}to=Math.max(0,Math.min(slides.length,to));slides.splice(to,0,el);const parent=slides[0].parentNode;slides.forEach(s=>parent.appendChild(s));this.deck.refreshSlides();const afterIds=this.deck.slides.map(s=>s.id);this.history.push({undo:()=>{this._restoreOrder(parent,beforeIds);this.deck.refreshSlides();this.deck._updateChrome();this.refresh();},redo:()=>{this._restoreOrder(parent,afterIds);this.deck.refreshSlides();this.deck._updateChrome();this.refresh();}});this.deck._updateChrome();this.refresh();}
+    _restoreOrder(parent,ids){const map={};Array.from(parent.querySelectorAll(':scope>section.slide')).forEach(s=>{map[s.id]=s;});const frag=document.createDocumentFragment();ids.forEach(id=>{if(map[id])frag.appendChild(map[id]);});parent.appendChild(frag);}
+    _deleteSlide(index){this.deck.refreshSlides();if(this.deck.slides.length<=1){alert('At least one slide is required.');return;}if(!confirm('Delete this slide?'))return;const slide=this.deck.slides[index];const parent=slide.parentNode;const next=slide.nextElementSibling;const outer=slide.outerHTML;const nid=next&&next.id?next.id:null;const sid=slide.id;parent.removeChild(slide);this.deck.refreshSlides();this.history.push({undo:()=>{const tpl=document.createElement('template');tpl.innerHTML=outer.trim();const node=tpl.content.firstElementChild;if(nid){const ref=parent.querySelector('#'+CSS.escape(nid));parent.insertBefore(node,ref);}else parent.appendChild(node);this.deck.refreshSlides();ensureResizeHandles(document);this.deck._updateChrome();this.refresh();},redo:()=>{const el=document.getElementById(sid);if(el&&el.parentNode)el.parentNode.removeChild(el);this.deck.refreshSlides();this.deck._updateChrome();this.refresh();}});this.deck.goTo(Math.min(index,this.deck.slides.length-1));this.refresh();}}
+  function sanitizeEditableState(root){if(!root||!root.querySelectorAll)return;root.querySelectorAll('.slide-object.is-selected').forEach(el=>{el.classList.remove('is-selected');});root.querySelectorAll('.slide-object-text').forEach(el=>{if(el.getAttribute('contenteditable')==='true'){el.setAttribute('contenteditable','false');}delete el.dataset._deckHtmlBefore;});root.querySelectorAll('.snap-line-v,.snap-line-h').forEach(el=>el.remove());}
+  function serializeSlidesRoot(root){const clone=root.cloneNode(true);sanitizeEditableState(clone);return clone.innerHTML;}
+  function sanitizeExportDocument(docEl){if(!docEl||!docEl.query)return;const body=docEl.querySelector('body');if(body){body.classList.remove('deck-edit-mode','slide-anim-paused','deck-sidebar-open');}sanitizeEditableState(docEl);const filmstrip=docEl.querySelector('#filmstripList');if(filmstrip)filmstrip.innerHTML='';['#editToggle','#pagesToggle','#btnSave','#deckEditChrome','#rteToolbar'].forEach(sel=>{const el=docEl.querySelector(sel);if(!el)return;el.classList.remove('show','active','visible');if(sel==='#rteToolbar'){el.style.left='';el.style.top='';}});}
+  function saveState(){const root=document.querySelector('.slides-offset')||document.body;const data={v:2,deckHtml:serializeSlidesRoot(root)};try{localStorage.setItem(STORAGE_KEY,JSON.stringify(data));}catch(e){console.warn(e);}}
+  function loadState(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return;const data=JSON.parse(raw);if(!data)return;const parent=document.querySelector('.slides-offset')||document.body;if(typeof data.deckHtml==='string'){parent.innerHTML=data.deckHtml;}else if(Array.isArray(data.slides)){const map={};Array.from(parent.querySelectorAll(':scope>section.slide')).forEach(s=>{map[s.id]=s;});data.slides.forEach(entry=>{const el=map[entry.id];if(el)el.innerHTML=entry.html;});}else return;ensureResizeHandles(document);deck.refreshSlides();deck._syncCurrentFromScroll();deck._updateChrome();}catch(e){console.warn(e);}}
+  function exportHtml(){const clone=document.documentElement.cloneNode(true);sanitizeExportDocument(clone);const html='<!DOCTYPE html>\n'+clone.outerHTML;const blob=new Blob([html],{type:'text/html;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(document.title||'deck')+'.html';a.click();URL.revokeObjectURL(a.href);}
+  const btnUndo=document.getElementById('btnUndo');const btnRedo=document.getElementById('btnRedo');const btnDoneEdit=document.getElementById('btnDoneEdit');const deckEditChromeEl=document.getElementById('deckEditChrome');const deckLeftHover=document.getElementById('deckLeftHover');const editToggle=document.getElementById('editToggle');const pagesToggle=document.getElementById('pagesToggle');const btnSave=document.getElementById('btnSave');
+  function updateUndoRedoChrome(){if(btnUndo){btnUndo.disabled=!history.canUndo();btnUndo.setAttribute('aria-disabled',btnUndo.disabled?'true':'false');}if(btnRedo){btnRedo.disabled=!history.canRedo();btnRedo.setAttribute('aria-disabled',btnRedo.disabled?'true':'false');}}
+  const history=new HistoryStack(updateUndoRedoChrome);const deck=new SlideDeck();const editor=new SlideObjectEditor(deck,history);const sidebar=new SlideSidebar(deck,history);ensureResizeHandles(document);editor.bind();updateUndoRedoChrome();
+  document.addEventListener('focusout',e=>{const t=e.target;if(!editor.active)return;if(!t.classList||!t.classList.contains('slide-object-text'))return;if(t.getAttribute('contenteditable')!=='true')return;setTimeout(()=>{if(!editor.active)return;const ae=document.activeElement;if(ae&&(ae===t||t.contains(ae)||editor.toolbar.contains(ae)))return;t.contentEditable='false';const before=t.dataset._deckHtmlBefore;if(before!==undefined&&before!==t.innerHTML){const after=t.innerHTML;history.push({undo:()=>{t.innerHTML=before;},redo:()=>{t.innerHTML=after;}});}delete t.dataset._deckHtmlBefore;editor.toolbar.classList.remove('visible');updateUndoRedoChrome();},0);},true);
+  if(btnUndo){btnUndo.addEventListener('mousedown',ev=>ev.preventDefault());btnUndo.addEventListener('click',()=>{history.undo();});}if(btnRedo){btnRedo.addEventListener('mousedown',ev=>ev.preventDefault());btnRedo.addEventListener('click',()=>{history.redo();});}if(btnDoneEdit){btnDoneEdit.addEventListener('click',()=>exitEditMode());}
+  function exitEditMode(){editor.setActive(false);editToggle.classList.remove('active');pagesToggle.classList.remove('active');editToggle.classList.remove('show');pagesToggle.classList.remove('show');if(deckEditChromeEl)deckEditChromeEl.classList.remove('show');if(btnSave)btnSave.classList.remove('show');updateUndoRedoChrome();}
+  function enterEditMode(){editor.setActive(true);editToggle.classList.add('active');sidebar.setOpen(true);updateUndoRedoChrome();}
+  loadState();deck.onSlideChange=()=>{if(sidebar.open)sidebar.refresh();deck._updateChrome();};
+  let hideT=null;function showToggles(){clearTimeout(hideT);editToggle.classList.add('show');pagesToggle.classList.add('show');if(document.body.classList.contains('deck-edit-mode')){if(btnSave)btnSave.classList.add('show');if(deckEditChromeEl)deckEditChromeEl.classList.add('show');}}function scheduleHide(){hideT=setTimeout(()=>{editToggle.classList.remove('show');pagesToggle.classList.remove('show');if(btnSave)btnSave.classList.remove('show');if(deckEditChromeEl)deckEditChromeEl.classList.remove('show');},400);}if(deckLeftHover){deckLeftHover.addEventListener('mouseenter',showToggles);deckLeftHover.addEventListener('mouseleave',scheduleHide);}editToggle.addEventListener('mouseenter',()=>clearTimeout(hideT));editToggle.addEventListener('mouseleave',scheduleHide);pagesToggle.addEventListener('mouseenter',()=>clearTimeout(hideT));pagesToggle.addEventListener('mouseleave',scheduleHide);if(deckEditChromeEl){deckEditChromeEl.addEventListener('mouseenter',()=>clearTimeout(hideT));deckEditChromeEl.addEventListener('mouseleave',scheduleHide);}if(btnSave){btnSave.addEventListener('mouseenter',()=>clearTimeout(hideT));btnSave.addEventListener('mouseleave',scheduleHide);}
+  editToggle.addEventListener('click',()=>{if(!editor.active)enterEditMode();});pagesToggle.addEventListener('click',()=>{sidebar.toggle();pagesToggle.classList.toggle('active',sidebar.open);if(sidebar.open)sidebar.refresh();});if(btnSave)btnSave.addEventListener('click',saveState);document.getElementById('btnExport').addEventListener('click',exportHtml);
+  document.addEventListener('keydown',e=>{const ce=e.target.closest&&e.target.closest('.slide-object-text[contenteditable="true"]');if(editor.active&&(e.key==='Escape'||e.key==='Esc')){if(ce){e.preventDefault();ce.contentEditable='false';ce.blur();editor.toolbar.classList.remove('visible');return;}e.preventDefault();exitEditMode();return;}if((e.key==='e'||e.key==='E')&&!ce){e.preventDefault();if(editor.active)exitEditMode();else enterEditMode();}if(editor.active&&(e.ctrlKey||e.metaKey)&&(e.key==='s'||e.key==='S')){e.preventDefault();saveState();}if(editor.active&&!ce&&(e.ctrlKey||e.metaKey)&&(e.key==='z'||e.key==='Z')){e.preventDefault();if(e.shiftKey)history.redo();else history.undo();}if(editor.active&&!ce&&(e.ctrlKey||e.metaKey)&&(e.key==='y'||e.key==='Y')){e.preventDefault();history.redo();}if(editor.active&&!ce&&(e.key==='Delete'||e.key==='Backspace')){if(editor.selected.size===0)return;if(editor.selected.size>=2&&!confirm('Delete '+editor.selected.size+' objects?'))return;const toRemove=Array.from(editor.selected);const snapshots=toRemove.map(el=>{const slideSec=el.closest('section.slide');return{slideId:slideSec?slideSec.id:'',oid:el.getAttribute('data-oid')||'',html:el.outerHTML};});toRemove.forEach(el=>el.remove());editor.clearSelection();history.push({undo:()=>{snapshots.forEach(s=>{const slideSec=document.getElementById(s.slideId);if(!slideSec)return;const layer=slideSec.querySelector('.slide-edit-layer');if(!layer)return;const tpl=document.createElement('template');tpl.innerHTML=s.html.trim();const node=tpl.content.firstElementChild;if(node)layer.appendChild(node);});ensureResizeHandles(document);},redo:()=>{snapshots.forEach(s=>{const slideSec=document.getElementById(s.slideId);if(!slideSec||!s.oid)return;const n=slideSec.querySelector('[data-oid="'+s.oid.replace(/"/g,'')+'"]');if(n)n.remove();});}});}});
+  deck._updateChrome();})();
+</script>
+</body>
+</html>
