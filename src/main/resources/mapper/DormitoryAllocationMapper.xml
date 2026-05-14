@@ -17,32 +17,36 @@
     </resultMap>
     
     <select id="findById" parameterType="Integer" resultMap="dormitoryAllocationMap">
-        SELECT da.*, d.dormitory_number, d.dormitory_type, d.building 
+        SELECT da.*, d.dormitory_number, d.dormitory_type, d.building, s.name AS student_name
         FROM dormitory_allocation da
         LEFT JOIN dormitory d ON da.dormitory_id = d.id
+        LEFT JOIN student s ON da.student_id = s.id
         WHERE da.id = #{id}
     </select>
     
     <select id="findByStudentId" parameterType="Integer" resultMap="dormitoryAllocationMap">
-        SELECT da.*, d.dormitory_number, d.dormitory_type, d.building 
+        SELECT da.*, d.dormitory_number, d.dormitory_type, d.building, s.name AS student_name
         FROM dormitory_allocation da
         LEFT JOIN dormitory d ON da.dormitory_id = d.id
+        LEFT JOIN student s ON da.student_id = s.id
         WHERE da.student_id = #{studentId}
         ORDER BY da.allocate_time DESC
         LIMIT 1
     </select>
     
     <select id="findByDormitoryId" parameterType="Integer" resultMap="dormitoryAllocationMap">
-        SELECT da.*, d.dormitory_number, d.dormitory_type, d.building 
+        SELECT da.*, d.dormitory_number, d.dormitory_type, d.building, s.name AS student_name
         FROM dormitory_allocation da
         LEFT JOIN dormitory d ON da.dormitory_id = d.id
+        LEFT JOIN student s ON da.student_id = s.id
         WHERE da.dormitory_id = #{dormitoryId}
     </select>
     
     <select id="findAll" resultMap="dormitoryAllocationMap">
-        SELECT da.*, d.dormitory_number, d.dormitory_type, d.building 
+        SELECT da.*, d.dormitory_number, d.dormitory_type, d.building, s.name AS student_name
         FROM dormitory_allocation da
         LEFT JOIN dormitory d ON da.dormitory_id = d.id
+        LEFT JOIN student s ON da.student_id = s.id
     </select>
     
     <insert id="addDormitoryAllocation" parameterType="DormitoryAllocation" useGeneratedKeys="true" keyProperty="id">

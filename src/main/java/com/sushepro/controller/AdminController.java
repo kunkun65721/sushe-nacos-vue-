@@ -24,8 +24,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,7 +61,20 @@ public class AdminController {
 
     @Autowired
     private UserService userService;
-    
+
+    // REST API: 获取所有分配记录
+    @GetMapping("/allocations")
+    @ResponseBody
+    public void getAllocationsApi(HttpServletResponse response) throws Exception {
+        response.setContentType("application/json;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        List<DormitoryAllocation> list = dormitoryAllocationService.findAll();
+        Map<String, Object> result = new HashMap<>();
+        result.put("code", 200);
+        result.put("data", list);
+        response.getWriter().write(JSON.toJSONString(result));
+    }
+
     // 管理员首页
     @GetMapping("/index")
     public String index(Model model) {
