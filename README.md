@@ -31,7 +31,8 @@ sushepro/
 │   │       ├── pojo/          # 实体类（复用原有）
 │   │       └── dto/           # 数据传输对象
 │   └── src/main/resources/
-│       ├── application.yml    # Spring Boot配置
+│       ├── application.yml    # Spring Boot配置（本地配置，fallback）
+│       ├── bootstrap.yml      # Nacos配置引导文件
 │       └── mapper/            # MyBatis映射文件
 │
 ├── sushepro-frontend/          # 前端应用
@@ -41,6 +42,8 @@ sushepro/
 │   │   ├── router/            # 路由配置
 │   │   └── stores/            # 状态管理
 │   └── package.json
+│
+├── nacos-config/              # Nacos配置模板（供参考）
 │
 └── README.md                   # 本文件
 ```
@@ -86,23 +89,18 @@ Nacos 控制台：http://localhost:8848/nacos
 配置内容：
 
 ```yaml
-server:
-  port: 8080
-  servlet:
-    context-path: /api
+servlet:
+  multipart:
+    enabled: true
+    max-file-size: 10MB
+    max-request-size: 10MB
 
-spring:
-  application:
-    name: sushepro-backend
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/susheguanli?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
-    username: root
-    password: 你的数据库密码
-    druid:
-      initial-size: 5
-      min-idle: 5
-      max-active: 20
+datasource:
+  type: com.alibaba.druid.pool.DruidDataSource
+  driver-class-name: com.mysql.cj.jdbc.Driver
+  url: jdbc:mysql://localhost:3306/susheguanli?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+  username: root
+  password: 你的数据库密码
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
@@ -115,6 +113,8 @@ jwt:
   expiration: 86400000
 ```
 
+> **注意**：本地 `application.yml` 中的配置作为 fallback，Nacos 中的配置会覆盖本地配置。
+
 ### 4. 启动后端
 
 ```bash
@@ -125,7 +125,7 @@ mvn spring-boot:run
 后端启动后会自动注册到 Nacos。
 
 验证后端是否正常运行：
-- 健康检查：http://localhost:8080/api/actuator/health
+- 健康检查：http://localhost:8081/api/actuator/health
 - Nacos 控制台服务列表应看到 `sushepro-backend`
 
 ### 5. 启动前端
@@ -150,7 +150,7 @@ npm run dev
 ## API 文档
 
 启动后端后可访问 Actuator 端点：
-- http://localhost:8080/api/actuator
+- http://localhost:8081/api/actuator
 
 ### 认证接口
 
@@ -216,4 +216,4 @@ npm run dev
 
 ### 3. 前端 API 请求失败
 
-确保后端已启动（端口 8080），Vite 代理已正确配置。
+确保后端已启动（端口 8081），Vite 代理已正确配置。

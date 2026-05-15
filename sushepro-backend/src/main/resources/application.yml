@@ -6,6 +6,8 @@ server:
 spring:
   application:
     name: sushepro-backend
+  config:
+    import: optional:nacos:${spring.application.name}.yml
   servlet:
     multipart:
       enabled: true
