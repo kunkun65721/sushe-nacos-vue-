@@ -473,11 +473,58 @@ public class AdminController {
         }
 
         Map<String, Object> data = new HashMap<>();
-        data.put("pendingRepairs", repairRequestService.countPending());
-        data.put("pendingTransfers", dormitoryTransferService.findByStatus(0) != null ?
-                dormitoryTransferService.findByStatus(0).size() : 0);
-        data.put("recentAllocations", dormitoryAllocationService.findRecent(10));
+
+        // 待处理报修申请
+        List<RepairRequest> pendingRepairs = repairRequestService.findByStatus(0);
+        List<Map<String, Object>> repairNotifications = new ArrayList<>();
+        for (RepairRequest r : pendingRepairs) {
+            Map<String, Object> notif = new HashMap<>();
+            notif.put("id", r.getId());
+            notif.put("type", "repair");
+            notif.put("icon", "plumbing");
+            notif.put("title", "新的报修申请");
+            notif.put("description", (r.getBuilding() != null ? r.getBuilding() : "") + (r.getDormitoryNumber() != null ? r.getDormitoryNumber() : "") + " - " + (r.getDescription() != null ? r.getDescription() : ""));
+            notif.put("time", r.getCreateTime());
+            notif.put("status", r.getStatus());
+            Student student = studentService.findById(r.getStudentId());
+            notif.put("studentName", student != null ? student.getName() : "");
+            repairNotifications.add(notif);
+        }
+        data.put("repairs", repairNotifications);
+
+        // 待审核调换申请
+        List<DormitoryTransfer> pendingTransfers = dormitoryTransferService.findByStatus(0);
+        List<Map<String, Object>> transferNotifications = new ArrayList<>();
+        for (DormitoryTransfer t : pendingTransfers) {
+            Map<String, Object> notif = new HashMap<>();
+            notif.put("id", t.getId());
+            notif.put("type", "transfer");
+            notif.put("icon", "swap_horiz");
+            notif.put("title", "新的调换申请");
+            notif.put("description", t.getStudentName() + " 申请调换宿舍");
+            notif.put("time", t.getApplyTime());
+            notif.put("status", t.getStatus());
+            notif.put("reason", t.getReason());
+            transferNotifications.add(notif);
+        }
+        data.put("transfers", transferNotifications);
+
+        // 通知总数（用于小红点）
+        int totalCount = repairNotifications.size() + transferNotifications.size();
+        data.put("totalCount", totalCount);
+
         return ApiResponse.success(data);
+    }
+
+    @GetMapping("/notifications/count")
+    public ApiResponse<Integer> getNotificationCount(@RequestHeader("Authorization") String authHeader) {
+        User user = getUserFromToken(authHeader);
+        if (user == null) {
+            return ApiResponse.unauthorized();
+        }
+        int pendingRepairs = repairRequestService.findByStatus(0).size();
+        int pendingTransfers = dormitoryTransferService.findByStatus(0).size();
+        return ApiResponse.success(pendingRepairs + pendingTransfers);
     }
 
     @PostMapping("/password")

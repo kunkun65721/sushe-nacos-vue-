@@ -281,7 +281,7 @@ $senary-fixed: #f9d0cf;
   display: flex;
   flex-direction: column;
   gap: 24px;
-  max-width: 800px;
+  width: 100%;
 }
 
 .input-card {
@@ -289,6 +289,7 @@ $senary-fixed: #f9d0cf;
   border: 1px solid $outline-variant;
   border-radius: 12px;
   padding: 20px;
+  width: 100%;
 
   .hint-text {
     font-size: 12px;

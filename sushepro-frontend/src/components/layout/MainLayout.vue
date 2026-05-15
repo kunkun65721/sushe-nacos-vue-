@@ -38,12 +38,14 @@
           <h2>{{ pageTitle }}</h2>
         </div>
         <div class="topbar-right">
-          <router-link v-if="isAdmin" to="/admin/notifications" class="topbar-icon" title="通知">
-            <span class="material-icons">notifications</span>
-          </router-link>
-          <router-link v-else to="/student/notifications" class="topbar-icon" title="通知">
-            <span class="material-icons">notifications</span>
-          </router-link>
+          <el-badge :value="notificationCount" :hidden="notificationCount === 0" :max="99">
+            <router-link v-if="isAdmin" to="/admin/notifications" class="topbar-icon" title="通知">
+              <span class="material-icons">notifications</span>
+            </router-link>
+            <router-link v-else to="/student/notifications" class="topbar-icon" title="通知">
+              <span class="material-icons">notifications</span>
+            </router-link>
+          </el-badge>
 
           <router-link v-if="isAdmin" to="/admin/help" class="topbar-icon" title="帮助">
             <span class="material-icons">help</span>
@@ -77,15 +79,38 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { getAdminNotificationCount } from '@/api/admin'
+import { getStudentNotifications } from '@/api/student'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 
 const isAdmin = computed(() => authStore.isAdmin)
+const notificationCount = ref(0)
+
+const fetchNotificationCount = async () => {
+  if (isAdmin.value) {
+    try {
+      const count = await getAdminNotificationCount()
+      notificationCount.value = count || 0
+    } catch {
+      notificationCount.value = 0
+    }
+  } else {
+    try {
+      const data = await getStudentNotifications()
+      const repairCount = data.repairs?.length || 0
+      const transferCount = data.transfers?.length || 0
+      notificationCount.value = repairCount + transferCount
+    } catch {
+      notificationCount.value = 0
+    }
+  }
+}
 
 const pageTitle = computed(() => {
   const path = route.path
@@ -136,6 +161,10 @@ const handleLogout = async () => {
   await authStore.logout()
   router.push('/login')
 }
+
+onMounted(() => {
+  fetchNotificationCount()
+})
 </script>
 
 <style scoped lang="scss">

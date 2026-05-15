@@ -341,11 +341,78 @@ public class StudentController {
         Map<String, Object> data = new HashMap<>();
         Student student = studentService.findByUserId(user.getId());
         if (student != null) {
-            data.put("repairList", repairRequestService.findByStudentId(student.getId()));
-            data.put("transferList", dormitoryTransferService.findByStudentId(student.getId()));
-            data.put("allocation", dormitoryAllocationService.findByStudentId(student.getId()));
+            // 报修申请进度通知
+            List<RepairRequest> repairList = repairRequestService.findByStudentId(student.getId());
+            List<Map<String, Object>> repairNotifications = new ArrayList<>();
+            for (RepairRequest r : repairList) {
+                Map<String, Object> notif = new HashMap<>();
+                notif.put("id", r.getId());
+                notif.put("type", "repair");
+                notif.put("icon", "plumbing");
+                String statusText = r.getStatus() == 0 ? "待处理" : r.getStatus() == 1 ? "处理中" : r.getStatus() == 2 ? "已完成" : "已拒绝";
+                notif.put("title", "报修申请 - " + statusText);
+                notif.put("description", (r.getBuilding() != null ? r.getBuilding() : "") + (r.getDormitoryNumber() != null ? r.getDormitoryNumber() : "") + " - " + (r.getDescription() != null ? r.getDescription() : ""));
+                notif.put("time", r.getCreateTime());
+                notif.put("status", r.getStatus());
+                notif.put("adminComment", r.getAdminComment());
+                repairNotifications.add(notif);
+            }
+            data.put("repairs", repairNotifications);
+
+            // 调换申请进度通知
+            List<DormitoryTransfer> transferList = dormitoryTransferService.findByStudentId(student.getId());
+            List<Map<String, Object>> transferNotifications = new ArrayList<>();
+            for (DormitoryTransfer t : transferList) {
+                Map<String, Object> notif = new HashMap<>();
+                notif.put("id", t.getId());
+                notif.put("type", "transfer");
+                notif.put("icon", "swap_horiz");
+                String statusText = t.getStatus() == 0 ? "待审核" : t.getStatus() == 1 ? "已通过" : "已拒绝";
+                notif.put("title", "调换申请 - " + statusText);
+                notif.put("description", t.getReason() != null ? t.getReason() : "");
+                notif.put("time", t.getApplyTime());
+                notif.put("status", t.getStatus());
+                notif.put("adminComment", t.getAdminComment());
+                transferNotifications.add(notif);
+            }
+            data.put("transfers", transferNotifications);
+
+            // 宿舍分配信息
+            DormitoryAllocation allocation = dormitoryAllocationService.findByStudentId(student.getId());
+            if (allocation != null) {
+                Map<String, Object> allocNotif = new HashMap<>();
+                allocNotif.put("id", allocation.getId());
+                allocNotif.put("type", "allocation");
+                allocNotif.put("icon", "king_bed");
+                allocNotif.put("title", "宿舍分配");
+                allocNotif.put("description", (allocation.getBuilding() != null ? allocation.getBuilding() : "") + (allocation.getDormitoryNumber() != null ? allocation.getDormitoryNumber() : ""));
+                allocNotif.put("time", allocation.getAllocateTime());
+                data.put("allocation", allocNotif);
+            }
         }
         return ApiResponse.success(data);
+    }
+
+    @DeleteMapping("/notifications/repair/{id}")
+    public ApiResponse<Void> deleteRepairNotification(@PathVariable("id") Integer id,
+                                                     @RequestHeader("Authorization") String authHeader) {
+        User user = getUserFromToken(authHeader);
+        if (user == null) {
+            return ApiResponse.unauthorized();
+        }
+        repairRequestService.deleteRepair(id);
+        return ApiResponse.success();
+    }
+
+    @DeleteMapping("/notifications/transfer/{id}")
+    public ApiResponse<Void> deleteTransferNotification(@PathVariable("id") Integer id,
+                                                      @RequestHeader("Authorization") String authHeader) {
+        User user = getUserFromToken(authHeader);
+        if (user == null) {
+            return ApiResponse.unauthorized();
+        }
+        dormitoryTransferService.deleteTransfer(id);
+        return ApiResponse.success();
     }
 
     @PostMapping("/password")

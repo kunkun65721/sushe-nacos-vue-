@@ -15,17 +15,74 @@
         <el-table-column prop="major" label="专业" />
         <el-table-column prop="grade" label="年级" width="100" />
         <el-table-column prop="phone" label="电话" width="150" />
+        <el-table-column label="操作" width="100" fixed="right">
+          <template #default="{ row }">
+            <el-button type="primary" size="small" text @click="viewDetail(row.id)">查看</el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
+
+    <!-- 学生详情模态框 -->
+    <el-dialog v-model="dialogVisible" title="学生详情" width="700px">
+      <el-tabs v-if="studentDetail">
+        <!-- 基本信息 -->
+        <el-tab-pane label="基本信息" name="basic">
+          <el-descriptions :column="2" border>
+            <el-descriptions-item label="学号">{{ studentDetail.student?.studentId }}</el-descriptions-item>
+            <el-descriptions-item label="姓名">{{ studentDetail.student?.name }}</el-descriptions-item>
+            <el-descriptions-item label="性别">{{ studentDetail.student?.gender === 0 ? '男' : '女' }}</el-descriptions-item>
+            <el-descriptions-item label="专业">{{ studentDetail.student?.major }}</el-descriptions-item>
+            <el-descriptions-item label="年级">{{ studentDetail.student?.grade }}</el-descriptions-item>
+            <el-descriptions-item label="电话">{{ studentDetail.student?.phone }}</el-descriptions-item>
+          </el-descriptions>
+        </el-tab-pane>
+
+        <!-- 问卷调查 -->
+        <el-tab-pane label="问卷调查" name="questionnaire">
+          <div v-if="studentDetail.questionnaire">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item label="睡觉时间">{{ studentDetail.questionnaire.sleepTime || '未填写' }}</el-descriptions-item>
+              <el-descriptions-item label="起床时间">{{ studentDetail.questionnaire.wakeUpTime || '未填写' }}</el-descriptions-item>
+              <el-descriptions-item label="是否抽烟">{{ studentDetail.questionnaire.smoking === 1 ? '是' : '否' }}</el-descriptions-item>
+              <el-descriptions-item label="是否喝酒">{{ studentDetail.questionnaire.drinking === 1 ? '是' : '否' }}</el-descriptions-item>
+              <el-descriptions-item label="噪音容忍度">{{ studentDetail.questionnaire.noiseTolerance || '未填写' }}</el-descriptions-item>
+              <el-descriptions-item label="清洁要求">{{ studentDetail.questionnaire.cleanliness || '未填写' }}</el-descriptions-item>
+            </el-descriptions>
+            <el-form-item label="备注" style="margin-top: 16px;">
+              <span>{{ studentDetail.questionnaire.note || '无' }}</span>
+            </el-form-item>
+          </div>
+          <el-empty v-else description="该学生尚未填写问卷" />
+        </el-tab-pane>
+
+        <!-- 宿舍分配 -->
+        <el-tab-pane label="宿舍分配" name="allocation">
+          <div v-if="studentDetail.allocation">
+            <el-descriptions :column="2" border>
+              <el-descriptions-item label="宿舍楼">{{ studentDetail.allocation.building }}</el-descriptions-item>
+              <el-descriptions-item label="房间号">{{ studentDetail.allocation.dormitoryNumber }}</el-descriptions-item>
+              <el-descriptions-item label="入住时间">{{ studentDetail.allocation.allocateTime }}</el-descriptions-item>
+            </el-descriptions>
+          </div>
+          <el-empty v-else description="该学生尚未分配宿舍" />
+        </el-tab-pane>
+      </el-tabs>
+      <template #footer>
+        <el-button @click="dialogVisible = false">关闭</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { getStudents } from '@/api/admin'
+import { getStudents, getStudentDetail } from '@/api/admin'
 
 const loading = ref(false)
 const students = ref<any[]>([])
+const dialogVisible = ref(false)
+const studentDetail = ref<any>(null)
 
 const fetchData = async () => {
   loading.value = true
@@ -35,6 +92,15 @@ const fetchData = async () => {
     // error handled
   } finally {
     loading.value = false
+  }
+}
+
+const viewDetail = async (id: number) => {
+  try {
+    studentDetail.value = await getStudentDetail(id)
+    dialogVisible.value = true
+  } catch {
+    // error handled
   }
 }
 

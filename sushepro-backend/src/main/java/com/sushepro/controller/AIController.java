@@ -28,6 +28,9 @@ public class AIController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    // 存储用户聊天历史
+    private final Map<Integer, List<Map<String, String>>> userChatHistory = new HashMap<>();
+
     private User getUserFromToken(String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return null;
@@ -66,6 +69,16 @@ public class AIController {
         Map<String, String> result = new HashMap<>();
         result.put("response", response);
         return ApiResponse.success(result);
+    }
+
+    @PostMapping("/clear")
+    public ApiResponse<Void> clearChat(@RequestHeader("Authorization") String authHeader) {
+        User user = getUserFromToken(authHeader);
+        if (user == null) {
+            return ApiResponse.unauthorized();
+        }
+        userChatHistory.remove(user.getId());
+        return ApiResponse.success();
     }
 
     private String buildStudentContext(Student student) {

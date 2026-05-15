@@ -125,8 +125,24 @@ export interface StudentNotification {
   description: string
   link?: string
   time?: string
+  status?: number
+  adminComment?: string
+}
+
+export interface StudentNotificationResponse {
+  repairs: StudentNotification[]
+  transfers: StudentNotification[]
+  allocation?: StudentNotification
 }
 
 export const getStudentNotifications = () => {
-  return request.get<StudentNotification[]>('/student/notifications')
+  return request.get<StudentNotificationResponse>('/student/notifications')
+}
+
+export const deleteStudentRepairNotification = (id: number) => {
+  return request.delete('/student/notifications/repair/' + id)
+}
+
+export const deleteStudentTransferNotification = (id: number) => {
+  return request.delete('/student/notifications/transfer/' + id)
 }

@@ -14,26 +14,6 @@
     <div class="settings-content">
       <div class="settings-section">
         <h3 class="section-title">
-          <span class="material-icons">notifications</span> 通知设置
-        </h3>
-        <div class="setting-item">
-          <div class="setting-info">
-            <p class="setting-label">邮件通知</p>
-            <p class="setting-desc">接收新通知邮件提醒</p>
-          </div>
-          <el-switch />
-        </div>
-        <div class="setting-item">
-          <div class="setting-info">
-            <p class="setting-label">声音提醒</p>
-            <p class="setting-desc">开启通知声音</p>
-          </div>
-          <el-switch />
-        </div>
-      </div>
-
-      <div class="settings-section">
-        <h3 class="section-title">
           <span class="material-icons">palette</span> 界面设置
         </h3>
         <div class="setting-item">

@@ -28,22 +28,48 @@
           </svg>
         </div>
         <div class="stat-info">
-          <span class="stat-value">{{ allocations.length }}</span>
-          <span class="stat-label">分配总数</span>
+          <span class="stat-value">{{ occupiedCount }}</span>
+          <span class="stat-label">已入住人数</span>
         </div>
       </div>
       <div class="stat-card">
         <div class="stat-icon green">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-            <line x1="16" y1="2" x2="16" y2="6"/>
-            <line x1="8" y1="2" x2="8" y2="6"/>
-            <line x1="3" y1="10" x2="21" y2="10"/>
+            <rect x="3" y="3" width="7" height="9" rx="1"/>
+            <rect x="14" y="3" width="7" height="5" rx="1"/>
+            <rect x="14" y="12" width="7" height="9" rx="1"/>
+            <rect x="3" y="16" width="7" height="5" rx="1"/>
           </svg>
         </div>
         <div class="stat-info">
-          <span class="stat-value">{{ todayCount }}</span>
-          <span class="stat-label">今日分配</span>
+          <span class="stat-value">{{ dormitories.length }}</span>
+          <span class="stat-label">宿舍总数</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon orange">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <line x1="19" y1="8" x2="19" y2="14"/>
+            <line x1="22" y1="11" x2="16" y2="11"/>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ unallocatedCount }}</span>
+          <span class="stat-label">待分配学生</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+            <polyline points="22,4 12,14.01 9,11.01"/>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ occupancyRate }}%</span>
+          <span class="stat-label">入住率</span>
         </div>
       </div>
     </div>
@@ -116,21 +142,72 @@
             </span>
           </template>
         </el-table-column>
+        <el-table-column label="操作" width="100" fixed="right">
+          <template #default="{ row }">
+            <el-button type="primary" size="small" text @click="openAllocateDialog(row)">分配</el-button>
+          </template>
+        </el-table-column>
       </el-table>
+
+      <!-- 分配宿舍模态框 -->
+      <el-dialog v-model="dialogVisible" title="分配宿舍" width="500px">
+        <el-form :model="allocateForm" label-width="100px">
+          <el-form-item label="学生姓名">
+            <span>{{ allocateForm.studentName }}</span>
+          </el-form-item>
+          <el-form-item label="当前宿舍">
+            <span>{{ allocateForm.building ? allocateForm.building + ' - ' + allocateForm.dormitoryNumber : '未分配' }}</span>
+          </el-form-item>
+          <el-form-item label="选择宿舍">
+            <el-select v-model="allocateForm.dormitoryId" placeholder="请选择宿舍" style="width: 100%">
+              <el-option v-for="dorm in dormitories" :key="dorm.id" :label="dorm.building + ' - ' + dorm.dormitoryNumber" :value="dorm.id" />
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" :loading="submitting" @click="submitAllocate">确认分配</el-button>
+        </template>
+      </el-dialog>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { getAllocations } from '@/api/admin'
+import { getAllocations, getDormitories, getStudents, allocateDormitory } from '@/api/admin'
+import { ElMessage } from 'element-plus'
 
 const loading = ref(false)
 const allocations = ref<any[]>([])
+const students = ref<any[]>([])
+const dormitories = ref<any[]>([])
 const searchKeyword = ref('')
+const dialogVisible = ref(false)
+const submitting = ref(false)
+const allocateForm = ref({
+  studentId: null as number | null,
+  studentName: '',
+  building: '',
+  dormitoryNumber: '',
+  dormitoryId: null as number | null
+})
 
-const todayCount = computed(() => {
-  return allocations.value.filter(a => isToday(a.allocateTime)).length
+// 统计指标计算
+const occupiedCount = computed(() => {
+  return dormitories.value.reduce((sum, d) => sum + d.currentOccupancy, 0)
+})
+
+const unallocatedCount = computed(() => {
+  const allocatedStudentIds = allocations.value.map(a => a.studentId)
+  return students.value.filter(s => !allocatedStudentIds.includes(s.id)).length
+})
+
+const occupancyRate = computed(() => {
+  const totalCapacity = dormitories.value.reduce((sum, d) => sum + d.capacity, 0)
+  const totalOccupancy = occupiedCount.value
+  if (totalCapacity === 0) return 0
+  return Math.round((totalOccupancy / totalCapacity) * 100)
 })
 
 const filteredAllocations = computed(() => {
@@ -166,7 +243,6 @@ const fetchData = async () => {
   loading.value = true
   try {
     const response = await getAllocations()
-    console.log('API response:', JSON.stringify(response, null, 2))
     allocations.value = response || []
   } catch {
     // error handled
@@ -175,7 +251,56 @@ const fetchData = async () => {
   }
 }
 
-onMounted(fetchData)
+const fetchStudents = async () => {
+  try {
+    students.value = await getStudents()
+  } catch {
+    // error handled
+  }
+}
+
+const fetchDormitories = async () => {
+  try {
+    dormitories.value = await getDormitories()
+  } catch {
+    // error handled
+  }
+}
+
+const openAllocateDialog = async (row: any) => {
+  allocateForm.value = {
+    studentId: row.studentId,
+    studentName: row.studentName,
+    building: row.building || '',
+    dormitoryNumber: row.dormitoryNumber || '',
+    dormitoryId: null
+  }
+  dialogVisible.value = true
+}
+
+const submitAllocate = async () => {
+  if (!allocateForm.value.studentId || !allocateForm.value.dormitoryId) {
+    ElMessage.warning('请选择宿舍')
+    return
+  }
+  submitting.value = true
+  try {
+    await allocateDormitory(allocateForm.value.studentId, allocateForm.value.dormitoryId)
+    ElMessage.success('分配成功')
+    dialogVisible.value = false
+    fetchData()
+  } catch {
+    ElMessage.error('分配失败')
+  } finally {
+    submitting.value = false
+  }
+}
+
+onMounted(() => {
+  fetchData()
+  fetchStudents()
+  fetchDormitories()
+})
 </script>
 
 <style scoped lang="scss">
@@ -192,6 +317,7 @@ $outline-variant: #c1c6d7;
 $blue: #3b82f6;
 $green: #22c55e;
 $orange: #f59e0b;
+$purple: #8b5cf6;
 $purple: #8b5cf6;
 
 .allocations {
@@ -249,10 +375,9 @@ $purple: #8b5cf6;
 
 .stats-row {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   margin-bottom: 24px;
-  max-width: 500px;
 
   .stat-card {
     background: $surface-lowest;

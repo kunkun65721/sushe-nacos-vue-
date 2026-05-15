@@ -13,3 +13,7 @@ export interface ChatRequest {
 export const chat = (data: ChatRequest) => {
   return request.post('/ai/chat', data)
 }
+
+export const clearChat = () => {
+  return request.post('/ai/clear')
+}

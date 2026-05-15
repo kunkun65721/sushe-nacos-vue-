@@ -173,8 +173,30 @@ export interface AdminNotification {
   description: string
   link?: string
   time?: string
+  status?: number
+  studentName?: string
+  reason?: string
+}
+
+export interface AdminNotificationResponse {
+  repairs: AdminNotification[]
+  transfers: AdminNotification[]
+  totalCount: number
 }
 
 export const getAdminNotifications = () => {
-  return request.get<AdminNotification[]>('/admin/notifications')
+  return request.get<AdminNotificationResponse>('/admin/notifications')
+}
+
+export const getAdminNotificationCount = () => {
+  return request.get<number>('/admin/notifications/count')
+}
+
+export const deleteAdminNotification = (type: string, id: number) => {
+  if (type === 'repair') {
+    return request.delete('/admin/repairs/' + id)
+  } else if (type === 'transfer') {
+    return request.delete('/admin/transfers/' + id)
+  }
+  return Promise.reject(new Error('Invalid notification type'))
 }

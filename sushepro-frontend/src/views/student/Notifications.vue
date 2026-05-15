@@ -6,48 +6,108 @@
         <h2 class="page-title flex items-center gap-sm">
           <span class="material-icons">notifications</span> 通知中心
         </h2>
-        <p class="page-subtitle">查看您的通知和待处理事项。</p>
+        <p class="page-subtitle">查看您的申请进度和状态。</p>
       </div>
     </div>
 
     <!-- Notifications List -->
-    <div class="notifications-list">
-      <template v-if="notifications.length > 0">
-        <div v-for="(item, index) in notifications" :key="index" :class="['notification-card', item.type]">
+    <div class="notifications-list" v-loading="loading">
+      <template v-if="allNotifications.length > 0">
+        <div v-for="(item, index) in allNotifications" :key="index" :class="['notification-card', item.type, getStatusClass(item.status)]">
           <div class="notification-icon">
             <span class="material-icons">{{ item.icon }}</span>
           </div>
           <div class="notification-content">
             <h3 class="notification-title">{{ item.title }}</h3>
             <p class="notification-desc">{{ item.description }}</p>
-            <p v-if="item.time" class="notification-time">{{ item.time }}</p>
+            <p v-if="item.adminComment" class="notification-comment">管理员回复: {{ item.adminComment }}</p>
+            <p v-if="item.time" class="notification-time">{{ formatTime(item.time) }}</p>
           </div>
-          <span v-if="item.link" class="material-icons arrow">chevron_right</span>
+          <el-button type="danger" size="small" text @click="handleDelete(item)" class="delete-btn">
+            <span class="material-icons">delete</span>
+          </el-button>
         </div>
       </template>
       <div v-else class="empty-state">
         <span class="material-icons">notifications_off</span>
-        <p>暂无新的通知</p>
+        <p>暂无申请记录</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { getStudentNotifications } from '@/api/student'
+import { ref, computed, onMounted } from 'vue'
+import { getStudentNotifications, deleteStudentRepairNotification, deleteStudentTransferNotification } from '@/api/student'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const loading = ref(false)
-const notifications = ref<any[]>([])
+const repairs = ref<any[]>([])
+const transfers = ref<any[]>([])
+const allocation = ref<any>(null)
+
+const allNotifications = computed(() => {
+  const list = [...repairs.value, ...transfers.value]
+  if (allocation.value) {
+    list.push(allocation.value)
+  }
+  return list.sort((a, b) => {
+    if (!a.time) return 1
+    if (!b.time) return -1
+    return new Date(b.time).getTime() - new Date(a.time).getTime()
+  })
+})
+
+const getStatusClass = (status?: number) => {
+  if (status === 0) return 'pending'
+  if (status === 1) return 'processing'
+  if (status === 2) return 'success'
+  if (status === 3) return 'rejected'
+  return ''
+}
+
+const formatTime = (time: string) => {
+  if (!time) return ''
+  const date = new Date(time)
+  return date.toLocaleString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}
 
 const fetchData = async () => {
   loading.value = true
   try {
-    notifications.value = await getStudentNotifications()
+    const data = await getStudentNotifications()
+    repairs.value = data.repairs || []
+    transfers.value = data.transfers || []
+    allocation.value = data.allocation || null
   } catch {
     // error handled
   } finally {
     loading.value = false
+  }
+}
+
+const handleDelete = async (item: any) => {
+  try {
+    await ElMessageBox.confirm('确定要删除此记录吗？', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+    if (item.type === 'repair') {
+      await deleteStudentRepairNotification(item.id)
+    } else if (item.type === 'transfer') {
+      await deleteStudentTransferNotification(item.id)
+    }
+    ElMessage.success('删除成功')
+    fetchData()
+  } catch {
+    // cancelled or error
   }
 }
 
@@ -143,10 +203,38 @@ $error-container: #ffdad6;
     }
   }
 
-  &.error {
+  &.error, &.rejected {
     .notification-icon {
       background: $error-container;
       color: $error;
+    }
+  }
+
+  &.pending {
+    .notification-icon {
+      background: #fef3c7;
+      color: #92400e;
+    }
+  }
+
+  &.processing {
+    .notification-icon {
+      background: $primary-fixed;
+      color: $primary;
+    }
+  }
+
+  &.success {
+    .notification-icon {
+      background: #dcfce7;
+      color: #166534;
+    }
+  }
+
+  &.allocation {
+    .notification-icon {
+      background: #dbeafe;
+      color: #1d4ed8;
     }
   }
 
@@ -179,6 +267,15 @@ $error-container: #ffdad6;
       color: $on-surface-variant;
     }
 
+    .notification-comment {
+      font-size: 12px;
+      color: $primary;
+      margin-top: 4px;
+      padding: 8px;
+      background: $primary-fixed;
+      border-radius: 6px;
+    }
+
     .notification-time {
       font-size: 12px;
       color: $outline;
@@ -190,6 +287,13 @@ $error-container: #ffdad6;
   .arrow {
     color: $outline;
     font-size: 24px;
+  }
+
+  .delete-btn {
+    margin-left: 16px;
+    .material-icons {
+      font-size: 20px;
+    }
   }
 }
 

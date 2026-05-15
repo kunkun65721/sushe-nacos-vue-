@@ -5,7 +5,7 @@ import type { LoginRequest, LoginResponse, User } from '@/api/auth'
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(localStorage.getItem('token'))
-  const user = ref<User | null>(null)
+  const user = ref<User | null>(JSON.parse(localStorage.getItem('user') || 'null'))
 
   const isLoggedIn = computed(() => !!token.value)
   const isAdmin = computed(() => user.value?.role === 1)
@@ -16,11 +16,13 @@ export const useAuthStore = defineStore('auth', () => {
     const loginData = response as unknown as LoginResponse
     token.value = loginData.token
     localStorage.setItem('token', loginData.token)
-    user.value = {
+    const userData = {
       id: loginData.id,
       username: loginData.username,
       role: loginData.role === 'admin' ? 1 : 0
     }
+    user.value = userData
+    localStorage.setItem('user', JSON.stringify(userData))
     return loginData
   }
 
@@ -33,6 +35,7 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = null
     user.value = null
     localStorage.removeItem('token')
+    localStorage.removeItem('user')
   }
 
   const fetchUser = async () => {
@@ -40,10 +43,12 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const userData = await getCurrentUser()
       user.value = userData
+      localStorage.setItem('user', JSON.stringify(userData))
     } catch {
       token.value = null
       user.value = null
       localStorage.removeItem('token')
+      localStorage.removeItem('user')
     }
   }
 
