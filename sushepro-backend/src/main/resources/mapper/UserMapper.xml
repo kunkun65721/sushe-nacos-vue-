@@ -38,5 +38,9 @@
     <delete id="deleteUser" parameterType="Integer">
         DELETE FROM user WHERE id = #{id}
     </delete>
-    
+
+    <select id="findByRole" parameterType="Integer" resultMap="userMap">
+        SELECT * FROM user WHERE role = #{role}
+    </select>
+
 </mapper>

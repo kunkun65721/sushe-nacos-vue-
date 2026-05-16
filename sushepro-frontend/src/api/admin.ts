@@ -200,3 +200,7 @@ export const deleteAdminNotification = (type: string, id: number) => {
   }
   return Promise.reject(new Error('Invalid notification type'))
 }
+
+export const deleteAdminNotificationById = (id: number) => {
+  return request.delete('/admin/notifications/' + id)
+}

@@ -37,6 +37,9 @@ public class AdminController {
     private AIService aiService;
 
     @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
     private UserService userService;
 
     @Autowired
@@ -449,6 +452,17 @@ public class AdminController {
         return ApiResponse.success();
     }
 
+    @DeleteMapping("/notifications/{id}")
+    public ApiResponse<Void> deleteNotification(@PathVariable("id") Integer id,
+                                                @RequestHeader("Authorization") String authHeader) {
+        User user = getUserFromToken(authHeader);
+        if (user == null) {
+            return ApiResponse.unauthorized();
+        }
+        notificationService.markAsDeleted(id);
+        return ApiResponse.success();
+    }
+
     @PostMapping("/ai/recommend")
     public ApiResponse<Map<String, Object>> aiRecommend(@RequestParam("studentId") Integer studentId,
                                                         @RequestParam(value = "remark", required = false) String remark,
@@ -472,47 +486,35 @@ public class AdminController {
             return ApiResponse.unauthorized();
         }
 
+        List<Notification> notifications = notificationService.findActiveByUserId(user.getId());
+
+        List<Map<String, Object>> repairNotifs = new ArrayList<>();
+        List<Map<String, Object>> transferNotifs = new ArrayList<>();
+
+        for (Notification n : notifications) {
+            Map<String, Object> m = new HashMap<>();
+            m.put("id", n.getId());
+            m.put("referenceId", n.getReferenceId());
+            m.put("type", n.getReferenceType());
+            m.put("icon", "repair".equals(n.getReferenceType()) ? "plumbing" : "swap_horiz");
+            m.put("title", n.getTitle());
+            m.put("description", n.getContent());
+            m.put("time", n.getCreateTime());
+            m.put("status", n.getRefStatus());
+            m.put("studentName", n.getRelatedStudentName());
+            m.put("isRead", n.getIsRead());
+
+            if ("repair".equals(n.getReferenceType())) {
+                repairNotifs.add(m);
+            } else {
+                transferNotifs.add(m);
+            }
+        }
+
         Map<String, Object> data = new HashMap<>();
-
-        // 待处理报修申请
-        List<RepairRequest> pendingRepairs = repairRequestService.findByStatus(0);
-        List<Map<String, Object>> repairNotifications = new ArrayList<>();
-        for (RepairRequest r : pendingRepairs) {
-            Map<String, Object> notif = new HashMap<>();
-            notif.put("id", r.getId());
-            notif.put("type", "repair");
-            notif.put("icon", "plumbing");
-            notif.put("title", "新的报修申请");
-            notif.put("description", (r.getBuilding() != null ? r.getBuilding() : "") + (r.getDormitoryNumber() != null ? r.getDormitoryNumber() : "") + " - " + (r.getDescription() != null ? r.getDescription() : ""));
-            notif.put("time", r.getCreateTime());
-            notif.put("status", r.getStatus());
-            Student student = studentService.findById(r.getStudentId());
-            notif.put("studentName", student != null ? student.getName() : "");
-            repairNotifications.add(notif);
-        }
-        data.put("repairs", repairNotifications);
-
-        // 待审核调换申请
-        List<DormitoryTransfer> pendingTransfers = dormitoryTransferService.findByStatus(0);
-        List<Map<String, Object>> transferNotifications = new ArrayList<>();
-        for (DormitoryTransfer t : pendingTransfers) {
-            Map<String, Object> notif = new HashMap<>();
-            notif.put("id", t.getId());
-            notif.put("type", "transfer");
-            notif.put("icon", "swap_horiz");
-            notif.put("title", "新的调换申请");
-            notif.put("description", t.getStudentName() + " 申请调换宿舍");
-            notif.put("time", t.getApplyTime());
-            notif.put("status", t.getStatus());
-            notif.put("reason", t.getReason());
-            transferNotifications.add(notif);
-        }
-        data.put("transfers", transferNotifications);
-
-        // 通知总数（用于小红点）
-        int totalCount = repairNotifications.size() + transferNotifications.size();
-        data.put("totalCount", totalCount);
-
+        data.put("repairs", repairNotifs);
+        data.put("transfers", transferNotifs);
+        data.put("totalCount", repairNotifs.size() + transferNotifs.size());
         return ApiResponse.success(data);
     }
 
@@ -522,9 +524,7 @@ public class AdminController {
         if (user == null) {
             return ApiResponse.unauthorized();
         }
-        int pendingRepairs = repairRequestService.findByStatus(0).size();
-        int pendingTransfers = dormitoryTransferService.findByStatus(0).size();
-        return ApiResponse.success(pendingRepairs + pendingTransfers);
+        return ApiResponse.success(notificationService.countActive(user.getId()));
     }
 
     @PostMapping("/password")

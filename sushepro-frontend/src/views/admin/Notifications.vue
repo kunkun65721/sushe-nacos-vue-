@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { getAdminNotifications, deleteAdminNotification } from '@/api/admin'
+import { getAdminNotifications, deleteAdminNotificationById } from '@/api/admin'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const loading = ref(false)
@@ -86,7 +86,7 @@ const handleDelete = async (item: any) => {
       cancelButtonText: '取消',
       type: 'warning'
     })
-    await deleteAdminNotification(item.type, item.id)
+    await deleteAdminNotificationById(item.id)
     ElMessage.success('删除成功')
     fetchData()
   } catch {

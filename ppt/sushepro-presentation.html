@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-deck-id="sushepro-deck">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SushePro - 智慧宿舍管理系统</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ===========================================
+   VIEWPORT FITTING: MANDATORY BASE STYLES
+   =========================================== */
+html, body { height: 100%; overflow-x: hidden; }
+html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+.slide { width: 100vw; height: 100vh; height: 100dvh; overflow: hidden; scroll-snap-align: start; display: flex; flex-direction: column; position: relative; }
+.slide-content { flex: 1; display: flex; flex-direction: column; justify-content: center; max-height: 100%; overflow: hidden; padding: var(--slide-padding); }
+:root {
+  --title-size: clamp(1.5rem, 5vw, 4rem);
+  --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
+  --h3-size: clamp(1rem, 2.5vw, 1.75rem);
+  --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
+  --small-size: clamp(0.65rem, 1vw, 0.875rem);
+  --slide-padding: clamp(1rem, 4vw, 4rem);
+  --content-gap: clamp(0.5rem, 2vw, 2rem);
+  --element-gap: clamp(0.25rem, 1vw, 1rem);
+}
+.card, .container, .content-box { max-width: min(90vw, 1000px); max-height: min(80vh, 700px); }
+.feature-list, .bullet-list { gap: clamp(0.4rem, 1vh, 1rem); }
+.feature-list li, .bullet-list li { font-size: var(--body-size); line-height: 1.4; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: clamp(0.5rem, 1.5vw, 1rem); }
+img, .image-container { max-width: 100%; max-height: min(50vh, 400px); object-fit: contain; }
+
+@media (max-height: 700px) {
+  :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); --content-gap: clamp(0.4rem, 1.5vw, 1rem); --title-size: clamp(1.25rem, 4.5vw, 2.5rem); --h2-size: clamp(1rem, 3vw, 1.75rem); }
+}
+@media (max-height: 600px) {
+  :root { --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem); --content-gap: clamp(0.3rem, 1vw, 0.75rem); --title-size: clamp(1.1rem, 4vw, 2rem); --body-size: clamp(0.7rem, 1.2vw, 0.95rem); }
+  .nav-dots, .keyboard-hint, .decorative { display: none; }
+}
+@media (max-height: 500px) {
+  :root { --slide-padding: clamp(0.4rem, 2vw, 1rem); --title-size: clamp(1rem, 3.5vw, 1.5rem); --h2-size: clamp(0.9rem, 2.5vw, 1.25rem); --body-size: clamp(0.65rem, 1vw, 0.85rem); }
+}
+@media (max-width: 600px) {
+  :root { --title-size: clamp(1.25rem, 7vw, 2.5rem); }
+  .grid { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+  html { scroll-behavior: auto; }
+}
+
+/* ===========================================
+   ELECTRIC STUDIO THEME — 白色简约科技风
+   =========================================== */
+:root {
+  --bg-white: #ffffff;
+  --bg-light: #f8fafc;
+  --bg-card: #f1f5f9;
+  --accent-blue: #4361ee;
+  --accent-dark: #3651d4;
+  --accent-light: #eef2ff;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --text-light: #ffffff;
+  --border-light: #e2e8f0;
+  --shadow-sm: 0 1px 3px rgba(15,23,42,0.06);
+  --shadow-md: 0 4px 16px rgba(15,23,42,0.08);
+  --font-display: 'Manrope', sans-serif;
+  --font-body: 'Manrope', sans-serif;
+  --font-cn: 'Noto Sans SC', sans-serif;
+  /* Deck chrome — light deck variant */
+  --deck-chrome-bg: rgba(255,255,255,0.94);
+  --deck-chrome-border: rgba(15,23,42,0.12);
+  --deck-chrome-text: #0f172a;
+  --deck-chrome-muted: #64748b;
+  --deck-chrome-accent: #4361ee;
+  --deck-chrome-shadow: 0 12px 40px rgba(15,23,42,0.12);
+  --deck-chrome-surface: rgba(241,245,249,0.95);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font-body); background: var(--bg-white); color: var(--text-primary); -webkit-font-smoothing: antialiased; }
+.cn { font-family: var(--font-cn); }
+
+/* ===========================================
+   REVEAL ANIMATIONS
+   =========================================== */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.55s var(--ease-out-expo, cubic-bezier(0.16,1,0.3,1)), transform 0.55s var(--ease-out-expo, cubic-bezier(0.16,1,0.3,1)); }
+.slide.visible .reveal { opacity: 1; transform: translateY(0); }
+.slide.visible .reveal:nth-child(1) { transition-delay: 0.05s; }
+.slide.visible .reveal:nth-child(2) { transition-delay: 0.12s; }
+.slide.visible .reveal:nth-child(3) { transition-delay: 0.18s; }
+.slide.visible .reveal:nth-child(4) { transition-delay: 0.24s; }
+.slide.visible .reveal:nth-child(5) { transition-delay: 0.30s; }
+.slide.visible .reveal:nth-child(6) { transition-delay: 0.36s; }
+
+/* ===========================================
+   ELECTRIC STUDIO SIGNATURE ELEMENTS
+   =========================================== */
+/* Accent bar on left edge */
+.accent-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: clamp(4px, 0.4vw, 6px);
+  height: 100%;
+  background: var(--accent-blue);
+  z-index: 2;
+}
+/* Blue accent panel at bottom */
+.accent-panel-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: clamp(80px, 20vh, 180px);
+  background: var(--accent-blue);
+  z-index: 1;
+}
+/* Blue accent panel for highlight slides */
+.accent-card {
+  background: var(--accent-light);
+  border-radius: clamp(8px, 1vw, 16px);
+  padding: clamp(0.6rem, 1.5vw, 1.2rem);
+  border-left: clamp(3px, 0.3vw, 5px) solid var(--accent-blue);
+}
+/* Tag pills */
+.tag-pill {
+  display: inline-block;
+  background: var(--accent-light);
+  color: var(--accent-blue);
+  padding: clamp(0.15rem, 0.4vw, 0.3rem) clamp(0.5rem, 1vw, 0.9rem);
+  border-radius: 20px;
+  font-size: clamp(0.65rem, 1vw, 0.85rem);
+  font-weight: 600;
+  font-family: var(--font-body);
+}
+/* AI highlight badge */
+.ai-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(4px, 0.5vw, 8px);
+  background: linear-gradient(135deg, var(--accent-blue), #6c5ce7);
+  color: var(--text-light);
+  padding: clamp(0.2rem, 0.4vw, 0.35rem) clamp(0.6rem, 1.2vw, 1rem);
+  border-radius: 20px;
+  font-size: clamp(0.6rem, 0.9vw, 0.8rem);
+  font-weight: 600;
+  font-family: var(--font-body);
+}
+.ai-badge::before {
+  content: '◆';
+  font-size: clamp(0.4rem, 0.6vw, 0.6rem);
+}
+/* Feature cards for grid */
+.feature-card {
+  background: var(--bg-card);
+  border-radius: clamp(8px, 1vw, 12px);
+  padding: clamp(0.5rem, 1.2vw, 1rem);
+  border: 1px solid var(--border-light);
+  transition: box-shadow 0.2s;
+}
+.feature-card:hover { box-shadow: var(--shadow-md); }
+.feature-card .card-icon {
+  display: inline-block;
+  width: clamp(28px, 2.5vw, 40px);
+  height: clamp(28px, 2.5vw, 40px);
+  line-height: clamp(28px, 2.5vw, 40px);
+  text-align: center;
+  background: var(--accent-light);
+  color: var(--accent-blue);
+  border-radius: 10px;
+  font-size: clamp(0.8rem, 1.2vw, 1.1rem);
+  font-weight: 700;
+  margin-bottom: clamp(0.3rem, 0.6vw, 0.5rem);
+}
+.feature-card .card-title {
+  font-size: clamp(0.75rem, 1.2vw, 1rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+}
+.feature-card .card-desc {
+  font-size: clamp(0.6rem, 0.9vw, 0.8rem);
+  color: var(--text-secondary);
+  font-family: var(--font-cn);
+  margin-top: clamp(0.15rem, 0.3vw, 0.3rem);
+}
+/* Two-column layout for comparison */
+.two-col {
+  display: flex;
+  gap: clamp(0.8rem, 2vw, 2rem);
+  width: 100%;
+}
+.two-col > * { flex: 1; }
+.col-card {
+  background: var(--bg-card);
+  border-radius: clamp(8px, 1vw, 14px);
+  padding: clamp(0.6rem, 1.2vw, 1.2rem);
+  border: 1px solid var(--border-light);
+}
+.col-card.before { border-left: clamp(3px, 0.3vw, 4px) solid var(--text-muted); }
+.col-card.after { border-left: clamp(3px, 0.3vw, 4px) solid var(--accent-blue); }
+.col-card h4 {
+  font-size: clamp(0.8rem, 1.3vw, 1.1rem);
+  font-weight: 700;
+  margin-bottom: clamp(0.3rem, 0.5vw, 0.5rem);
+}
+.col-card ul { list-style: none; padding: 0; }
+.col-card ul li {
+  font-size: clamp(0.65rem, 1vw, 0.85rem);
+  color: var(--text-secondary);
+  padding: clamp(0.15rem, 0.3vw, 0.3rem) 0;
+  font-family: var(--font-cn);
+}
+.col-card ul li::before { content: '› '; color: var(--accent-blue); font-weight: 700; }
+
+/* Brand marks in corners */
+.corner-mark {
+  position: absolute;
+  z-index: 3;
+  width: clamp(20px, 2vw, 32px);
+  height: clamp(20px, 2vw, 32px);
+  border: 2px solid var(--accent-blue);
+  opacity: 0.3;
+  border-radius: 4px;
+}
+.corner-mark.tl { top: clamp(12px, 2vh, 20px); left: clamp(12px, 2vw, 20px); border-right: none; border-bottom: none; }
+.corner-mark.br { bottom: clamp(12px, 2vh, 20px); right: clamp(12px, 2vw, 20px); border-left: none; border-top: none; }
+
+/* Slide index number */
+.slide-num {
+  position: absolute;
+  bottom: clamp(10px, 2vh, 20px);
+  right: clamp(14px, 2.5vw, 28px);
+  font-size: clamp(0.65rem, 1vw, 0.85rem);
+  color: var(--text-muted);
+  font-weight: 500;
+  z-index: 3;
+  font-family: var(--font-body);
+}
+.slide-num.light { color: rgba(255,255,255,0.6); }
+
+/* ===========================================
+   SLIDE BACKGROUND VARIANTS
+   =========================================== */
+.slide-white { background: var(--bg-white); }
+.slide-accent-bottom { background: var(--bg-white); }
+.slide-accent-bottom .accent-panel-bottom { background: var(--accent-blue); }
+
+/* Title slide specific */
+.title-main {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2rem, 6vw, 4.5rem);
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.title-cn {
+  font-family: var(--font-cn);
+  font-weight: 500;
+  font-size: clamp(1rem, 2.5vw, 1.8rem);
+  color: var(--text-secondary);
+  margin-top: clamp(0.3rem, 0.8vw, 0.6rem);
+}
+.title-sub {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: clamp(0.8rem, 1.5vw, 1.2rem);
+  color: var(--text-muted);
+  margin-top: clamp(0.4rem, 1vw, 0.8rem);
+}
+.title-tags {
+  display: flex;
+  gap: clamp(0.4rem, 0.8vw, 0.8rem);
+  flex-wrap: wrap;
+  margin-top: clamp(0.6rem, 1.5vw, 1.2rem);
+}
+
+/* Content slide headings */
+.content-heading {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.2rem, 3vw, 2.2rem);
+  color: var(--text-primary);
+  line-height: 1.2;
+  margin-bottom: clamp(0.4rem, 1vw, 0.8rem);
+}
+.content-heading .cn { font-weight: 500; }
+.content-sub {
+  font-family: var(--font-cn);
+  font-size: clamp(0.7rem, 1.2vw, 0.95rem);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: min(85vw, 900px);
+}
+.bullet-item {
+  font-family: var(--font-cn);
+  font-size: clamp(0.7rem, 1.2vw, 0.95rem);
+  color: var(--text-secondary);
+  line-height: 1.5;
+  padding: clamp(0.15rem, 0.3vw, 0.3rem) 0;
+  padding-left: clamp(1rem, 1.5vw, 1.5rem);
+  position: relative;
+}
+.bullet-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: clamp(0.45rem, 0.6vw, 0.55rem);
+  width: clamp(5px, 0.5vw, 7px);
+  height: clamp(5px, 0.5vw, 7px);
+  border-radius: 50%;
+  background: var(--accent-blue);
+}
+.bullet-item strong { color: var(--text-primary); font-weight: 600; }
+
+/* Architecture flow */
+.arch-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.3rem, 0.8vw, 0.8rem);
+  flex-wrap: wrap;
+  width: 100%;
+}
+.arch-tier {
+  background: var(--bg-card);
+  border-radius: clamp(8px, 1vw, 14px);
+  padding: clamp(0.5rem, 1vw, 1rem) clamp(0.8rem, 1.5vw, 1.5rem);
+  border: 1px solid var(--border-light);
+  text-align: center;
+  min-width: clamp(100px, 14vw, 180px);
+}
+.arch-tier.highlight { background: var(--accent-light); border-color: var(--accent-blue); }
+.arch-tier .tier-label {
+  font-size: clamp(0.65rem, 0.9vw, 0.8rem);
+  font-weight: 600;
+  color: var(--accent-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--font-body);
+}
+.arch-tier .tier-tech {
+  font-size: clamp(0.7rem, 1.1vw, 0.9rem);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-top: clamp(0.15rem, 0.3vw, 0.3rem);
+  font-family: var(--font-body);
+}
+.arch-tier .tier-desc {
+  font-size: clamp(0.55rem, 0.8vw, 0.75rem);
+  color: var(--text-secondary);
+  font-family: var(--font-cn);
+  margin-top: clamp(0.1rem, 0.2vw, 0.2rem);
+}
+.arch-arrow {
+  font-size: clamp(1rem, 1.8vw, 1.5rem);
+  color: var(--accent-blue);
+  font-weight: 300;
+}
+
+/* Workflow visual */
+.workflow-row {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.3rem, 0.6vw, 0.6rem);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.wf-step {
+  background: var(--bg-card);
+  border-radius: clamp(6px, 0.8vw, 10px);
+  padding: clamp(0.3rem, 0.6vw, 0.6rem) clamp(0.5rem, 1vw, 1rem);
+  font-size: clamp(0.6rem, 1vw, 0.85rem);
+  color: var(--text-secondary);
+  font-family: var(--font-cn);
+  border: 1px solid var(--border-light);
+  white-space: nowrap;
+}
+.wf-step.active { background: var(--accent-light); border-color: var(--accent-blue); color: var(--accent-blue); font-weight: 600; }
+.wf-arrow { font-size: clamp(0.7rem, 1.2vw, 1rem); color: var(--accent-blue); }
+
+/* Radar chart placeholder (CSS visual) */
+.radar-placeholder {
+  width: clamp(120px, 20vw, 220px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: conic-gradient(
+    #4361ee 0deg 60deg,
+    #6c5ce7 60deg 120deg,
+    #00cec9 120deg 180deg,
+    #fd79a8 180deg 240deg,
+    #fdcb6e 240deg 300deg,
+    #e17055 300deg 360deg
+  );
+  opacity: 0.15;
+  position: relative;
+  flex-shrink: 0;
+}
+.radar-placeholder::after {
+  content: '';
+  position: absolute;
+  inset: 20%;
+  border-radius: 50%;
+  background: var(--bg-white);
+}
+.radar-inner {
+  position: absolute;
+  inset: 5%;
+  border-radius: 50%;
+  border: 2px dashed var(--accent-blue);
+  opacity: 0.3;
+}
+.radar-dots {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(0.2rem, 0.5vw, 0.5rem);
+  flex: 1;
+}
+.radar-dim {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.3rem, 0.5vw, 0.5rem);
+  font-size: clamp(0.6rem, 1vw, 0.85rem);
+  font-family: var(--font-cn);
+  color: var(--text-secondary);
+}
+.radar-dim .dot {
+  width: clamp(6px, 0.5vw, 8px);
+  height: clamp(6px, 0.5vw, 8px);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Tech stack grid cards */
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.4rem, 1vw, 0.8rem);
+  width: 100%;
+}
+.tech-card {
+  background: var(--bg-card);
+  border-radius: clamp(8px, 1vw, 12px);
+  padding: clamp(0.4rem, 0.8vw, 0.8rem) clamp(0.5rem, 1vw, 1rem);
+  border: 1px solid var(--border-light);
+  text-align: center;
+}
+.tech-card .tech-name {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(0.7rem, 1.2vw, 1rem);
+  color: var(--text-primary);
+}
+.tech-card .tech-ver {
+  font-size: clamp(0.55rem, 0.8vw, 0.7rem);
+  color: var(--accent-blue);
+  font-weight: 500;
+  font-family: var(--font-body);
+}
+.tech-card .tech-desc {
+  font-size: clamp(0.55rem, 0.8vw, 0.7rem);
+  color: var(--text-muted);
+  font-family: var(--font-body);
+}
+
+/* ===========================================
+   DECK CHROME (fixed UI)
+   =========================================== */
+.progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px;
+  background: linear-gradient(90deg, var(--accent-blue), #6c5ce7);
+  width: 0%; z-index: 8000; pointer-events: none;
+}
+.nav-dots {
+  position: fixed; bottom: clamp(0.5rem, 2vh, 1.25rem); left: 50%; transform: translateX(-50%);
+  display: flex; gap: 0.45rem; z-index: 8000;
+}
+.nav-dots button {
+  width: 9px; height: 9px; border-radius: 50%; border: none; padding: 0;
+  background: color-mix(in srgb, var(--text-muted) 25%, transparent); cursor: pointer;
+}
+.nav-dots button.active { background: var(--accent-blue); transform: scale(1.15); }
+
+/* Top-left hover cluster */
+.deck-left-hover-anchor {
+  position: fixed; top: 0; left: 0; z-index: 10000;
+  padding: clamp(0.35rem, 1vh, 0.5rem) clamp(0.5rem, 1.2vw, 0.65rem);
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: clamp(0.35rem, 1vh, 0.5rem);
+  min-width: min(280px, 72vw); min-height: 44px;
+  pointer-events: auto; background: transparent;
+}
+.deck-left-row { display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; gap: clamp(0.3rem, 0.9vw, 0.45rem); }
+.deck-left-row--tools { flex-wrap: nowrap; max-width: min(100vw - 1rem, 420px); overflow-x: auto; scrollbar-width: thin; }
+
+.deck-edit-chrome {
+  display: none; align-items: center; gap: 6px; padding: 6px 8px;
+  border-radius: 10px; border: 1px solid var(--deck-chrome-border);
+  background: var(--deck-chrome-bg); box-shadow: var(--deck-chrome-shadow);
+  opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+}
+body.deck-edit-mode .deck-edit-chrome { display: flex; }
+body.deck-edit-mode .deck-edit-chrome.show { opacity: 1; pointer-events: auto; }
+.deck-edit-chrome button {
+  flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; padding: 0; border-radius: 8px;
+  border: 1px solid var(--deck-chrome-border); background: var(--deck-chrome-surface);
+  color: var(--deck-chrome-text); cursor: pointer;
+}
+.deck-edit-chrome button:hover:not(:disabled) { background: color-mix(in srgb, var(--accent-blue) 15%, var(--deck-chrome-surface)); }
+.deck-edit-chrome button:disabled { opacity: 0.35; cursor: not-allowed; }
+.deck-edit-chrome .deck-btn-done {
+  width: auto; padding: 0 12px; font-size: clamp(0.75rem, 1.2vw, 0.875rem); font-weight: 600;
+  color: var(--text-light); background: var(--accent-blue);
+  border-color: color-mix(in srgb, var(--accent-blue) 70%, #000);
+}
+.deck-edit-chrome .deck-btn-done:hover:not(:disabled) { filter: brightness(1.08); }
+.deck-edit-chrome svg { width: 18px; height: 18px; fill: currentColor; }
+
+.edit-toggle, .sidebar-pages-toggle, .deck-btn-save {
+  position: relative; z-index: 10001;
+  border: 1px solid var(--deck-chrome-border); background: var(--deck-chrome-bg);
+  color: var(--deck-chrome-text); border-radius: 10px; padding: 8px 12px;
+  font-size: clamp(0.7rem, 1.1vw, 0.875rem); cursor: pointer;
+  opacity: 0; pointer-events: none; transition: opacity 0.25s ease; white-space: nowrap;
+}
+.deck-btn-save { display: none; }
+body.deck-edit-mode .deck-btn-save { display: inline-flex; align-items: center; justify-content: center; }
+.edit-toggle.show, .edit-toggle.active, .sidebar-pages-toggle.show, .sidebar-pages-toggle.active,
+body.deck-edit-mode .deck-btn-save.show { opacity: 1; pointer-events: auto; }
+
+/* Sidebar */
+.slide-sidebar {
+  position: fixed; top: 0; right: 0; bottom: 0; width: min(200px, 28vw);
+  background: var(--deck-chrome-bg); border-left: 1px solid var(--deck-chrome-border);
+  z-index: 9500; transform: translateX(100%); transition: transform 0.28s ease;
+  display: flex; flex-direction: column; padding: 10px 8px; gap: 8px;
+  box-shadow: -8px 0 32px rgba(0,0,0,0.12);
+}
+body.deck-sidebar-open .slide-sidebar { transform: translateX(0); }
+body.deck-sidebar-open .slides-offset { padding-right: min(200px, 28vw); }
+.slide-sidebar h3 { font-size: clamp(0.65rem, 1.2vw, 0.8rem); text-transform: uppercase; letter-spacing: 0.08em; color: var(--deck-chrome-muted); margin: 0 4px 4px; }
+.filmstrip-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+.filmstrip-item { position: relative; border-radius: 8px; border: 2px solid transparent; background: color-mix(in srgb, var(--deck-chrome-surface) 80%, transparent); padding: 6px; cursor: grab; touch-action: none; }
+.filmstrip-item.is-current { border-color: var(--accent-blue); }
+.filmstrip-item.dragging { opacity: 0.55; }
+.filmstrip-item .filmstrip-drop-line { display: none; height: 3px; background: #a78bfa; border-radius: 2px; margin: 4px 0; }
+.filmstrip-item.drop-before .filmstrip-drop-line-before { display: block; }
+.filmstrip-item.drop-after .filmstrip-drop-line-after { display: block; }
+.filmstrip-thumb-host { width: 100%; aspect-ratio: 16/9; overflow: hidden; border-radius: 6px; background: var(--bg-light); }
+.filmstrip-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; gap: 4px; }
+.filmstrip-actions button { font-size: 11px; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--deck-chrome-border); background: var(--deck-chrome-surface); color: var(--deck-chrome-text); cursor: pointer; }
+.filmstrip-actions button:hover { filter: brightness(1.12); }
+.filmstrip-num { font-size: 11px; color: var(--deck-chrome-muted); }
+
+/* Slide edit layer & objects */
+.slide-edit-layer { position: absolute; inset: 0; z-index: 6; pointer-events: none; }
+body.deck-edit-mode .slide-edit-layer { pointer-events: none; }
+body.deck-edit-mode .slide { cursor: default; }
+.slide-object { position: absolute; box-sizing: border-box; pointer-events: auto; outline: 1px dashed transparent; border-radius: 4px; }
+body.deck-edit-mode .slide-object { outline-color: color-mix(in srgb, var(--text-muted) 35%, transparent); }
+.slide-object.is-selected { outline: 2px solid var(--accent-blue); box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-blue) 25%, transparent); }
+.slide-object-move {
+  position: absolute; left: -22px; top: 4px; width: 20px; height: 28px;
+  border: 1px solid var(--deck-chrome-border); border-radius: 6px; background: var(--deck-chrome-bg);
+  color: var(--deck-chrome-muted); font-size: 12px; line-height: 1; padding: 0; cursor: grab;
+  display: none; align-items: center; justify-content: center; z-index: 2;
+}
+body.deck-edit-mode .slide-object-move { display: flex; }
+.slide-object-resize {
+  position: absolute; right: -7px; bottom: -7px; width: 14px; height: 14px;
+  border-radius: 3px; background: var(--accent-blue); cursor: nwse-resize;
+  display: none; z-index: 4; border: 1px solid var(--deck-chrome-border);
+  padding: 0; box-sizing: border-box;
+}
+body.deck-edit-mode .slide-object.is-selected .slide-object-resize { display: block; }
+.slide-object-text { min-height: 1.2em; outline: none; font-size: var(--body-size); width: 100%; box-sizing: border-box; overflow-wrap: anywhere; word-break: break-word; }
+.slide-object[data-object-type="text"] .slide-object-text { cursor: text; }
+.slide-object-graphic { width: 100%; height: 100%; box-sizing: border-box; }
+.snap-line-v, .snap-line-h { position: absolute; background: #f472b6; pointer-events: none; z-index: 7; opacity: 0.85; }
+.snap-line-v { width: 1px; top: 0; bottom: 0; }
+.snap-line-h { height: 1px; left: 0; right: 0; }
+
+/* RTE toolbar */
+.rte-toolbar { position: fixed; z-index: 9600; display: none; flex-wrap: wrap; gap: 4px; padding: 6px; background: var(--deck-chrome-bg); border: 1px solid var(--deck-chrome-border); border-radius: 10px; box-shadow: var(--deck-chrome-shadow); }
+.rte-toolbar.visible { display: flex; }
+.rte-toolbar button { border: 1px solid var(--deck-chrome-border); background: var(--deck-chrome-surface); color: var(--deck-chrome-text); border-radius: 6px; padding: 4px 8px; font-size: 12px; cursor: pointer; }
+.rte-toolbar button.is-active { outline: 2px solid var(--accent-blue); outline-offset: 1px; }
+.rte-toolbar-group { display: inline-flex; align-items: center; gap: 4px; padding-left: 2px; border-left: 1px solid color-mix(in srgb, var(--deck-chrome-border) 70%, transparent); margin-left: 2px; }
+.rte-toolbar-group:first-of-type { border-left: 0; margin-left: 0; padding-left: 0; }
+.rte-toolbar-meta { font-size: 11px; color: var(--deck-chrome-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+
+body.deck-edit-mode.slide-anim-paused .reveal { transition: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ===========================================
+     TOP-LEFT CONTROL CLUSTER
+     =========================================== -->
+<div class="deck-left-hover-anchor" id="deckLeftHover" aria-label="Deck controls">
+  <div class="deck-left-row">
+    <button type="button" class="edit-toggle" id="editToggle" title="Edit mode (E)">Edit</button>
+    <button type="button" class="sidebar-pages-toggle" id="pagesToggle" title="Pages sidebar">Pages</button>
+    <button type="button" class="deck-btn-save" id="btnSave" title="Save (Ctrl+S)">Save</button>
+  </div>
+  <div class="deck-edit-chrome deck-left-row deck-left-row--tools" id="deckEditChrome" data-deck-chrome-surface="" role="toolbar" aria-label="Editing">
+    <button type="button" id="btnUndo" aria-label="Undo" title="Undo (Ctrl+Z)">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14l-4-4 4-4M5 10h8a5 5 0 010 10h-2"/></svg>
+    </button>
+    <button type="button" id="btnRedo" aria-label="Redo" title="Redo (Ctrl+Y)">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 14l4-4-4-4M19 10h-8a5 5 0 000 10h2"/></svg>
+    </button>
+    <button type="button" class="deck-btn-done" id="btnDoneEdit">Done</button>
+  </div>
+</div>
+
+<div class="progress-bar" id="progressBar"></div>
+<nav class="nav-dots" id="navDots" aria-label="Slides"></nav>
+
+<aside class="slide-sidebar" id="slideSidebar" aria-label="Slide pages">
+  <h3>Slides</h3>
+  <div class="filmstrip-list" id="filmstripList"></div>
+  <div class="filmstrip-actions" style="margin-top:auto;">
+    <button type="button" id="btnExport">Export HTML</button>
+  </div>
+</aside>
+
+<div class="rte-toolbar" id="rteToolbar" role="toolbar" aria-label="Text format" data-deck-chrome-surface="">
+  <button type="button" data-cmd="bold"><strong>B</strong></button>
+  <button type="button" data-cmd="italic"><em>I</em></button>
+  <span class="rte-toolbar-group" aria-label="Font family">
+    <span class="rte-toolbar-meta">Font</span>
+    <button type="button" data-font="var(--font-body)">Body</button>
+    <button type="button" data-font="var(--font-display)">Display</button>
+  </span>
+  <span class="rte-toolbar-group" aria-label="Font size">
+    <span class="rte-toolbar-meta">Size</span>
+    <button type="button" data-size="0.85">S</button>
+    <button type="button" data-size="1">M</button>
+    <button type="button" data-size="1.2">L</button>
+    <button type="button" data-size="1.45">XL</button>
+  </span>
+</div>
+
+<!-- ===========================================
+     SLIDES
+     =========================================== -->
+<div class="slides-offset">
+
+<!-- ============ SLIDE 1: TITLE ============ -->
+<section class="slide slide-accent-bottom visible" id="slide-0">
+  <div class="accent-panel-bottom"></div>
+  <div class="corner-mark tl"></div>
+  <div class="corner-mark br"></div>
+  <div class="slide-num light">01 / 13</div>
+  <div class="slide-edit-layer" style="z-index:10;">
+    <div class="slide-object" data-slide-object data-oid="s0-o0" data-object-type="text"
+         style="left:10%;top:18%;width:80%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false" style="font-family:var(--font-display);font-weight:800;font-size:clamp(2rem,6vw,4.5rem);color:var(--text-primary);letter-spacing:-0.02em;">SushePro</div>
+    </div>
+    <div class="slide-object" data-slide-object data-oid="s0-o1" data-object-type="text"
+         style="left:10%;top:38%;width:75%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false" style="font-family:var(--font-cn);font-weight:500;font-size:clamp(1rem,2.5vw,1.8rem);color:var(--text-secondary);">智慧宿舍管理系统</div>
+    </div>
+    <div class="slide-object" data-slide-object data-oid="s0-o2" data-object-type="text"
+         style="left:10%;top:48%;width:75%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false" style="font-family:var(--font-body);font-weight:400;font-size:clamp(0.75rem,1.4vw,1.1rem);color:var(--text-muted);">Full-stack Distributed Dormitory Management System · AI-Powered</div>
+    </div>
+    <div class="slide-object" data-slide-object data-oid="s0-o3" data-object-type="text"
+         style="left:10%;top:57%;width:75%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false" style="display:flex;gap:clamp(0.4rem,0.8vw,0.8rem);flex-wrap:wrap;">
+        <span class="tag-pill">Java 21</span>
+        <span class="tag-pill">Spring Boot 3</span>
+        <span class="tag-pill">Vue 3</span>
+        <span class="tag-pill">DeepSeek AI</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 2: PROJECT BACKGROUND ============ -->
+<section class="slide slide-white" id="slide-1">
+  <div class="accent-bar"></div>
+  <div class="corner-mark tl"></div>
+  <div class="slide-num">02 / 13</div>
+  <div class="slide-edit-layer">
+    <div class="slide-object" data-slide-object data-oid="s1-o0" data-object-type="text"
+         style="left:8%;top:12%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false"><span class="content-heading">项目背景 <span class="cn" style="font-weight:300;color:var(--text-muted);font-size:0.7em;">Project Background</span></span></div>
+    </div>
+    <div class="slide-object" data-slide-object data-oid="s1-o1" data-object-type="text"
+         style="left:8%;top:26%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false">
+        <div class="bullet-item">传统宿舍管理依赖<strong>纸质表格和人工分配</strong>，效率低下且易出错</div>
+        <div class="bullet-item">学生<strong>生活习惯差异</strong>（作息、卫生、烟酒等）导致宿舍矛盾频发</div>
+        <div class="bullet-item">缺乏<strong>智能化、数据化</strong>的管理手段，管理成本高</div>
+        <div class="bullet-item"><strong>技术驱动升级</strong>：从传统 SSM + JSP 单体架构迁移到分布式微服务架构</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 3: SYSTEM ARCHITECTURE ============ -->
+<section class="slide slide-white" id="slide-2">
+  <div class="accent-bar"></div>
+  <div class="corner-mark tl"></div>
+  <div class="slide-num">03 / 13</div>
+  <div class="slide-edit-layer">
+    <div class="slide-object" data-slide-object data-oid="s2-o0" data-object-type="text"
+         style="left:8%;top:10%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false"><span class="content-heading">系统架构 <span class="cn" style="font-weight:300;color:var(--text-muted);font-size:0.7em;">System Architecture</span></span></div>
+    </div>
+    <div class="slide-object" data-slide-object data-oid="s2-o1" data-object-type="text"
+         style="left:8%;top:24%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false" style="display:flex;flex-direction:column;align-items:center;gap:clamp(0.3rem,0.6vw,0.6rem);">
+        <div style="display:flex;align-items:center;gap:clamp(0.3rem,0.8vw,0.8rem);flex-wrap:wrap;justify-content:center;width:100%;">
+          <div class="arch-tier"><div class="tier-label">Frontend</div><div class="tier-tech">Vue 3 + Element Plus</div><div class="tier-desc">TypeScript · SPA</div></div>
+          <div class="arch-arrow">↓</div>
+          <div class="arch-tier highlight"><div class="tier-label">JWT Auth</div><div class="tier-tech">RESTful API</div><div class="tier-desc">Axios HTTP</div></div>
+          <div class="arch-arrow">↓</div>
+          <div class="arch-tier"><div class="tier-label">Backend</div><div class="tier-tech">Spring Boot 3 + MyBatis</div><div class="tier-desc">Java 21 · Druid</div></div>
+          <div class="arch-arrow">↓</div>
+          <div class="arch-tier"><div class="tier-label">Database</div><div class="tier-tech">MySQL 8.0</div><div class="tier-desc">Nacos Config</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:clamp(0.3rem,0.8vw,0.8rem);flex-wrap:wrap;justify-content:center;width:100%;margin-top:clamp(0.2rem,0.4vw,0.4rem);">
+          <div class="arch-tier highlight"><div class="tier-label">AI Service</div><div class="tier-tech">DeepSeek API</div><div class="tier-desc">RAG · Knowledge Base</div></div>
+          <div class="arch-arrow">↔</div>
+          <div class="arch-tier"><div class="tier-label">Discovery</div><div class="tier-tech">Spring Cloud Alibaba</div><div class="tier-desc">Nacos</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 4: BACKEND TECH STACK ============ -->
+<section class="slide slide-white" id="slide-3">
+  <div class="accent-bar"></div>
+  <div class="corner-mark tl"></div>
+  <div class="slide-num">04 / 13</div>
+  <div class="slide-edit-layer">
+    <div class="slide-object" data-slide-object data-oid="s3-o0" data-object-type="text"
+         style="left:8%;top:10%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false"><span class="content-heading">后端技术栈 <span class="cn" style="font-weight:300;color:var(--text-muted);font-size:0.7em;">Backend Stack</span></span></div>
+    </div>
+    <div class="slide-object" data-slide-object data-oid="s3-o1" data-object-type="text"
+         style="left:8%;top:24%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false">
+        <div class="tech-grid">
+          <div class="tech-card"><div class="tech-name">Java</div><div class="tech-ver">21</div><div class="tech-desc">Latest LTS</div></div>
+          <div class="tech-card"><div class="tech-name">Spring Boot</div><div class="tech-ver">3.2.5</div><div class="tech-desc">Cloud Native</div></div>
+          <div class="tech-card"><div class="tech-name">MyBatis</div><div class="tech-ver">3.0.3</div><div class="tech-desc">ORM Framework</div></div>
+          <div class="tech-card"><div class="tech-name">MySQL</div><div class="tech-ver">8.0</div><div class="tech-desc">Database</div></div>
+          <div class="tech-card"><div class="tech-name">Druid</div><div class="tech-ver">1.2.22</div><div class="tech-desc">Connection Pool</div></div>
+          <div class="tech-card"><div class="tech-name">JWT</div><div class="tech-ver">0.12.5</div><div class="tech-desc">Auth</div></div>
+          <div class="tech-card"><div class="tech-name">Nacos</div><div class="tech-ver">2023.0.3.2</div><div class="tech-desc">Discovery</div></div>
+          <div class="tech-card"><div class="tech-name">POI · PDFBox</div><div class="tech-ver">5.2.5 / 3.0.1</div><div class="tech-desc">Doc Parsing</div></div>
+          <div class="tech-card"><div class="tech-name">FastJSON</div><div class="tech-ver">2.0.43</div><div class="tech-desc">JSON</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 5: FRONTEND TECH STACK ============ -->
+<section class="slide slide-white" id="slide-4">
+  <div class="accent-bar"></div>
+  <div class="corner-mark tl"></div>
+  <div class="slide-num">05 / 13</div>
+  <div class="slide-edit-layer">
+    <div class="slide-object" data-slide-object data-oid="s4-o0" data-object-type="text"
+         style="left:8%;top:10%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false"><span class="content-heading">前端技术栈 <span class="cn" style="font-weight:300;color:var(--text-muted);font-size:0.7em;">Frontend Stack</span></span></div>
+    </div>
+    <div class="slide-object" data-slide-object data-oid="s4-o1" data-object-type="text"
+         style="left:8%;top:24%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false">
+        <div class="tech-grid">
+          <div class="tech-card"><div class="tech-name">Vue</div><div class="tech-ver">3.4</div><div class="tech-desc">Composition API</div></div>
+          <div class="tech-card"><div class="tech-name">TypeScript</div><div class="tech-ver">5.4</div><div class="tech-desc">Type Safe</div></div>
+          <div class="tech-card"><div class="tech-name">Element Plus</div><div class="tech-ver">2.6</div><div class="tech-desc">UI Library</div></div>
+          <div class="tech-card"><div class="tech-name">Pinia</div><div class="tech-ver">2.1</div><div class="tech-desc">State Mgmt</div></div>
+          <div class="tech-card"><div class="tech-name">Vue Router</div><div class="tech-ver">4.3</div><div class="tech-desc">SPA Routing</div></div>
+          <div class="tech-card"><div class="tech-name">ECharts</div><div class="tech-ver">5.5</div><div class="tech-desc">Visualization</div></div>
+          <div class="tech-card"><div class="tech-name">Vite</div><div class="tech-ver">5.2</div><div class="tech-desc">Build Tool</div></div>
+          <div class="tech-card"><div class="tech-name">Axios</div><div class="tech-ver">1.6</div><div class="tech-desc">HTTP Client</div></div>
+          <div class="tech-card"><div class="tech-name">Sass</div><div class="tech-ver">1.72</div><div class="tech-desc">CSS Preprocessor</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 6: ADMIN FEATURES ============ -->
+<section class="slide slide-white" id="slide-5">
+  <div class="accent-bar"></div>
+  <div class="corner-mark tl"></div>
+  <div class="slide-num">06 / 13</div>
+  <div class="slide-edit-layer">
+    <div class="slide-object" data-slide-object data-oid="s5-o0" data-object-type="text"
+         style="left:8%;top:10%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false"><span class="content-heading">管理员功能 <span class="cn" style="font-weight:300;color:var(--text-muted);font-size:0.7em;">Admin Features</span></span></div>
+    </div>
+    <div class="slide-object" data-slide-object data-oid="s5-o1" data-object-type="text"
+         style="left:8%;top:24%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:clamp(0.4rem,1vw,0.8rem);width:100%;">
+          <div class="feature-card"><div class="card-icon">📊</div><div class="card-title">Dashboard</div><div class="card-desc">数据仪表盘 · 全局统计</div></div>
+          <div class="feature-card"><div class="card-icon">👥</div><div class="card-title">Student CRUD</div><div class="card-desc">学生信息管理</div></div>
+          <div class="feature-card"><div class="card-icon">🏠</div><div class="card-title">Dormitory CRUD</div><div class="card-desc">宿舍楼栋管理</div></div>
+          <div class="feature-card"><div class="card-icon">🔄</div><div class="card-title">Allocation</div><div class="card-desc">宿舍分配 · AI推荐</div></div>
+          <div class="feature-card"><div class="card-icon">🔧</div><div class="card-title">Transfer / Repair</div><div class="card-desc">调宿审批 · 报修管理</div></div>
+          <div class="feature-card"><div class="card-icon">📚</div><div class="card-title">Knowledge Base</div><div class="card-desc">知识库 · RAG数据源</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 7: STUDENT FEATURES ============ -->
+<section class="slide slide-white" id="slide-6">
+  <div class="accent-bar"></div>
+  <div class="corner-mark tl"></div>
+  <div class="slide-num">07 / 13</div>
+  <div class="slide-edit-layer">
+    <div class="slide-object" data-slide-object data-oid="s6-o0" data-object-type="text"
+         style="left:8%;top:10%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false"><span class="content-heading">学生功能 <span class="cn" style="font-weight:300;color:var(--text-muted);font-size:0.7em;">Student Features</span></span></div>
+    </div>
+    <div class="slide-object" data-slide-object data-oid="s6-o1" data-object-type="text"
+         style="left:8%;top:24%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:clamp(0.4rem,1vw,0.8rem);width:100%;">
+          <div class="feature-card"><div class="card-icon">🏠</div><div class="card-title">Dashboard</div><div class="card-desc">个人首页 · 信息概览</div></div>
+          <div class="feature-card"><div class="card-icon">📋</div><div class="card-title">Questionnaire</div><div class="card-desc">习惯问卷 · 作息/烟酒/整洁</div></div>
+          <div class="feature-card"><div class="card-icon">🗺️</div><div class="card-title">Allocation</div><div class="card-desc">宿舍查看 · 地图导航</div></div>
+          <div class="feature-card"><div class="card-icon">📝</div><div class="card-title">Transfer</div><div class="card-desc">调宿申请</div></div>
+          <div class="feature-card"><div class="card-icon">⚙️</div><div class="card-title">Repair</div><div class="card-desc">报修申请</div></div>
+          <div class="feature-card"><div class="card-icon">🤖</div><div class="card-title">AI Chat</div><div class="card-desc">智能客服 · RAG知识库</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 8: CORE WORKFLOWS ============ -->
+<section class="slide slide-white" id="slide-7">
+  <div class="accent-bar"></div>
+  <div class="corner-mark tl"></div>
+  <div class="slide-num">08 / 13</div>
+  <div class="slide-edit-layer">
+    <div class="slide-object" data-slide-object data-oid="s7-o0" data-object-type="text"
+         style="left:8%;top:10%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false"><span class="content-heading">核心业务流程 <span class="cn" style="font-weight:300;color:var(--text-muted);font-size:0.7em;">Core Workflows</span></span></div>
+    </div>
+    <div class="slide-object" data-slide-object data-oid="s7-o1" data-object-type="text"
+         style="left:8%;top:26%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false">
+        <div style="display:flex;flex-direction:column;gap:clamp(0.6rem,1.2vw,1.2rem);width:100%;">
+          <div>
+            <div class="workflow-row">
+              <span class="wf-step active">🎓 新生入学</span>
+              <span class="wf-arrow">→</span>
+              <span class="wf-step">📝 填写习惯问卷</span>
+              <span class="wf-arrow">→</span>
+              <span class="wf-step active">🤖 AI 智能匹配宿舍</span>
+              <span class="wf-arrow">→</span>
+              <span class="wf-step">✅ 确认入住</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:clamp(0.3rem,0.6vw,0.6rem);padding:clamp(0.4rem,0.8vw,0.8rem) clamp(0.6rem,1.2vw,1.2rem);background:var(--bg-card);border-radius:clamp(6px,0.8vw,10px);">
+            <div style="font-size:clamp(0.7rem,1.1vw,0.9rem);color:var(--text-secondary);font-family:var(--font-cn);">
+              <strong style="color:var(--text-primary);">日常运维:</strong> 报修申请 → 管理员审批 → 维修完成
+            </div>
+            <div style="font-size:clamp(0.7rem,1.1vw,0.9rem);color:var(--text-secondary);font-family:var(--font-cn);">
+              <strong style="color:var(--text-primary);">调宿流程:</strong> 调宿申请 → 管理员审核 → 宿舍变更
+            </div>
+            <div style="font-size:clamp(0.7rem,1.1vw,0.9rem);color:var(--text-secondary);font-family:var(--font-cn);">
+              <strong style="color:var(--text-primary);">AI 客服:</strong> 学生提问 → RAG知识库检索 → DeepSeek生成回答
+            </div>
+          </div>
+          <div style="text-align:center;font-family:var(--font-cn);font-size:clamp(0.65rem,0.9vw,0.8rem);color:var(--text-muted);">* AI 贯穿全流程：智能分配 + 智能客服</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 9: AI ROOM RECOMMENDATION ★ ============ -->
+<section class="slide slide-white" id="slide-8">
+  <div class="accent-bar"></div>
+  <div class="corner-mark tl"></div>
+  <div class="slide-num">09 / 13</div>
+  <div class="slide-edit-layer">
+    <div class="slide-object" data-slide-object data-oid="s8-o0" data-object-type="text"
+         style="left:8%;top:8%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false"><span class="content-heading">AI 智能宿舍推荐 <span class="ai-badge">DeepSeek</span></span></div>
+    </div>
+    <div class="slide-object" data-slide-object data-oid="s8-o1" data-object-type="text"
+         style="left:8%;top:18%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false">
+        <div class="accent-card" style="margin-bottom:clamp(0.4rem,0.8vw,0.8rem);">
+          <div style="font-family:var(--font-cn);font-size:clamp(0.65rem,1vw,0.85rem);color:var(--text-secondary);line-height:1.5;">
+            基于 <strong>DeepSeek 大语言模型</strong>，分析学生生活习惯问卷数据，智能匹配最合适的宿舍和室友，并通过 <strong>ECharts 雷达图</strong>可视化六维兼容度评分。
+          </div>
+        </div>
+        <div style="display:flex;gap:clamp(0.6rem,1.5vw,1.5rem);align-items:stretch;width:100%;">
+          <div class="radar-placeholder" style="flex-shrink:0;">
+            <div class="radar-inner"></div>
+            <div class="radar-inner" style="inset:15%;"></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:clamp(0.2rem,0.4vw,0.4rem);justify-content:center;">
+            <div style="font-family:var(--font-cn);font-weight:600;font-size:clamp(0.7rem,1vw,0.85rem);color:var(--text-primary);margin-bottom:clamp(0.15rem,0.3vw,0.3rem);">六维评估体系</div>
+            <div class="radar-dim"><span class="dot" style="background:#4361ee;"></span> 入睡时间匹配度 Sleep</div>
+            <div class="radar-dim"><span class="dot" style="background:#6c5ce7;"></span> 起床时间匹配度 Wake-up</div>
+            <div class="radar-dim"><span class="dot" style="background:#00cec9;"></span> 吸烟习惯匹配度 Smoking</div>
+            <div class="radar-dim"><span class="dot" style="background:#fd79a8;"></span> 饮酒习惯匹配度 Drinking</div>
+            <div class="radar-dim"><span class="dot" style="background:#fdcb6e;"></span> 噪音耐受匹配度 Noise</div>
+            <div class="radar-dim"><span class="dot" style="background:#e17055;"></span> 整洁度匹配度 Cleanliness</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 10: AI CHAT / RAG ============ -->
+<section class="slide slide-white" id="slide-9">
+  <div class="accent-bar"></div>
+  <div class="corner-mark tl"></div>
+  <div class="slide-num">10 / 13</div>
+  <div class="slide-edit-layer">
+    <div class="slide-object" data-slide-object data-oid="s9-o0" data-object-type="text"
+         style="left:8%;top:8%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false"><span class="content-heading">AI 智能客服 <span class="ai-badge">RAG</span></span></div>
+    </div>
+    <div class="slide-object" data-slide-object data-oid="s9-o1" data-object-type="text"
+         style="left:8%;top:19%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false">
+        <div class="accent-card" style="margin-bottom:clamp(0.4rem,0.8vw,0.8rem);">
+          <div style="font-family:var(--font-cn);font-size:clamp(0.65rem,1vw,0.85rem);color:var(--text-secondary);line-height:1.5;">
+            基于 <strong>RAG (Retrieval-Augmented Generation)</strong> 架构的智能客服系统，结合 DeepSeek API 与动态知识库，提供 7x24 小时宿舍管理智能问答服务。
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(0.4rem,0.8vw,0.8rem);width:100%;">
+          <div class="feature-card">
+            <div class="card-icon">🧠</div>
+            <div class="card-title">DeepSeek API</div>
+            <div class="card-desc" style="margin-top:clamp(0.2rem,0.3vw,0.3rem);">
+              <span style="display:block;font-size:clamp(0.55rem,0.8vw,0.75rem);color:var(--text-secondary);font-family:var(--font-cn);">Temperature 0.7 · Max 2048 tokens</span>
+              <span style="display:block;font-size:clamp(0.55rem,0.8vw,0.75rem);color:var(--text-secondary);font-family:var(--font-cn);">流式响应 · 自然语言理解</span>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="card-icon">📄</div>
+            <div class="card-title">RAG Knowledge Base</div>
+            <div class="card-desc" style="margin-top:clamp(0.2rem,0.3vw,0.3rem);">
+              <span style="display:block;font-size:clamp(0.55rem,0.8vw,0.75rem);color:var(--text-secondary);font-family:var(--font-cn);">PDF/DOC/TXT 文档动态注入</span>
+              <span style="display:block;font-size:clamp(0.55rem,0.8vw,0.75rem);color:var(--text-secondary);font-family:var(--font-cn);">所有已启用知识库文档作为上下文</span>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="card-icon">👤</div>
+            <div class="card-title">Context Awareness</div>
+            <div class="card-desc" style="margin-top:clamp(0.2rem,0.3vw,0.3rem);">
+              <span style="display:block;font-size:clamp(0.55rem,0.8vw,0.75rem);color:var(--text-secondary);font-family:var(--font-cn);">学生个人信息自动注入</span>
+              <span style="display:block;font-size:clamp(0.55rem,0.8vw,0.75rem);color:var(--text-secondary);font-family:var(--font-cn);">姓名 · 专业 · 年级 · 学号</span>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="card-icon">💬</div>
+            <div class="card-title">Chat History</div>
+            <div class="card-desc" style="margin-top:clamp(0.2rem,0.3vw,0.3rem);">
+              <span style="display:block;font-size:clamp(0.55rem,0.8vw,0.75rem);color:var(--text-secondary);font-family:var(--font-cn);">最近 20 条对话记忆</span>
+              <span style="display:block;font-size:clamp(0.55rem,0.8vw,0.75rem);color:var(--text-secondary);font-family:var(--font-cn);">连续对话上下文理解</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 11: KNOWLEDGE BASE ============ -->
+<section class="slide slide-white" id="slide-10">
+  <div class="accent-bar"></div>
+  <div class="corner-mark tl"></div>
+  <div class="slide-num">11 / 13</div>
+  <div class="slide-edit-layer">
+    <div class="slide-object" data-slide-object data-oid="s10-o0" data-object-type="text"
+         style="left:8%;top:8%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false"><span class="content-heading">知识库系统 <span class="cn" style="font-weight:300;color:var(--text-muted);font-size:0.7em;">Knowledge Base · RAG Data Source</span></span></div>
+    </div>
+    <div class="slide-object" data-slide-object data-oid="s10-o1" data-object-type="text"
+         style="left:8%;top:22%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false">
+        <div class="accent-card" style="margin-bottom:clamp(0.4rem,0.8vw,0.8rem);">
+          <div style="font-family:var(--font-cn);font-size:clamp(0.65rem,1vw,0.85rem);color:var(--text-secondary);line-height:1.5;">
+            知识库为 AI 客服提供 <strong>RAG 数据源</strong>，支持多格式文档上传、内容提取、启禁用控制，是 AI 问答质量的保障。
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(0.4rem,0.8vw,0.8rem);width:100%;">
+          <div class="feature-card">
+            <div class="card-icon">📎</div>
+            <div class="card-title">文档格式支持</div>
+            <div class="card-desc" style="margin-top:clamp(0.2rem,0.3vw,0.3rem);">
+              <span style="display:block;font-size:clamp(0.55rem,0.8vw,0.75rem);color:var(--text-secondary);font-family:var(--font-cn);">PDF · DOC/DOCX · XLS/XLSX · TXT</span>
+              <span style="display:block;font-size:clamp(0.55rem,0.8vw,0.75rem);color:var(--text-secondary);font-family:var(--font-cn);">单文件上限 <strong>10MB</strong></span>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="card-icon">🔧</div>
+            <div class="card-title">内容提取引擎</div>
+            <div class="card-desc" style="margin-top:clamp(0.2rem,0.3vw,0.3rem);">
+              <span style="display:block;font-size:clamp(0.55rem,0.8vw,0.75rem);color:var(--text-secondary);font-family:var(--font-cn);">Apache POI 5.2.5 → Office文档</span>
+              <span style="display:block;font-size:clamp(0.55rem,0.8vw,0.75rem);color:var(--text-secondary);font-family:var(--font-cn);">Apache PDFBox 3.0.1 → PDF文档</span>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="card-icon">🔄</div>
+            <div class="card-title">灵活管理</div>
+            <div class="card-desc" style="margin-top:clamp(0.2rem,0.3vw,0.3rem);">
+              <span style="display:block;font-size:clamp(0.55rem,0.8vw,0.75rem);color:var(--text-secondary);font-family:var(--font-cn);">启用/禁用开关控制</span>
+              <span style="display:block;font-size:clamp(0.55rem,0.8vw,0.75rem);color:var(--text-secondary);font-family:var(--font-cn);">分类管理 · 访问统计</span>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="card-icon">⚡</div>
+            <div class="card-title">动态注入</div>
+            <div class="card-desc" style="margin-top:clamp(0.2rem,0.3vw,0.3rem);">
+              <span style="display:block;font-size:clamp(0.55rem,0.8vw,0.75rem);color:var(--text-secondary);font-family:var(--font-cn);">所有启用文档内容拼接为 AI 上下文</span>
+              <span style="display:block;font-size:clamp(0.55rem,0.8vw,0.75rem);color:var(--text-secondary);font-family:var(--font-cn);">实现真正的 RAG 增强问答</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 12: SYSTEM MIGRATION ============ -->
+<section class="slide slide-white" id="slide-11">
+  <div class="accent-bar"></div>
+  <div class="corner-mark tl"></div>
+  <div class="slide-num">12 / 13</div>
+  <div class="slide-edit-layer">
+    <div class="slide-object" data-slide-object data-oid="s11-o0" data-object-type="text"
+         style="left:8%;top:10%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false"><span class="content-heading">架构升级 <span class="cn" style="font-weight:300;color:var(--text-muted);font-size:0.7em;">SSM → Distributed</span></span></div>
+    </div>
+    <div class="slide-object" data-slide-object data-oid="s11-o1" data-object-type="text"
+         style="left:8%;top:24%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false">
+        <div class="two-col">
+          <div class="col-card before">
+            <h4 style="color:var(--text-muted);">Before · 旧架构</h4>
+            <ul>
+              <li>SSM (Spring + SpringMVC + MyBatis)</li>
+              <li>JSP 页面 · 服务端渲染</li>
+              <li>Tomcat 单体部署</li>
+              <li>XML 配置 · 耦合度高</li>
+              <li>维护成本高 · 扩展性差</li>
+            </ul>
+          </div>
+          <div class="col-card after">
+            <h4 style="color:var(--accent-blue);">After · 新架构</h4>
+            <ul>
+              <li>Spring Boot 3 + Vue 3 前后端分离</li>
+              <li>RESTful API · JWT 认证</li>
+              <li>Nacos 微服务 · 分布式配置</li>
+              <li>TypeScript + Composition API</li>
+              <li>AI 集成 · 易于扩展</li>
+            </ul>
+          </div>
+        </div>
+        <div style="margin-top:clamp(0.4rem,0.8vw,0.8rem);text-align:center;font-family:var(--font-cn);font-size:clamp(0.6rem,0.9vw,0.8rem);color:var(--text-muted);">
+          ➤ 迁移策略：渐进式重构，保留旧版代码于 <code style="background:var(--bg-card);padding:0.1rem 0.3rem;border-radius:3px;">旧/</code> 目录，新功能全部在新架构上开发
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 13: SUMMARY ============ -->
+<section class="slide slide-white" id="slide-12">
+  <div class="accent-bar"></div>
+  <div class="corner-mark tl"></div>
+  <div class="slide-num">13 / 13</div>
+  <div class="slide-edit-layer">
+    <div class="slide-object" data-slide-object data-oid="s12-o0" data-object-type="text"
+         style="left:8%;top:10%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false"><span class="content-heading">总结与展望 <span class="cn" style="font-weight:300;color:var(--text-muted);font-size:0.7em;">Summary</span></span></div>
+    </div>
+    <div class="slide-object" data-slide-object data-oid="s12-o1" data-object-type="text"
+         style="left:8%;top:24%;width:84%;">
+      <button type="button" class="slide-object-move" aria-label="Move">⠿</button>
+      <button type="button" class="slide-object-resize" aria-label="Resize"></button>
+      <div class="slide-object-text" contenteditable="false">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(0.3rem,0.6vw,0.6rem);width:100%;margin-bottom:clamp(0.5rem,1vw,1rem);">
+          <div class="feature-card" style="background:var(--accent-light);border-color:var(--accent-blue);">
+            <div class="card-title" style="color:var(--accent-blue);">✓ 完整管理系统</div>
+            <div class="card-desc" style="font-family:var(--font-cn);">CRUD + Workflow + AI 全链路覆盖</div>
+          </div>
+          <div class="feature-card" style="background:var(--accent-light);border-color:var(--accent-blue);">
+            <div class="card-title" style="color:var(--accent-blue);">✓ 分布式架构</div>
+            <div class="card-desc" style="font-family:var(--font-cn);">前后端分离 · Nacos 微服务</div>
+          </div>
+          <div class="feature-card" style="background:var(--accent-light);border-color:var(--accent-blue);">
+            <div class="card-title" style="color:var(--accent-blue);">✓ AI 驱动</div>
+            <div class="card-desc" style="font-family:var(--font-cn);">智能推荐 + RAG 客服 · DeepSeek</div>
+          </div>
+          <div class="feature-card" style="background:var(--accent-light);border-color:var(--accent-blue);">
+            <div class="card-title" style="color:var(--accent-blue);">✓ 平滑迁移</div>
+            <div class="card-desc" style="font-family:var(--font-cn);">SSM → Spring Boot + Vue 3</div>
+          </div>
+        </div>
+        <div style="text-align:center;padding:clamp(0.4rem,0.8vw,0.8rem);background:var(--accent-blue);border-radius:clamp(8px,1vw,14px);color:var(--text-light);width:100%;">
+          <div style="font-family:var(--font-display);font-weight:700;font-size:clamp(0.8rem,1.4vw,1.2rem);">SushePro · 智慧宿舍管理系统</div>
+          <div style="font-family:var(--font-cn);font-size:clamp(0.65rem,1vw,0.85rem);opacity:0.85;margin-top:clamp(0.2rem,0.3vw,0.3rem);">Java 21 · Spring Boot 3 · Vue 3 · DeepSeek AI</div>
+          <div style="font-family:var(--font-cn);font-size:clamp(0.7rem,1.2vw,1rem);font-weight:500;margin-top:clamp(0.3rem,0.6vw,0.6rem);">感谢观看！</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /slides-offset -->
+
+<script>
+(function () {
+  'use strict';
+
+  const STORAGE_KEY = 'sushepro-deck:' + (document.documentElement.getAttribute('data-deck-id') || 'default');
+  const SNAP_PX = 8;
+  const MAX_HISTORY = 60;
+  const RESIZE_MIN_FRAC = 0.05;
+
+  function prefersReducedMotion() {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  function isDeckChromeNode(node) {
+    if (!node || !node.closest) return false;
+    return !!(node.closest('#deckEditChrome') || node.closest('#rteToolbar') || node.closest('#slideSidebar') ||
+      node.closest('.deck-edit-chrome') || node.closest('[data-deck-chrome-surface]'));
+  }
+
+  /* ---------- History ---------- */
+  class HistoryStack {
+    constructor(onChange) {
+      this._u = []; this._r = []; this._onChange = typeof onChange === 'function' ? onChange : function () {};
+    }
+    push(record) {
+      this._u.push(record); if (this._u.length > MAX_HISTORY) this._u.shift();
+      this._r.length = 0; this._onChange();
+    }
+    undo() { const r = this._u.pop(); if (r && r.undo) r.undo(); if (r) this._r.push(r); this._onChange(); }
+    redo() { const r = this._r.pop(); if (r && r.redo) r.redo(); if (r) this._u.push(r); this._onChange(); }
+    canUndo() { return this._u.length > 0; }
+    canRedo() { return this._r.length > 0; }
+  }
+
+  /* ---------- Slide deck ---------- */
+  class SlideDeck {
+    constructor() {
+      this.slidesContainer = document.body;
+      this.refreshSlides(); this.current = 0; this.onSlideChange = null;
+      this._obs = new IntersectionObserver((ents) => { ents.forEach((en) => { if (en.isIntersecting) en.target.classList.add('visible'); }); }, { threshold: 0.35 });
+      this.slides.forEach((s) => this._obs.observe(s));
+      this._onScroll = () => this._syncCurrentFromScroll();
+      window.addEventListener('scroll', this._onScroll, { passive: true });
+      this._keys = this._keys.bind(this); window.addEventListener('keydown', this._keys);
+      this._wheel = this._wheel.bind(this); window.addEventListener('wheel', this._wheel, { passive: false });
+      this._syncCurrentFromScroll();
+    }
+    refreshSlides() { const root = document.querySelector('.slides-offset'); this.slides = root ? Array.from(root.querySelectorAll(':scope > section.slide')) : []; }
+    _syncCurrentFromScroll() {
+      const h = window.innerHeight; let best = 0, bestRatio = 0;
+      this.slides.forEach((s, i) => { const r = s.getBoundingClientRect(); const vis = Math.max(0, Math.min(r.bottom, h) - Math.max(r.top, 0)) / h; if (vis > bestRatio) { bestRatio = vis; best = i; } });
+      if (best !== this.current) { this.current = best; this.onSlideChange && this.onSlideChange(best); }
+      this._updateChrome();
+    }
+    goTo(i) { this.refreshSlides(); i = Math.max(0, Math.min(this.slides.length - 1, i)); this.slides[i].scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' }); this.current = i; this._updateChrome(); this.onSlideChange && this.onSlideChange(i); }
+    _updateChrome() {
+      const n = this.slides.length, p = n ? ((this.current + 1) / n) * 100 : 0;
+      const bar = document.getElementById('progressBar'); if (bar) bar.style.width = p + '%';
+      const dots = document.getElementById('navDots'); if (dots) { dots.innerHTML = ''; for (let i = 0; i < n; i++) { const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-label', 'Go to slide ' + (i + 1)); if (i === this.current) b.classList.add('active'); b.addEventListener('click', () => this.goTo(i)); dots.appendChild(b); } }
+    }
+    _keys(e) {
+      if (document.body.classList.contains('deck-edit-mode') && e.target.closest('.slide-object-text[contenteditable="true"]')) return;
+      const fwd = e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ';
+      const back = e.key === 'ArrowUp' || e.key === 'PageUp';
+      if (fwd) { e.preventDefault(); this.goTo(this.current + 1); }
+      else if (back) { e.preventDefault(); this.goTo(this.current - 1); }
+    }
+    _wheel(e) { if (document.body.classList.contains('deck-edit-mode')) return; if (Math.abs(e.deltaY) < 8) return; e.preventDefault(); if (e.deltaY > 0) this.goTo(this.current + 1); else this.goTo(this.current - 1); }
+  }
+
+  function ensureResizeHandles(root) {
+    const el = root || document;
+    el.querySelectorAll('[data-slide-object]').forEach((obj) => {
+      if (obj.querySelector('.slide-object-resize')) return;
+      const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'slide-object-resize'; btn.setAttribute('aria-label', 'Resize'); obj.appendChild(btn);
+    });
+  }
+
+  /* ---------- Editor ---------- */
+  class SlideObjectEditor {
+    constructor(deck, history) {
+      this.deck = deck; this.history = history; this.active = false; this.selected = new Set();
+      this._dragState = null; this._resizeState = null; this._snapEls = [];
+      this.toolbar = document.getElementById('rteToolbar');
+      this._onDocPointerDown = this._onDocPointerDown.bind(this);
+      this._onDocPointerMove = this._onDocPointerMove.bind(this);
+      this._onDocPointerUp = this._onDocPointerUp.bind(this);
+      this._onResizeMove = this._onResizeMove.bind(this);
+      this._onResizeUp = this._onResizeUp.bind(this);
+      this._onSelectionChange = this._onSelectionChange.bind(this);
+      this._onFocusIn = this._onFocusIn.bind(this);
+    }
+    setActive(on) {
+      this.active = !!on; document.body.classList.toggle('deck-edit-mode', on); document.body.classList.toggle('slide-anim-paused', on);
+      if (on) { ensureResizeHandles(document); } else { this.clearSelection(); this.toolbar.classList.remove('visible'); document.querySelectorAll('.slide-object-text[contenteditable="true"]').forEach((el) => { el.contentEditable = 'false'; }); }
+    }
+    toggle() { this.setActive(!this.active); }
+    clearSelection() { this.selected.forEach((el) => el.classList.remove('is-selected')); this.selected.clear(); }
+    _addSel(el) { el.classList.add('is-selected'); this.selected.add(el); }
+    _toggleSel(el) { if (this.selected.has(el)) { el.classList.remove('is-selected'); this.selected.delete(el); } else this._addSel(el); }
+    _selectOnly(el) { this.clearSelection(); this._addSel(el); }
+    _closestObject(t) { return t && t.closest && t.closest('[data-slide-object]'); }
+
+    _onDocPointerDown(e) {
+      if (!this.active) return; if (isDeckChromeNode(e.target)) return;
+      const obj = this._closestObject(e.target); const slide = e.target.closest && e.target.closest('section.slide');
+      if (obj && e.ctrlKey) { e.preventDefault(); this._toggleSel(obj); return; }
+      if (obj && !e.ctrlKey) {
+        const onResize = e.target.closest('.slide-object-resize');
+        if (onResize) { e.preventDefault(); e.stopPropagation(); if (!this.selected.has(obj)) this._selectOnly(obj); if (this.selected.size === 1) this._startResize(e, obj); return; }
+        const isText = obj.getAttribute('data-object-type') === 'text';
+        const onMove = e.target.closest('.slide-object-move'); const onText = e.target.closest('.slide-object-text');
+        if (isText && onText && !onMove) {
+          this._selectOnly(obj); const te = obj.querySelector('.slide-object-text');
+          if (te) { if (te.dataset._deckHtmlBefore === undefined) te.dataset._deckHtmlBefore = te.innerHTML; te.contentEditable = 'true'; te.focus(); this._updateRteToolbar(); }
+          return;
+        }
+        if (!this.selected.has(obj)) this._selectOnly(obj);
+        if (onMove || !isText) { e.preventDefault(); this._startDrag(e, obj); }
+        return;
+      }
+      if (slide && !obj) { this.clearSelection(); document.querySelectorAll('.slide-object-text[contenteditable="true"]').forEach((el) => { el.contentEditable = 'false'; }); this.toolbar.classList.remove('visible'); }
+    }
+
+    _parsePct(el, prop) { const v = getComputedStyle(el)[prop]; if (v.endsWith('%')) return parseFloat(v) || 0; return null; }
+    _positionPct(el, slide, axis) {
+      const prop = axis === 'left' ? 'left' : 'top'; const raw = el.style && el.style[prop] ? String(el.style[prop]).trim() : '';
+      if (raw.endsWith('%')) { const p = parseFloat(raw); return Number.isFinite(p) ? p : 0; }
+      const sr = this._slideRect(slide); const r = el.getBoundingClientRect();
+      if (axis === 'left') return ((r.left - sr.left) / sr.width) * 100;
+      return ((r.top - sr.top) / sr.height) * 100;
+    }
+    _setPct(el, leftPct, topPct) { el.style.left = leftPct + '%'; el.style.top = topPct + '%'; }
+    _slideRect(slide) { return slide.getBoundingClientRect(); }
+
+    _startDrag(e, primary) {
+      const slide = primary.closest('section.slide'); if (!slide) return; const sr = this._slideRect(slide);
+      const moving = Array.from(this.selected).filter((o) => slide.contains(o)); if (!moving.length) moving.push(primary);
+      const starts = moving.map((o) => ({ el: o, l: this._positionPct(o, slide, 'left'), t: this._positionPct(o, slide, 'top'), w: o.offsetWidth, h: o.offsetHeight }));
+      this._dragState = { slide, sr, moving: starts, startX: e.clientX, startY: e.clientY, primary: primary };
+      this._clearSnap(); document.addEventListener('pointermove', this._onDocPointerMove); document.addEventListener('pointerup', this._onDocPointerUp); document.addEventListener('pointercancel', this._onDocPointerUp);
+      try { e.target.setPointerCapture(e.pointerId); } catch (_) {}
+    }
+    _startResize(e, obj) {
+      const slide = obj.closest('section.slide'); if (!slide) return; const sr = this._slideRect(slide); const r = obj.getBoundingClientRect();
+      this._resizeState = { slide, el: obj, sr, startX: e.clientX, startY: e.clientY, startW: r.width, startH: r.height, beforeW: obj.style.width, beforeH: obj.style.height };
+      document.addEventListener('pointermove', this._onResizeMove); document.addEventListener('pointerup', this._onResizeUp); document.addEventListener('pointercancel', this._onResizeUp);
+      try { e.target.setPointerCapture(e.pointerId); } catch (_) {}
+    }
+    _onResizeMove(e) {
+      if (!this._resizeState) return; const st = this._resizeState; const sr = st.sr; const dx = e.clientX - st.startX; const dy = e.clientY - st.startY;
+      const minPx = Math.min(sr.width, sr.height) * RESIZE_MIN_FRAC;
+      let nw = Math.max(minPx, st.startW + dx); let nh = Math.max(minPx, st.startH + dy);
+      st.el.style.width = (nw / sr.width * 100) + '%'; st.el.style.height = (nh / sr.height * 100) + '%';
+    }
+    _onResizeUp() {
+      if (!this._resizeState) return; const st = this._resizeState; const el = st.el; const afterW = el.style.width; const afterH = el.style.height; const beforeW = st.beforeW; const beforeH = st.beforeH;
+      if (afterW !== beforeW || afterH !== beforeH) { this.history.push({ undo: () => { el.style.width = beforeW; el.style.height = beforeH; }, redo: () => { el.style.width = afterW; el.style.height = afterH; } }); }
+      this._resizeState = null; document.removeEventListener('pointermove', this._onResizeMove); document.removeEventListener('pointerup', this._onResizeUp); document.removeEventListener('pointercancel', this._onResizeUp);
+    }
+    _otherObjects(slide, excludeSet) { return Array.from(slide.querySelectorAll('[data-slide-object]')).filter((o) => !excludeSet.has(o)); }
+    _snapLinesForSlide(slide, excludeSet) {
+      const sr = this._slideRect(slide); const linesV = [sr.width / 2]; const linesH = [sr.height / 2];
+      this._otherObjects(slide, excludeSet).forEach((o) => { const r = o.getBoundingClientRect(); const left = r.left - sr.left; const top = r.top - sr.top; linesV.push(left, left + r.width / 2, left + r.width); linesH.push(top, top + r.height / 2, top + r.height); });
+      return { linesV, linesH, sr };
+    }
+    _applySnap(dx, dy, primaryStart, state) {
+      if (prefersReducedMotion()) return { dx, dy, lv: null, lh: null };
+      const { slide, moving, sr } = state; const exclude = new Set(moving.map((m) => m.el)); const snap = this._snapLinesForSlide(slide, exclude);
+      const pw = primaryStart.w, ph = primaryStart.h;
+      let pl = (primaryStart.l / 100) * sr.width + dx, pt = (primaryStart.t / 100) * sr.height + dy;
+      let bestVX = null, bestVd = SNAP_PX + 1; snap.linesV.forEach((xv) => { [pl, pl + pw / 2, pl + pw].forEach((edge) => { const d = xv - edge; if (Math.abs(d) < bestVd) { bestVd = Math.abs(d); bestVX = xv - edge; } }); });
+      let bestHY = null, bestHd = SNAP_PX + 1; snap.linesH.forEach((yh) => { [pt, pt + ph / 2, pt + ph].forEach((edge) => { const d = yh - edge; if (Math.abs(d) < bestHd) { bestHd = Math.abs(d); bestHY = yh - edge; } }); });
+      let ndx = dx, ndy = dy; if (bestVX !== null && bestVd <= SNAP_PX) ndx += bestVX; if (bestHY !== null && bestHd <= SNAP_PX) ndy += bestHY;
+      let lv = null, lh = null;
+      if (bestVX !== null && bestVd <= SNAP_PX) { const nx = pl + ndx - dx; lv = { pos: nx + pw / 2 }; }
+      if (bestHY !== null && bestHd <= SNAP_PX) { const ny = pt + ndy - dy; lh = { pos: ny + ph / 2 }; }
+      return { dx: ndx, dy: ndy, lv, lh, sr };
+    }
+    _showSnap(lv, lh, sr, slide) { this._clearSnap(); const layer = slide.querySelector('.slide-edit-layer'); if (!layer) return; if (lv) { const d = document.createElement('div'); d.className = 'snap-line-v'; d.style.left = (lv.pos / sr.width * 100) + '%'; layer.appendChild(d); this._snapEls.push(d); } if (lh) { const d = document.createElement('div'); d.className = 'snap-line-h'; d.style.top = (lh.pos / sr.height * 100) + '%'; layer.appendChild(d); this._snapEls.push(d); } }
+    _clearSnap() { this._snapEls.forEach((e) => e.remove()); this._snapEls = []; }
+
+    _onDocPointerMove(e) {
+      if (!this._dragState) return; const st = this._dragState; const sr = st.sr; let dx = e.clientX - st.startX; let dy = e.clientY - st.startY;
+      const primaryStart = st.moving.find((m) => m.el === st.primary) || st.moving[0]; const snapped = this._applySnap(dx, dy, primaryStart, st);
+      dx = snapped.dx; dy = snapped.dy;
+      st.moving.forEach((m) => { const nl = m.l + (dx / sr.width) * 100; const nt = m.t + (dy / sr.height) * 100; const maxL = 100 - (m.w / sr.width) * 100; const maxT = 100 - (m.h / sr.height) * 100; this._setPct(m.el, Math.max(0, Math.min(maxL, nl)), Math.max(0, Math.min(maxT, nt))); });
+      if (snapped.lv || snapped.lh) this._showSnap(snapped.lv, snapped.lh, sr, st.slide); else this._clearSnap();
+    }
+    _onDocPointerUp() {
+      if (!this._dragState) return; const st = this._dragState;
+      const after = st.moving.map((m) => ({ el: m.el, l: this._positionPct(m.el, st.slide, 'left'), t: this._positionPct(m.el, st.slide, 'top') }));
+      const before = st.moving.map((m) => ({ el: m.el, l: m.l, t: m.t }));
+      const changed = after.some((a, i) => a.l !== before[i].l || a.t !== before[i].t);
+      if (changed) { this.history.push({ undo: () => { before.forEach((b) => this._setPct(b.el, b.l, b.t)); }, redo: () => { after.forEach((a) => this._setPct(a.el, a.l, a.t)); } }); }
+      this._dragState = null; this._clearSnap(); document.removeEventListener('pointermove', this._onDocPointerMove); document.removeEventListener('pointerup', this._onDocPointerUp); document.removeEventListener('pointercancel', this._onDocPointerUp);
+    }
+
+    _syncRteButtons() { try { const b = this.toolbar.querySelector('button[data-cmd="bold"]'); if (b) b.classList.toggle('is-active', document.queryCommandState('bold')); } catch (_) {} try { const i = this.toolbar.querySelector('button[data-cmd="italic"]'); if (i) i.classList.toggle('is-active', document.queryCommandState('italic')); } catch (_) {} }
+    _activeTextEl() {
+      const el = document.activeElement; if (el && el.classList && el.classList.contains('slide-object-text') && el.getAttribute('contenteditable') === 'true') return el;
+      const sel = document.getSelection(); if (!sel || !sel.rangeCount) return null; const n = sel.anchorNode; const p = n && (n.nodeType === 3 ? n.parentElement : n); const active = p && p.closest && p.closest('.slide-object-text[contenteditable="true"]'); if (active) return active;
+      if (this.toolbar.contains(document.activeElement)) return document.querySelector('.slide-object-text[contenteditable="true"]'); return null;
+    }
+    _updateRteToolbar() {
+      if (!this.active) return; const inside = this._activeTextEl(); if (!inside) { this.toolbar.classList.remove('visible'); return; }
+      const sel = document.getSelection(); let rr = inside.getBoundingClientRect(); if (sel && sel.rangeCount) { const r = sel.getRangeAt(0).getBoundingClientRect(); if (r.width > 1 && r.height > 1) rr = r; }
+      this.toolbar.classList.add('visible'); this.toolbar.style.left = Math.min(window.innerWidth - this.toolbar.offsetWidth - 8, Math.max(8, rr.left + window.scrollX)) + 'px'; this.toolbar.style.top = (rr.top + window.scrollY - this.toolbar.offsetHeight - 8) + 'px'; this._syncRteButtons();
+    }
+    _onFocusIn(e) { if (!this.active) return; const te = e.target.closest && e.target.closest('.slide-object-text[contenteditable="true"]'); if (te) this._updateRteToolbar(); }
+    _onSelectionChange() { if (!this.active) return; this._updateRteToolbar(); }
+    _applyInlineStyle(textEl, stylePatch) {
+      textEl.focus(); const sel = window.getSelection(); if (!sel || !sel.rangeCount) return false; const range = sel.getRangeAt(0); if (!textEl.contains(range.commonAncestorContainer)) return false;
+      const span = document.createElement('span'); Object.keys(stylePatch).forEach((key) => { span.style[key] = stylePatch[key]; });
+      if (range.collapsed) { span.appendChild(document.createTextNode('​')); range.insertNode(span); const nr = document.createRange(); nr.setStart(span.firstChild, 1); nr.collapse(true); sel.removeAllRanges(); sel.addRange(nr); return true; }
+      const contents = range.extractContents(); span.appendChild(contents); range.insertNode(span); const nr = document.createRange(); nr.selectNodeContents(span); sel.removeAllRanges(); sel.addRange(nr); return true;
+    }
+    _applyFontSizeFactor(textEl, fac) { const fs = 'clamp(' + (0.7 * fac) + 'rem, ' + (1.2 * fac) + 'vw, ' + (1.4 * fac) + 'rem)'; return this._applyInlineStyle(textEl, { fontSize: fs }); }
+    _applyFontFamily(textEl, fontExpr) { return this._applyInlineStyle(textEl, { fontFamily: fontExpr }); }
+
+    bind() {
+      document.addEventListener('pointerdown', this._onDocPointerDown, true); document.addEventListener('focusin', this._onFocusIn, true); document.addEventListener('selectionchange', this._onSelectionChange);
+      this.toolbar.querySelectorAll('button[data-cmd]').forEach((btn) => { btn.addEventListener('mousedown', (ev) => ev.preventDefault()); btn.addEventListener('click', () => this._exec(btn.getAttribute('data-cmd'))); });
+      this.toolbar.querySelectorAll('button[data-size]').forEach((btn) => {
+        btn.addEventListener('mousedown', (ev) => ev.preventDefault()); btn.addEventListener('click', () => {
+          const v = btn.getAttribute('data-size'); if (!v) return; const textEl = this._activeTextEl(); if (!textEl) return;
+          const beforeHtml = textEl.innerHTML; const fac = parseFloat(v, 10); this._applyFontSizeFactor(textEl, fac);
+          if (beforeHtml !== textEl.innerHTML) { this.history.push({ undo: () => { textEl.innerHTML = beforeHtml; }, redo: () => { textEl.innerHTML = textEl.innerHTML; } }); } this._updateRteToolbar();
+        });
+      });
+      this.toolbar.querySelectorAll('button[data-font]').forEach((btn) => {
+        btn.addEventListener('mousedown', (ev) => ev.preventDefault()); btn.addEventListener('click', () => {
+          const fontExpr = btn.getAttribute('data-font'); if (!fontExpr) return; const textEl = this._activeTextEl(); if (!textEl) return;
+          const beforeHtml = textEl.innerHTML; this._applyFontFamily(textEl, fontExpr);
+          if (beforeHtml !== textEl.innerHTML) { this.history.push({ undo: () => { textEl.innerHTML = beforeHtml; }, redo: () => { textEl.innerHTML = textEl.innerHTML; } }); } this._updateRteToolbar();
+        });
+      });
+    }
+    _exec(cmd) { const textEl = this._activeTextEl(); if (!textEl) return; textEl.focus(); const before = textEl.innerHTML; document.execCommand(cmd, false, null); if (before !== textEl.innerHTML) { this.history.push({ undo: () => { textEl.innerHTML = before; }, redo: () => { textEl.innerHTML = textEl.innerHTML; } }); } this._syncRteButtons(); this._updateRteToolbar(); }
+  }
+
+  /* ---------- Sidebar ---------- */
+  class SlideSidebar {
+    constructor(deck, history) { this.deck = deck; this.history = history; this.list = document.getElementById('filmstripList'); this.open = false; this._dragFilm = null; }
+    setOpen(on) { this.open = !!on; document.body.classList.toggle('deck-sidebar-open', on); document.getElementById('pagesToggle').classList.toggle('active', on); if (on) this.refresh(); }
+    toggle() { this.setOpen(!this.open); }
+    refresh() {
+      this.list.innerHTML = ''; this.deck.refreshSlides();
+      this.deck.slides.forEach((slide, idx) => {
+        const item = document.createElement('div'); item.className = 'filmstrip-item'; item.dataset.slideIndex = String(idx); if (idx === this.deck.current) item.classList.add('is-current');
+        const lineTop = document.createElement('div'); lineTop.className = 'filmstrip-drop-line filmstrip-drop-line-before';
+        const host = document.createElement('div'); host.className = 'filmstrip-thumb-host';
+        const lineBot = document.createElement('div'); lineBot.className = 'filmstrip-drop-line filmstrip-drop-line-after';
+        const actions = document.createElement('div'); actions.className = 'filmstrip-actions';
+        const num = document.createElement('span'); num.className = 'filmstrip-num'; num.textContent = 'Slide ' + (idx + 1);
+        const del = document.createElement('button'); del.type = 'button'; del.textContent = 'Delete'; del.addEventListener('click', (ev) => { ev.stopPropagation(); this._deleteSlide(idx); });
+        actions.appendChild(num); actions.appendChild(del);
+        item.appendChild(lineTop); item.appendChild(host); item.appendChild(lineBot); item.appendChild(actions);
+        item.addEventListener('click', (ev) => { if (ev.target.closest('button')) return; this.deck.goTo(idx); this.refresh(); });
+        this._fillThumb(slide, host);
+        item.addEventListener('pointerdown', (ev) => { if (ev.target.closest('button')) return; this._startFilmDrag(ev, item, idx); });
+        this.list.appendChild(item);
+      });
+    }
+    _fillThumb(slideEl, host) {
+      host.innerHTML = ''; const wrap = document.createElement('div'); wrap.style.cssText = 'position:relative;width:100%;height:100%;overflow:hidden;border-radius:6px;';
+      const sc = document.createElement('div'); sc.style.cssText = 'position:absolute;left:0;top:0;transform-origin:0 0;';
+      const cl = slideEl.cloneNode(true); cl.querySelectorAll('[id]').forEach((n) => n.removeAttribute('id')); cl.querySelectorAll('script').forEach((n) => n.remove()); cl.querySelectorAll('[data-slide-object]').forEach((n) => { n.removeAttribute('data-slide-object'); n.removeAttribute('data-oid'); n.removeAttribute('data-object-type'); n.classList.remove('is-selected'); }); cl.querySelectorAll('.slide-object-move, .slide-object-resize').forEach((n) => n.remove()); cl.querySelectorAll('[contenteditable]').forEach((n) => n.setAttribute('contenteditable', 'false'));
+      const w = slideEl.offsetWidth || window.innerWidth; const h = slideEl.offsetHeight || window.innerHeight; cl.style.width = w + 'px'; cl.style.height = h + 'px'; sc.appendChild(cl); wrap.appendChild(sc); host.appendChild(wrap);
+      requestAnimationFrame(() => { const bw = host.clientWidth, bh = host.clientHeight; const s = Math.min(bw / w, bh / h); sc.style.transform = 'scale(' + s + ')'; });
+    }
+    _startFilmDrag(ev, item, fromIndex) { if (ev.button !== 0) return; ev.preventDefault(); item.classList.add('dragging'); this._dragFilm = { fromIndex, item, lastX: ev.clientX, lastY: ev.clientY, targetIndex: null, before: true }; const move = (e) => { this._dragFilm.lastX = e.clientX; this._dragFilm.lastY = e.clientY; const el = document.elementFromPoint(e.clientX, e.clientY); const target = el && el.closest && el.closest('.filmstrip-item'); this.list.querySelectorAll('.filmstrip-item').forEach((it) => { it.classList.remove('drop-before', 'drop-after'); }); if (!target || target === item) return; const r = target.getBoundingClientRect(); const before = e.clientY < r.top + r.height / 2; target.classList.add(before ? 'drop-before' : 'drop-after'); this._dragFilm.targetIndex = parseInt(target.dataset.slideIndex, 10); this._dragFilm.before = before; }; const up = () => { item.classList.remove('dragging'); this.list.querySelectorAll('.filmstrip-item').forEach((it) => { it.classList.remove('drop-before', 'drop-after'); }); document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); if (this._dragFilm) { const { fromIndex, targetIndex, before } = this._dragFilm; this._dragFilm = null; if (targetIndex !== null && targetIndex !== undefined) { this._reorderFilmstrip(fromIndex, targetIndex, before); } } }; document.addEventListener('pointermove', move); document.addEventListener('pointerup', up); }
+    _reorderFilmstrip(fromIndex, targetIndex, before) {
+      this.deck.refreshSlides(); const slides = [...this.deck.slides]; const n = slides.length; if (fromIndex < 0 || fromIndex >= n) return; if (targetIndex < 0 || targetIndex >= n) return;
+      const beforeIds = slides.map((s) => s.id); const [el] = slides.splice(fromIndex, 1); let to = before ? (fromIndex < targetIndex ? targetIndex - 1 : targetIndex) : (fromIndex <= targetIndex ? targetIndex : targetIndex + 1); to = Math.max(0, Math.min(slides.length, to)); slides.splice(to, 0, el);
+      const parent = slides[0].parentNode; slides.forEach((s) => parent.appendChild(s));
+      this.deck.refreshSlides(); const afterIds = this.deck.slides.map((s) => s.id);
+      this.history.push({ undo: () => { this._restoreOrder(parent, beforeIds); this.deck.refreshSlides(); this.deck._updateChrome(); this.refresh(); }, redo: () => { this._restoreOrder(parent, afterIds); this.deck.refreshSlides(); this.deck._updateChrome(); this.refresh(); } });
+      this.deck._updateChrome(); this.refresh();
+    }
+    _restoreOrder(parent, ids) { const map = {}; Array.from(parent.querySelectorAll(':scope > section.slide')).forEach((s) => { map[s.id] = s; }); const frag = document.createDocumentFragment(); ids.forEach((id) => { if (map[id]) frag.appendChild(map[id]); }); parent.appendChild(frag); }
+    _deleteSlide(index) {
+      this.deck.refreshSlides(); if (this.deck.slides.length <= 1) { alert('At least one slide is required.'); return; } if (!confirm('Delete this slide?')) return;
+      const slide = this.deck.slides[index]; const parent = slide.parentNode; const next = slide.nextElementSibling; const outer = slide.outerHTML; const nid = next && next.id ? next.id : null; const sid = slide.id;
+      parent.removeChild(slide); this.deck.refreshSlides();
+      this.history.push({ undo: () => { const tpl = document.createElement('template'); tpl.innerHTML = outer.trim(); const node = tpl.content.firstElementChild; if (nid) { const ref = parent.querySelector('#' + CSS.escape(nid)); parent.insertBefore(node, ref); } else parent.appendChild(node); this.deck.refreshSlides(); ensureResizeHandles(document); this.deck._updateChrome(); this.refresh(); }, redo: () => { const el = document.getElementById(sid); if (el && el.parentNode) el.parentNode.removeChild(el); this.deck.refreshSlides(); this.deck._updateChrome(); this.refresh(); } });
+      this.deck.goTo(Math.min(index, this.deck.slides.length - 1)); this.refresh();
+    }
+  }
+
+  function sanitizeEditableState(root) {
+    if (!root || !root.querySelectorAll) return;
+    root.querySelectorAll('.slide-object.is-selected').forEach((el) => { el.classList.remove('is-selected'); });
+    root.querySelectorAll('.slide-object-text').forEach((el) => { if (el.getAttribute('contenteditable') === 'true') { el.setAttribute('contenteditable', 'false'); } delete el.dataset._deckHtmlBefore; el.removeAttribute('data-_deck-html-before'); });
+    root.querySelectorAll('.snap-line-v, .snap-line-h').forEach((el) => el.remove());
+  }
+  function serializeSlidesRoot(root) { const clone = root.cloneNode(true); sanitizeEditableState(clone); return clone.innerHTML; }
+  function sanitizeExportDocument(docEl) {
+    if (!docEl || !docEl.querySelector) return; const body = docEl.querySelector('body'); if (body) { body.classList.remove('deck-edit-mode', 'slide-anim-paused', 'deck-sidebar-open'); } sanitizeEditableState(docEl);
+    const filmstrip = docEl.querySelector('#filmstripList'); if (filmstrip) filmstrip.innerHTML = '';
+    ['#editToggle', '#pagesToggle', '#btnSave', '#deckEditChrome', '#rteToolbar'].forEach((selector) => { const el = docEl.querySelector(selector); if (!el) return; el.classList.remove('show', 'active', 'visible'); if (selector === '#rteToolbar') { el.style.left = ''; el.style.top = ''; } });
+  }
+
+  /* ---------- Persistence ---------- */
+  function saveState() { const root = document.querySelector('.slides-offset') || document.body; const data = { v: 2, deckHtml: serializeSlidesRoot(root) }; try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) { console.warn(e); } }
+  function loadState() { try { const raw = localStorage.getItem(STORAGE_KEY); if (!raw) return; const data = JSON.parse(raw); if (!data) return; const parent = document.querySelector('.slides-offset') || document.body; if (typeof data.deckHtml === 'string') { parent.innerHTML = data.deckHtml; } else if (Array.isArray(data.slides)) { const map = {}; Array.from(parent.querySelectorAll(':scope > section.slide')).forEach((s) => { map[s.id] = s; }); data.slides.forEach((entry) => { const el = map[entry.id]; if (el) el.innerHTML = entry.html; }); } else return; ensureResizeHandles(document); deck.refreshSlides(); deck._syncCurrentFromScroll(); deck._updateChrome(); } catch (e) { console.warn(e); } }
+  function exportHtml() { const clone = document.documentElement.cloneNode(true); sanitizeExportDocument(clone); const html = '<!DOCTYPE html>\n' + clone.outerHTML; const blob = new Blob([html], { type: 'text/html;charset=utf-8' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = (document.title || 'deck') + '.html'; a.click(); URL.revokeObjectURL(a.href); }
+
+  /* ---------- Init ---------- */
+  const btnUndo = document.getElementById('btnUndo'); const btnRedo = document.getElementById('btnRedo');
+  const btnDoneEdit = document.getElementById('btnDoneEdit'); const deckEditChromeEl = document.getElementById('deckEditChrome');
+  const deckLeftHover = document.getElementById('deckLeftHover'); const editToggle = document.getElementById('editToggle');
+  const pagesToggle = document.getElementById('pagesToggle'); const btnSave = document.getElementById('btnSave');
+
+  function updateUndoRedoChrome() { if (btnUndo) { btnUndo.disabled = !history.canUndo(); btnUndo.setAttribute('aria-disabled', btnUndo.disabled ? 'true' : 'false'); } if (btnRedo) { btnRedo.disabled = !history.canRedo(); btnRedo.setAttribute('aria-disabled', btnRedo.disabled ? 'true' : 'false'); } }
+
+  const history = new HistoryStack(updateUndoRedoChrome);
+  const deck = new SlideDeck();
+  const editor = new SlideObjectEditor(deck, history);
+  const sidebar = new SlideSidebar(deck, history);
+
+  ensureResizeHandles(document); editor.bind(); updateUndoRedoChrome();
+
+  document.addEventListener('focusout', (e) => {
+    const t = e.target; if (!editor.active) return; if (!t.classList || !t.classList.contains('slide-object-text')) return; if (t.getAttribute('contenteditable') !== 'true') return;
+    setTimeout(() => { if (!editor.active) return; const ae = document.activeElement; if (ae && (ae === t || t.contains(ae) || editor.toolbar.contains(ae))) return; t.contentEditable = 'false'; const before = t.dataset._deckHtmlBefore; if (before !== undefined && before !== t.innerHTML) { const after = t.innerHTML; history.push({ undo: () => { t.innerHTML = before; }, redo: () => { t.innerHTML = after; } }); } delete t.dataset._deckHtmlBefore; editor.toolbar.classList.remove('visible'); updateUndoRedoChrome(); }, 0);
+  }, true);
+
+  if (btnUndo) { btnUndo.addEventListener('mousedown', (ev) => ev.preventDefault()); btnUndo.addEventListener('click', () => { history.undo(); }); }
+  if (btnRedo) { btnRedo.addEventListener('mousedown', (ev) => ev.preventDefault()); btnRedo.addEventListener('click', () => { history.redo(); }); }
+  if (btnDoneEdit) { btnDoneEdit.addEventListener('click', () => exitEditMode()); }
+
+  function exitEditMode() { editor.setActive(false); editToggle.classList.remove('active'); pagesToggle.classList.remove('active'); sidebar.setOpen(false); editToggle.classList.remove('show'); pagesToggle.classList.remove('show'); if (deckEditChromeEl) deckEditChromeEl.classList.remove('show'); if (btnSave) btnSave.classList.remove('show'); updateUndoRedoChrome(); }
+  function enterEditMode() { editor.setActive(true); editToggle.classList.add('active'); sidebar.setOpen(true); updateUndoRedoChrome(); }
+
+  loadState();
+
+  deck.onSlideChange = () => { if (sidebar.open) sidebar.refresh(); deck._updateChrome(); };
+
+  let hideT = null;
+  function showToggles() { clearTimeout(hideT); editToggle.classList.add('show'); pagesToggle.classList.add('show'); if (document.body.classList.contains('deck-edit-mode')) { if (btnSave) btnSave.classList.add('show'); if (deckEditChromeEl) deckEditChromeEl.classList.add('show'); } }
+  function scheduleHide() { hideT = setTimeout(() => { editToggle.classList.remove('show'); pagesToggle.classList.remove('show'); if (btnSave) btnSave.classList.remove('show'); if (deckEditChromeEl) deckEditChromeEl.classList.remove('show'); }, 400); }
+  if (deckLeftHover) { deckLeftHover.addEventListener('mouseenter', showToggles); deckLeftHover.addEventListener('mouseleave', scheduleHide); }
+  editToggle.addEventListener('mouseenter', () => clearTimeout(hideT)); editToggle.addEventListener('mouseleave', scheduleHide);
+  pagesToggle.addEventListener('mouseenter', () => clearTimeout(hideT)); pagesToggle.addEventListener('mouseleave', scheduleHide);
+  if (deckEditChromeEl) { deckEditChromeEl.addEventListener('mouseenter', () => clearTimeout(hideT)); deckEditChromeEl.addEventListener('mouseleave', scheduleHide); }
+  if (btnSave) { btnSave.addEventListener('mouseenter', () => clearTimeout(hideT)); btnSave.addEventListener('mouseleave', scheduleHide); }
+
+  editToggle.addEventListener('click', () => { if (!editor.active) enterEditMode(); });
+  pagesToggle.addEventListener('click', () => { sidebar.toggle(); pagesToggle.classList.toggle('active', sidebar.open); if (sidebar.open) sidebar.refresh(); });
+  if (btnSave) btnSave.addEventListener('click', saveState);
+  document.getElementById('btnExport').addEventListener('click', exportHtml);
+
+  document.addEventListener('keydown', (e) => {
+    const ce = e.target.closest && e.target.closest('.slide-object-text[contenteditable="true"]');
+    if (editor.active && (e.key === 'Escape' || e.key === 'Esc')) { if (ce) { e.preventDefault(); ce.contentEditable = 'false'; ce.blur(); editor.toolbar.classList.remove('visible'); return; } e.preventDefault(); exitEditMode(); return; }
+    if ((e.key === 'e' || e.key === 'E') && !ce) { e.preventDefault(); if (editor.active) exitEditMode(); else enterEditMode(); }
+    if (editor.active && (e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) { e.preventDefault(); saveState(); }
+    if (editor.active && !ce && (e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'Z')) { e.preventDefault(); if (e.shiftKey) history.redo(); else history.undo(); }
+    if (editor.active && !ce && (e.ctrlKey || e.metaKey) && (e.key === 'y' || e.key === 'Y')) { e.preventDefault(); history.redo(); }
+    if (editor.active && !ce && (e.key === 'Delete' || e.key === 'Backspace')) {
+      if (editor.selected.size === 0) return; if (editor.selected.size >= 2 && !confirm('Delete ' + editor.selected.size + ' objects?')) return;
+      const toRemove = Array.from(editor.selected); const snapshots = toRemove.map((el) => { const slideSec = el.closest('section.slide'); return { slideId: slideSec ? slideSec.id : '', oid: el.getAttribute('data-oid') || '', html: el.outerHTML }; }); toRemove.forEach((el) => el.remove()); editor.clearSelection();
+      history.push({ undo: () => { snapshots.forEach((s) => { const slideSec = document.getElementById(s.slideId); if (!slideSec) return; const layer = slideSec.querySelector('.slide-edit-layer'); if (!layer) return; const tpl = document.createElement('template'); tpl.innerHTML = s.html.trim(); const node = tpl.content.firstElementChild; if (node) layer.appendChild(node); }); ensureResizeHandles(document); }, redo: () => { snapshots.forEach((s) => { const slideSec = document.getElementById(s.slideId); if (!slideSec || !s.oid) return; const n = slideSec.querySelector('[data-oid="' + s.oid.replace(/"/g, '') + '"]'); if (n) n.remove(); }); } });
+    }
+  });
+
+  deck._updateChrome();
+})();
+</script>
+</body>
+</html>

@@ -1,6 +1,9 @@
 package com.sushepro.mapper;
 
 import com.sushepro.pojo.User;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface UserMapper {
     // 根据用户名查询用户
@@ -17,4 +20,7 @@ public interface UserMapper {
     
     // 删除用户
     int deleteUser(Integer id);
+
+    // 根据角色查询用户
+    List<User> findByRole(@Param("role") Integer role);
 }

@@ -4,7 +4,11 @@ import com.sushepro.mapper.DormitoryAllocationMapper;
 import com.sushepro.mapper.DormitoryMapper;
 import com.sushepro.pojo.Dormitory;
 import com.sushepro.pojo.DormitoryAllocation;
+import com.sushepro.pojo.Notification;
+import com.sushepro.pojo.Student;
 import com.sushepro.service.DormitoryAllocationService;
+import com.sushepro.service.NotificationService;
+import com.sushepro.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +25,12 @@ public class DormitoryAllocationServiceImpl implements DormitoryAllocationServic
     
     @Autowired
     private DormitoryMapper dormitoryMapper;
+
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private StudentService studentService;
     
     @Override
     public DormitoryAllocation findById(Integer id) {
@@ -75,11 +85,27 @@ public class DormitoryAllocationServiceImpl implements DormitoryAllocationServic
                 int newOccupancy = newDormitory.getCurrentOccupancy() + 1;
                 dormitoryMapper.updateCurrentOccupancy(newDormitory.getId(), newOccupancy);
             }
+
+            // 学生通知
+            Student student = studentService.findById(dormitoryAllocation.getStudentId());
+            if (student != null) {
+                Notification notif = new Notification();
+                notif.setUserId(student.getUserId());
+                notif.setType("allocation_created");
+                notif.setReferenceId(dormitoryAllocation.getId());
+                notif.setReferenceType("allocation");
+                notif.setTitle("宿舍分配完成");
+                String dormInfo = (newDormitory != null ? newDormitory.getBuilding() : "") + (newDormitory != null ? newDormitory.getDormitoryNumber() : "");
+                notif.setContent(dormInfo);
+                notif.setRefStatus(dormitoryAllocation.getStatus());
+                notif.setCreateTime(new Date());
+                notificationService.createNotification(notif);
+            }
         }
-        
+
         return result;
     }
-    
+
     @Override
     public int updateDormitoryAllocation(DormitoryAllocation dormitoryAllocation) {
         return dormitoryAllocationMapper.updateDormitoryAllocation(dormitoryAllocation);

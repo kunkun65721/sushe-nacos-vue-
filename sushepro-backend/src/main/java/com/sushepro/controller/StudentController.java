@@ -43,6 +43,9 @@ public class StudentController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private NotificationService notificationService;
+
     private User getUserFromToken(String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return null;
@@ -340,58 +343,51 @@ public class StudentController {
             return ApiResponse.unauthorized();
         }
 
-        Map<String, Object> data = new HashMap<>();
-        Student student = studentService.findByUserId(user.getId());
-        if (student != null) {
-            // 报修申请进度通知
-            List<RepairRequest> repairList = repairRequestService.findByStudentId(student.getId());
-            List<Map<String, Object>> repairNotifications = new ArrayList<>();
-            for (RepairRequest r : repairList) {
-                Map<String, Object> notif = new HashMap<>();
-                notif.put("id", r.getId());
-                notif.put("type", "repair");
-                notif.put("icon", "plumbing");
-                String statusText = r.getStatus() == 0 ? "待处理" : r.getStatus() == 1 ? "处理中" : r.getStatus() == 2 ? "已完成" : "已拒绝";
-                notif.put("title", "报修申请 - " + statusText);
-                notif.put("description", (r.getBuilding() != null ? r.getBuilding() : "") + (r.getDormitoryNumber() != null ? r.getDormitoryNumber() : "") + " - " + (r.getDescription() != null ? r.getDescription() : ""));
-                notif.put("time", r.getCreateTime());
-                notif.put("status", r.getStatus());
-                notif.put("adminComment", r.getAdminComment());
-                repairNotifications.add(notif);
-            }
-            data.put("repairs", repairNotifications);
+        List<Notification> notifications = notificationService.findActiveByUserId(user.getId());
 
-            // 调换申请进度通知
-            List<DormitoryTransfer> transferList = dormitoryTransferService.findByStudentId(student.getId());
-            List<Map<String, Object>> transferNotifications = new ArrayList<>();
-            for (DormitoryTransfer t : transferList) {
-                Map<String, Object> notif = new HashMap<>();
-                notif.put("id", t.getId());
-                notif.put("type", "transfer");
-                notif.put("icon", "swap_horiz");
-                String statusText = t.getStatus() == 0 ? "待审核" : t.getStatus() == 1 ? "已通过" : "已拒绝";
-                notif.put("title", "调换申请 - " + statusText);
-                notif.put("description", t.getReason() != null ? t.getReason() : "");
-                notif.put("time", t.getApplyTime());
-                notif.put("status", t.getStatus());
-                notif.put("adminComment", t.getAdminComment());
-                transferNotifications.add(notif);
-            }
-            data.put("transfers", transferNotifications);
+        List<Map<String, Object>> repairNotifs = new ArrayList<>();
+        List<Map<String, Object>> transferNotifs = new ArrayList<>();
+        Map<String, Object> allocNotif = null;
 
-            // 宿舍分配信息
-            DormitoryAllocation allocation = dormitoryAllocationService.findByStudentId(student.getId());
-            if (allocation != null) {
-                Map<String, Object> allocNotif = new HashMap<>();
-                allocNotif.put("id", allocation.getId());
-                allocNotif.put("type", "allocation");
-                allocNotif.put("icon", "king_bed");
-                allocNotif.put("title", "宿舍分配");
-                allocNotif.put("description", (allocation.getBuilding() != null ? allocation.getBuilding() : "") + (allocation.getDormitoryNumber() != null ? allocation.getDormitoryNumber() : ""));
-                allocNotif.put("time", allocation.getAllocateTime());
-                data.put("allocation", allocNotif);
+        for (Notification n : notifications) {
+            Map<String, Object> m = new HashMap<>();
+            m.put("id", n.getId());
+            m.put("referenceId", n.getReferenceId());
+            m.put("type", n.getReferenceType());
+            m.put("title", n.getTitle());
+            m.put("description", n.getContent());
+            m.put("time", n.getCreateTime());
+            m.put("status", n.getRefStatus());
+            m.put("isRead", n.getIsRead());
+
+            // 根据类型设置图标
+            String icon;
+            switch (n.getType()) {
+                case "repair_submitted": icon = "plumbing"; break;
+                case "repair_processing": icon = "engineering"; break;
+                case "repair_completed": icon = "check_circle"; break;
+                case "repair_rejected": icon = "cancel"; break;
+                case "transfer_submitted": icon = "swap_horiz"; break;
+                case "transfer_approved": icon = "check_circle"; break;
+                case "transfer_rejected": icon = "cancel"; break;
+                case "allocation_created": icon = "king_bed"; break;
+                default: icon = "notifications";
+            }
+            m.put("icon", icon);
+
+            if ("repair".equals(n.getReferenceType())) {
+                repairNotifs.add(m);
+            } else if ("transfer".equals(n.getReferenceType())) {
+                transferNotifs.add(m);
+            } else if ("allocation".equals(n.getReferenceType())) {
+                allocNotif = m;
             }
         }
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("repairs", repairNotifs);
+        data.put("transfers", transferNotifs);
+        data.put("allocation", allocNotif);
         return ApiResponse.success(data);
     }
 
@@ -402,7 +398,7 @@ public class StudentController {
         if (user == null) {
             return ApiResponse.unauthorized();
         }
-        repairRequestService.deleteRepair(id);
+        notificationService.markAsDeleted(id);
         return ApiResponse.success();
     }
 
@@ -413,7 +409,7 @@ public class StudentController {
         if (user == null) {
             return ApiResponse.unauthorized();
         }
-        dormitoryTransferService.deleteTransfer(id);
+        notificationService.markAsDeleted(id);
         return ApiResponse.success();
     }
 

@@ -2,6 +2,8 @@ package com.sushepro.service;
 
 import com.sushepro.pojo.User;
 
+import java.util.List;
+
 public interface UserService {
     // 用户登录
     User login(String username, String password);
@@ -17,4 +19,7 @@ public interface UserService {
     
     // 删除用户
     int deleteUser(Integer id);
+
+    // 根据角色查询用户
+    List<User> findByRole(Integer role);
 }
