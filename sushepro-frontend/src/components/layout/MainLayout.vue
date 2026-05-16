@@ -121,6 +121,7 @@ const pageTitle = computed(() => {
   if (path.includes('allocations')) return '分配管理'
   if (path.includes('transfers')) return '调换管理'
   if (path.includes('repairs')) return '报修管理'
+  if (path.includes('knowledge')) return '知识库'
   if (path.includes('ai')) return 'AI匹配'
   if (path.includes('profile')) return '个人资料'
   if (path.includes('questionnaire')) return '生活方式问卷'
@@ -138,6 +139,7 @@ const adminMenuItems = [
   { path: '/admin/allocations', title: '分配管理', icon: 'assignment_turned_in' },
   { path: '/admin/transfers', title: '调换管理', icon: 'swap_horiz' },
   { path: '/admin/repairs', title: '报修管理', icon: 'construction' },
+  { path: '/admin/knowledge-base', title: '知识库', icon: 'library_books' },
   { path: '/admin/ai-recommend', title: 'AI匹配', icon: 'psychology' }
 ]
 

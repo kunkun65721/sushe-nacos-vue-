@@ -98,6 +98,12 @@ const routes: RouteRecordRaw[] = [
         meta: { requiresAuth: true, role: 'admin' }
       },
       {
+        path: 'admin/knowledge-base',
+        name: 'AdminKnowledgeBase',
+        component: () => import('@/views/admin/KnowledgeBase.vue'),
+        meta: { requiresAuth: true, role: 'admin' }
+      },
+      {
         path: 'admin/notifications',
         name: 'AdminNotifications',
         component: () => import('@/views/admin/Notifications.vue'),

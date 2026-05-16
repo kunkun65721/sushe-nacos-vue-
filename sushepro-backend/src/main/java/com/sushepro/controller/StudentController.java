@@ -318,7 +318,9 @@ public class StudentController {
 
     private String saveFile(HttpServletRequest request, MultipartFile file, String subDir) throws IOException {
         // 使用项目根目录下的 uploads 文件夹，便于静态资源访问
-        String uploadDir = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + subDir;
+        // user.dir 默认是后端模块目录，需要回退两级到项目根目录
+        String projectRoot = new File(System.getProperty("user.dir")).getParent();
+        String uploadDir = projectRoot + File.separator + "uploads" + File.separator + subDir;
         File dir = new File(uploadDir);
         if (!dir.exists()) {
             dir.mkdirs();

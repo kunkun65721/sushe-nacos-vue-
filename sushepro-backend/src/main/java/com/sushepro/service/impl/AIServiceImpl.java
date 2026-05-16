@@ -13,6 +13,7 @@ import com.sushepro.service.StudentService;
 import com.sushepro.service.DormitoryService;
 import com.sushepro.service.HabitQuestionnaireService;
 import com.sushepro.service.DormitoryAllocationService;
+import com.sushepro.service.KnowledgeBaseService;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -47,6 +48,9 @@ public class AIServiceImpl implements AIService {
     
     @Autowired
     private DormitoryAllocationService dormitoryAllocationService;
+
+    @Autowired
+    private KnowledgeBaseService knowledgeBaseService;
     
     // DeepSeek API配置
     private static final String API_URL = "https://api.deepseek.com/v1/chat/completions";
@@ -304,23 +308,37 @@ public class AIServiceImpl implements AIService {
 
             // 系统消息
             JSONObject systemMsg = new JSONObject();
+            StringBuilder systemPrompt = new StringBuilder();
+            systemPrompt.append("你是学生宿舍管理系统的AI客服助手。你的职责是帮助学生解答关于宿舍的各类问题。\n\n");
+
+            // 知识库内容（动态加载）
+            String knowledgeContent = knowledgeBaseService.getAllEnabledContentForAI();
+            if (knowledgeContent != null && !knowledgeContent.isEmpty()) {
+                systemPrompt.append("【知识库信息】\n以下是管理员上传的与宿舍管理相关的制度、规定和常见问题，请据此回答学生问题：\n\n")
+                           .append(knowledgeContent)
+                           .append("\n");
+            }
+
+            systemPrompt.append("你可以回答的问题范围包括：\n")
+                .append("- 宿舍设施（房间类型、容量、楼栋位置等）\n")
+                .append("- 宿舍管理规定（作息时间、访客制度、卫生要求等）\n")
+                .append("- 宿舍分配流程和规则\n")
+                .append("- 生活习惯问卷的填写指导\n")
+                .append("- 宿舍调换的相关政策和流程\n")
+                .append("- 宿舍费用相关问题\n\n")
+                .append("请优先使用上述知识库内容回答问题。如果知识库中没有相关信息，请根据常识回答。\n\n")
+                .append("你不能回答的问题：\n")
+                .append("- 与宿舍管理无关的问题\n")
+                .append("- 其他学生的个人信息\n")
+                .append("- 修改系统数据的请求\n\n")
+                .append("请用友好、耐心的语气回复，回复内容简洁明了，使用中文。\n\n")
+                .append("以下是当前学生的个人信息，你可以在回答中引用这些信息来提供个性化帮助：\n")
+                .append(studentContext)
+                .append("\n\n")
+                .append("现在开始回答学生的问题。");
+
             systemMsg.put("role", "system");
-            systemMsg.put("content", "你是学生宿舍管理系统的AI客服助手。你的职责是帮助学生解答关于宿舍的各类问题。\n\n" +
-                "你可以回答的问题范围包括：\n" +
-                "- 宿舍设施（房间类型、容量、楼栋位置等）\n" +
-                "- 宿舍管理规定（作息时间、访客制度、卫生要求等）\n" +
-                "- 宿舍分配流程和规则\n" +
-                "- 生活习惯问卷的填写指导\n" +
-                "- 宿舍调换的相关政策和流程\n" +
-                "- 宿舍费用相关问题\n\n" +
-                "你不能回答的问题：\n" +
-                "- 与宿舍管理无关的问题\n" +
-                "- 其他学生的个人信息\n" +
-                "- 修改系统数据的请求\n\n" +
-                "请用友好、耐心的语气回复，回复内容简洁明了，使用中文。\n\n" +
-                "以下是当前学生的个人信息，你可以在回答中引用这些信息来提供个性化帮助：\n" +
-                studentContext + "\n\n" +
-                "现在开始回答学生的问题。如果学生询问宿舍分配相关问题但你不知道具体信息，请建议学生联系宿舍管理员。");
+            systemMsg.put("content", systemPrompt.toString());
             messages.add(systemMsg);
 
             // 历史消息
