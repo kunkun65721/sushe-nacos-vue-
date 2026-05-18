@@ -21,7 +21,11 @@
       "Bash(curl -s http://localhost:5175)",
       "Bash(curl -s http://localhost:8080/api/admin/index -o /dev/null -w \"%{http_code}\")",
       "Bash(chcp 65001)",
-      "Bash(xxd -l 20 \"D:/IntelliJ IDEA 2025.1.2/xiangmu/sushepro - 副本/uploads/knowledge/8c95ec84-bd82-4f62-bd44-ba1d53f0d313.txt\")"
+      "Bash(xxd -l 20 \"D:/IntelliJ IDEA 2025.1.2/xiangmu/sushepro - 副本/uploads/knowledge/8c95ec84-bd82-4f62-bd44-ba1d53f0d313.txt\")",
+      "Bash(python -c ' *)",
+      "Skill(frontend-slides)",
+      "Skill(frontend-slides:*)",
+      "Bash(python generate_report.py)"
     ]
   }
 }

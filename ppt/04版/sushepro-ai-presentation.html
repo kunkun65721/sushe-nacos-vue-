@@ -1,0 +1,2014 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>宿舍管理系统 × AI智能</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Stardos+Stencil:wght@400;700&family=Barlow+Condensed:wght@500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="deck-stage.js"></script>
+<style>
+  :root {
+    --bone:    #E2DCC9;
+    --black:   #000000;
+    --ink:     #0A0A0A;
+    --paper:   #F4EFE0;
+    --sienna:  #A06A3C;
+    --magenta: #C73B7A;
+    --orange:  #EE7A2E;
+    --teal:    #2D7E73;
+    --blue:    #3F73B7;
+    --mustard: #D8A93B;
+    --olive:   #6F7A2E;
+  }
+  html, body { margin:0; padding:0; background:#1a1a1a; }
+  body { font-family: "Inter", "Helvetica Neue", Arial, sans-serif; color: var(--ink); }
+  deck-stage { background: #1a1a1a; }
+
+  section.slide { background: var(--bone); color: var(--ink); overflow: hidden; position: relative; }
+  section.slide.dark { background: var(--black); color: var(--bone); }
+  section.slide.teal-bg { background: var(--teal); color: var(--bone); }
+  section.slide.orange-bg { background: var(--orange); color: var(--ink); }
+
+  /* ---------- chrome ---------- */
+  .top {
+    position: absolute; top: 48px; left: 64px; right: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: "Barlow Condensed", "Helvetica Neue", sans-serif;
+    font-weight: 800;
+    font-size: 32px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .top .meta { display: flex; gap: 64px; font-size: 24px; font-weight: 600; letter-spacing: .06em; opacity: .85; }
+  section.slide.dark .top, section.slide.teal-bg .top { color: var(--bone); }
+
+  .footer {
+    position: absolute; left: 64px; right: 64px; bottom: 36px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 600; font-size: 22px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    opacity: .75;
+  }
+  section.slide.dark .footer, section.slide.teal-bg .footer { color: var(--bone); }
+
+  /* ---------- shared tablet card ---------- */
+  .tablet { border-radius: 26px; padding: 38px 32px 32px; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+  .tablet .num {
+    font-family: "Stardos Stencil", "Bowlby One", serif;
+    font-weight: 700;
+    line-height: .9;
+    color: var(--ink);
+    font-size: 220px;
+    letter-spacing: -.02em;
+  }
+  .tablet h3 {
+    font-family: "Stardos Stencil", serif;
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+    margin-top: auto;
+    margin-bottom: 14px;
+  }
+  .tablet p {
+    font-family: "Inter", sans-serif;
+    font-size: 22px;
+    line-height: 1.4;
+    color: var(--ink);
+  }
+  .tablet.dark { color: var(--bone); }
+  .tablet.dark h3 { color: var(--bone); }
+  .tablet.dark p  { color: var(--bone); opacity: .9; }
+
+  /* =========== 01 COVER =========== */
+  .s-cover { padding: 0; }
+  .s-cover .stage {
+    position: absolute; inset: 0;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    padding: 48px 64px;
+  }
+  .s-cover .super {
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 800; font-size: 28px; letter-spacing: .12em;
+    text-transform: uppercase; opacity: .8;
+  }
+  .s-cover h1 {
+    font-family: "Stardos Stencil", serif;
+    font-weight: 700;
+    font-size: 200px;
+    line-height: .82;
+    letter-spacing: -.015em;
+    text-transform: uppercase;
+    color: var(--ink);
+    align-self: end;
+    margin: 0;
+  }
+  .s-cover h1 em { font-style: normal; color: var(--magenta); }
+  .s-cover .subtitle {
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 600; font-size: 36px; letter-spacing: .06em;
+    text-transform: uppercase; margin-top: 20px;
+    opacity: .75;
+  }
+  .s-cover .row {
+    display: flex; align-items: end; justify-content: space-between;
+    margin-top: 24px;
+  }
+  .s-cover .row .lockup { display: flex; align-items: center; gap: 18px; }
+  .s-cover .row .mark {
+    width: 56px; height: 56px; border-radius: 14px; background: var(--magenta);
+  }
+  .s-cover .row .who {
+    font-family: "Barlow Condensed", sans-serif; font-weight: 700;
+    font-size: 30px; text-transform: uppercase; letter-spacing: .04em;
+  }
+  .s-cover .row .who small {
+    display: block; font-size: 22px; font-weight: 500; letter-spacing: .08em; opacity: .65;
+  }
+  .s-cover .row .date {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 36px; text-transform: uppercase;
+  }
+  .s-cover .shape {
+    position: absolute; right: 56px; top: 64px;
+    width: 320px; height: 380px;
+    color: var(--teal);
+  }
+  .s-cover .ai-badge {
+    position: absolute; right: 120px; bottom: 200px;
+    background: var(--magenta); color: var(--bone);
+    padding: 16px 28px; border-radius: 14px;
+    font-family: "Barlow Condensed", sans-serif; font-weight: 800;
+    font-size: 28px; letter-spacing: .08em; text-transform: uppercase;
+    transform: rotate(-5deg);
+  }
+
+  /* =========== 02 AGENDA =========== */
+  .s-agenda { padding: 0; }
+  .s-agenda .grid {
+    position: absolute;
+    left: 64px; right: 64px; top: 200px; bottom: 100px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 28px;
+  }
+  .s-agenda .item { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 36px 18px 36px; }
+  .s-agenda .item svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .s-agenda .item .n {
+    position: relative; z-index: 2;
+    font-family: "Barlow Condensed", sans-serif; font-weight: 800;
+    font-size: 32px; letter-spacing: .06em; color: var(--ink);
+  }
+  .s-agenda .item .lab {
+    position: relative; z-index: 2;
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 28px; line-height: 1.05; text-align: center;
+    text-transform: uppercase; color: var(--ink);
+  }
+  .s-agenda .item .desc {
+    position: relative; z-index: 2;
+    font-family: "Inter", sans-serif; font-weight: 500;
+    font-size: 16px; text-align: center;
+    color: var(--ink); opacity: .75; margin-top: 12px;
+  }
+
+  /* =========== 03 PRINCIPLES / CARDS =========== */
+  .s-princ { padding: 0; }
+  .s-princ .row {
+    position: absolute;
+    left: 64px; right: 64px; top: 160px; bottom: 70px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .s-princ .card { border-radius: 26px; padding: 36px 30px 32px; display: flex; flex-direction: column; min-height: 0; }
+  .s-princ .card.c1 { background: var(--sienna); }
+  .s-princ .card.c2 { background: var(--magenta); }
+  .s-princ .card.c3 { background: var(--orange); }
+  .s-princ .card.c4 { background: var(--teal); color: var(--bone); }
+  .s-princ .card .n {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 200px; line-height: .85; letter-spacing: -.02em;
+    color: var(--ink);
+  }
+  .s-princ .card.c4 .n { color: var(--bone); }
+  .s-princ .card h3 {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 30px; line-height: 1.05;
+    text-transform: uppercase; letter-spacing: .02em;
+    margin: auto 0 14px; color: var(--ink);
+  }
+  .s-princ .card.c4 h3 { color: var(--bone); }
+  .s-princ .card p { font-size: 20px; line-height: 1.4; color: var(--ink); }
+  .s-princ .card.c4 p { color: var(--bone); opacity: .9; }
+
+  /* =========== 04 SECTION DIVIDER =========== */
+  .s-sec { padding: 0; }
+  .s-sec .num {
+    position: absolute; left: 64px; top: 110px;
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 480px; line-height: .8; color: var(--orange);
+  }
+  .s-sec .label {
+    position: absolute; right: 64px; top: 220px;
+    font-family: "Barlow Condensed", sans-serif; font-weight: 800;
+    font-size: 24px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--bone); opacity: .7;
+    text-align: right;
+  }
+  .s-sec h2 {
+    position: absolute;
+    right: 64px; bottom: 130px; left: 360px;
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 100px; line-height: .92; text-transform: uppercase;
+    letter-spacing: -.005em;
+    color: var(--bone);
+    text-align: right;
+  }
+  .s-sec h2 em { font-style: normal; color: var(--orange); }
+
+  /* =========== 05 CONSULT / CONTENT =========== */
+  .s-consult .head {
+    position: absolute; left: 64px; right: 64px; top: 130px;
+    background: var(--mustard);
+    border-radius: 22px;
+    padding: 24px 32px;
+    display: flex; align-items: center; gap: 28px;
+  }
+  .s-consult .head .tag {
+    font-family: "Barlow Condensed", sans-serif; font-weight: 800;
+    font-size: 24px; letter-spacing: .12em; text-transform: uppercase;
+    flex-shrink: 0; padding-right: 28px;
+    border-right: 2px solid var(--ink);
+  }
+  .s-consult .head h2 {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 32px; line-height: 1.15; text-transform: uppercase; letter-spacing: -.005em;
+  }
+  .s-consult .grid {
+    position: absolute; left: 64px; right: 64px; top: 290px; bottom: 80px;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr 1fr;
+    gap: 24px;
+  }
+  .s-consult .col {
+    border-radius: 22px; padding: 28px 28px;
+    display: flex; flex-direction: column; gap: 14px; min-height: 0;
+  }
+  .s-consult .col.a { background: var(--paper); }
+  .s-consult .col.b { background: var(--orange); }
+  .s-consult .col.c { background: var(--paper); }
+  .s-consult .col h3 {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 28px; text-transform: uppercase; letter-spacing: .02em;
+    border-bottom: 2px solid var(--ink); padding-bottom: 12px;
+  }
+  .s-consult .col .meta {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 32px; line-height: 1.1;
+  }
+  .s-consult .col p { font-size: 20px; line-height: 1.45; }
+  .s-consult .col ul { margin: 0; padding-left: 22px; font-size: 20px; line-height: 1.45; }
+  .s-consult .col ul li { margin-bottom: 8px; }
+  .s-consult .col ul li strong { font-weight: 700; }
+  .s-consult .col .src {
+    margin-top: auto;
+    font-family: "Barlow Condensed", sans-serif; font-weight: 700;
+    font-size: 18px; letter-spacing: .12em; text-transform: uppercase;
+    border-top: 1px dashed rgba(10,10,10,.35); padding-top: 12px; opacity: .75;
+  }
+
+  /* =========== 06 CHART / IMAGE PLACEHOLDER =========== */
+  .s-chart { padding: 0; }
+  .s-chart .left {
+    position: absolute; left: 64px; top: 200px; bottom: 150px; width: 540px;
+    display: flex; flex-direction: column; gap: 24px;
+  }
+  .s-chart .left h2 {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: min(100px, 10vh); line-height: .92; text-transform: uppercase; letter-spacing: -.01em;
+    color: var(--bone);
+  }
+  .s-chart .left h2 em { font-style: normal; color: var(--orange); }
+  .s-chart .left p { font-size: 22px; line-height: 1.5; color: var(--bone); opacity: .85; }
+  .s-chart .left .legend {
+    margin-top: auto; display: flex; flex-direction: column; gap: 10px;
+  }
+  .s-chart .left .legend .li {
+    display: flex; align-items: center; gap: 14px;
+    font-family: "Barlow Condensed", sans-serif; font-weight: 700;
+    font-size: 22px; letter-spacing: .06em; text-transform: uppercase; color: var(--bone);
+  }
+  .s-chart .left .legend .li i { width: 32px; height: 6px; }
+  .s-chart .right {
+    position: absolute; right: 64px; top: 200px; bottom: 130px; left: 680px;
+    background: var(--paper); border-radius: 22px;
+    padding: 32px;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .placeholder-img {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border: 3px dashed rgba(10,10,10,.3); border-radius: 12px;
+    background: rgba(10,10,10,.05);
+  }
+  .placeholder-img .icon { font-size: 64px; opacity: .4; margin-bottom: 16px; }
+  .placeholder-img .text {
+    font-family: "Barlow Condensed", sans-serif; font-weight: 700;
+    font-size: 24px; letter-spacing: .06em; text-transform: uppercase;
+    opacity: .6;
+  }
+  .placeholder-img .sub {
+    font-family: "Inter", sans-serif; font-size: 16px;
+    opacity: .5; margin-top: 8px;
+  }
+
+  /* =========== 07 PROCESS DIAGRAM =========== */
+  .s-process .head {
+    position: absolute; left: 64px; right: 64px; top: 130px;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 40px;
+  }
+  .s-process .head h2 {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 86px; line-height: .92; text-transform: uppercase; letter-spacing: -.01em;
+  }
+  .s-process .head h2 em { font-style: normal; color: var(--magenta); }
+  .s-process .head .sub {
+    font-family: "Barlow Condensed", sans-serif; font-weight: 600;
+    font-size: 22px; letter-spacing: .06em; text-transform: uppercase;
+    max-width: 38ch; line-height: 1.5; opacity: .8; margin-top: 12px;
+  }
+  .s-process .flow {
+    position: absolute; left: 64px; right: 64px; top: 470px; bottom: 200px;
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 22px;
+  }
+  .s-process .node {
+    border-radius: 22px; padding: 24px 22px 22px;
+    display: flex; flex-direction: column; gap: 8px; position: relative;
+  }
+  .s-process .node.n1 { background: var(--sienna); color: var(--ink); }
+  .s-process .node.n2 { background: var(--magenta); color: var(--ink); }
+  .s-process .node.n3 { background: var(--orange); color: var(--ink); }
+  .s-process .node.n4 { background: var(--teal); color: var(--bone); }
+  .s-process .node.n5 { background: var(--blue); color: var(--bone); }
+  .s-process .node .n {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 64px; line-height: .9;
+  }
+  .s-process .node h3 {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 26px; line-height: 1.05; text-transform: uppercase; letter-spacing: .02em;
+  }
+  .s-process .node p { font-size: 17px; line-height: 1.4; }
+  .s-process .node .arr {
+    position: absolute; right: -16px; top: 40%;
+    width: 32px; height: 32px; z-index: 2;
+  }
+  .s-process .node.n5 .arr { display: none; }
+  .s-process .timeline {
+    position: absolute; left: 64px; right: 64px; bottom: 110px; height: 50px;
+    background: var(--paper); border-radius: 14px;
+    padding: 0 28px; display: flex; align-items: center; justify-content: space-between;
+    font-family: "Barlow Condensed", sans-serif; font-weight: 700;
+    font-size: 20px; letter-spacing: .08em; text-transform: uppercase;
+  }
+
+  /* =========== 08 COMPARISON MATRIX =========== */
+  .s-matrix .head {
+    position: absolute; left: 64px; right: 64px; top: 130px;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 40px;
+  }
+  .s-matrix .head h2 {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 86px; line-height: .92; text-transform: uppercase; letter-spacing: -.01em;
+  }
+  .s-matrix .head h2 em { font-style: normal; color: var(--teal); }
+  .s-matrix .head .sub {
+    font-family: "Barlow Condensed", sans-serif; font-weight: 600;
+    font-size: 22px; letter-spacing: .06em; text-transform: uppercase;
+    max-width: 38ch; line-height: 1.5; opacity: .8; margin-top: 12px;
+  }
+  .s-matrix .table {
+    position: absolute; left: 64px; right: 64px; top: 460px; bottom: 110px;
+    background: var(--paper); border-radius: 22px;
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    grid-auto-rows: 1fr; overflow: hidden;
+  }
+  .s-matrix .cell {
+    padding: 18px 22px; display: flex; align-items: center;
+    font-size: 22px; line-height: 1.35;
+    border-bottom: 1.5px solid rgba(10,10,10,.35);
+    border-right: 1.5px solid rgba(10,10,10,.35);
+  }
+  .s-matrix .cell:nth-child(4n) { border-right: 0; }
+  .s-matrix .cell.last { border-bottom: 0; }
+  .s-matrix .cell.head-row {
+    background: var(--ink); color: var(--bone);
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 24px; text-transform: uppercase; letter-spacing: .02em;
+  }
+  .s-matrix .cell.row-label {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 26px; text-transform: uppercase; letter-spacing: .01em;
+  }
+  .s-matrix .pill {
+    display: inline-block; border-radius: 999px;
+    padding: 6px 16px; font-weight: 700;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 18px; letter-spacing: .08em; text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .s-matrix .pill.yes  { background: var(--teal); color: var(--bone); }
+  .s-matrix .pill.part { background: var(--mustard); color: var(--ink); }
+  .s-matrix .pill.no   { background: var(--magenta); color: var(--bone); }
+  .s-matrix .pill.note { background: var(--paper); color: var(--ink); border: 1.5px solid var(--ink); }
+
+  /* =========== 09 STATS / NUMBERS =========== */
+  .s-stats .head {
+    position: absolute; left: 64px; right: 64px; top: 130px;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 40px;
+  }
+  .s-stats .head h2 {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 86px; line-height: .92; text-transform: uppercase; letter-spacing: -.01em;
+    color: var(--bone);
+  }
+  .s-stats .head h2 em { font-style: normal; color: var(--orange); }
+  .s-stats .head .sub {
+    font-family: "Barlow Condensed", sans-serif; font-weight: 600;
+    font-size: 22px; letter-spacing: .06em; text-transform: uppercase;
+    max-width: 36ch; line-height: 1.5; opacity: .85; color: var(--bone); margin-top: 12px;
+  }
+  .s-stats .grid {
+    position: absolute; left: 64px; right: 64px; top: 470px; bottom: 110px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  }
+  .s-stats .stat {
+    border-radius: 22px; padding: 32px 30px;
+    display: flex; flex-direction: column; gap: 14px;
+    color: var(--ink);
+  }
+  .s-stats .stat.s1 { background: var(--orange); }
+  .s-stats .stat.s2 { background: var(--mustard); }
+  .s-stats .stat.s3 { background: var(--bone); }
+  .s-stats .stat .big {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 140px; line-height: .85; letter-spacing: -.02em;
+  }
+  .s-stats .stat .big small {
+    font-family: "Barlow Condensed", sans-serif; font-weight: 800;
+    font-size: 40px; vertical-align: top; margin-left: 6px;
+  }
+  .s-stats .stat h3 {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 26px; text-transform: uppercase; letter-spacing: .02em;
+    margin-top: auto;
+  }
+  .s-stats .stat p { font-size: 20px; line-height: 1.4; }
+
+  /* =========== 10 QUOTE =========== */
+  .s-quote { padding: 0; }
+  .s-quote .panel {
+    position: absolute; left: 64px; right: 64px; top: 130px; bottom: 110px;
+    background: var(--magenta);
+    border-radius: 26px;
+    padding: 60px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 60px;
+    align-items: center;
+  }
+  .s-quote .panel .qmark {
+    font-family: "Bowlby One", "Stardos Stencil", serif; font-weight: 700;
+    font-size: 280px; line-height: .8; color: var(--ink);
+  }
+  .s-quote .panel blockquote {
+    margin: 0;
+    font-family: "Stardos Stencil", serif; font-weight: 400;
+    font-size: 52px; line-height: 1.05;
+    color: var(--ink);
+    letter-spacing: -.005em;
+  }
+  .s-quote .panel .who {
+    margin-top: 32px;
+    font-family: "Barlow Condensed", sans-serif; font-weight: 800;
+    font-size: 26px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink);
+  }
+  .s-quote .panel .who small {
+    display: block; font-weight: 600; font-size: 22px; opacity: .7; margin-top: 4px;
+  }
+
+  /* =========== 11 CTA =========== */
+  .s-cta { padding: 0; }
+  .s-cta .stage {
+    position: absolute; inset: 0;
+    padding: 130px 64px 100px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+  }
+  .s-cta .pane {
+    border-radius: 26px; padding: 40px;
+    display: flex; flex-direction: column; gap: 20px;
+  }
+  .s-cta .pane.l { background: var(--teal); color: var(--bone); justify-content: space-between; }
+  .s-cta .pane.r { background: var(--orange); color: var(--ink); }
+  .s-cta .pane.l h2 {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 120px; line-height: .9; text-transform: uppercase; letter-spacing: -.015em;
+  }
+  .s-cta .pane.l h2 em { font-style: normal; color: var(--orange); }
+  .s-cta .pane.l p { font-size: 22px; line-height: 1.5; opacity: .9; max-width: 32ch; }
+  .s-cta .pane.r h3 {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 36px; line-height: 1; text-transform: uppercase; letter-spacing: .02em;
+  }
+  .s-cta .pane.r .step { display: grid; grid-template-columns: 60px 1fr; gap: 14px; align-items: start; }
+  .s-cta .pane.r .step .n {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 56px; line-height: .9;
+  }
+  .s-cta .pane.r .step h4 {
+    font-family: "Barlow Condensed", sans-serif; font-weight: 800;
+    font-size: 26px; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px;
+  }
+  .s-cta .pane.r .step p { font-size: 20px; line-height: 1.4; }
+
+  /* =========== 12 DESIGN SYSTEM / CODE =========== */
+  .s-system .wrap {
+    position: absolute; left: 64px; right: 64px; top: 130px; bottom: 80px;
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px;
+  }
+  .s-system .card {
+    border-radius: 22px; padding: 28px;
+    display: flex; flex-direction: column; gap: 14px;
+    background: var(--paper);
+  }
+  .s-system .card h3 {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 28px; text-transform: uppercase; letter-spacing: .02em;
+    border-bottom: 2px solid var(--ink); padding-bottom: 10px;
+  }
+  .s-system .card .row { display: flex; align-items: center; gap: 14px; }
+  .s-system .swatch { width: 48px; height: 48px; border-radius: 10px; border: 1.5px solid var(--ink); }
+  .s-system .row .label {
+    font-family: "Barlow Condensed", sans-serif; font-weight: 700;
+    font-size: 22px; letter-spacing: .04em; text-transform: uppercase;
+  }
+  .s-system .row .label small {
+    display: block; font-weight: 500; opacity: .65; letter-spacing: .04em;
+  }
+  .s-system .typespec {
+    display: flex; align-items: baseline; gap: 14px;
+    border-bottom: 1px dashed rgba(10,10,10,.3); padding-bottom: 12px;
+  }
+  .s-system .typespec .name {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 36px; text-transform: uppercase; flex-shrink: 0;
+  }
+  .s-system .typespec .name.barlow {
+    font-family: "Barlow Condensed", sans-serif; font-weight: 800;
+  }
+  .s-system .typespec .name.inter {
+    font-family: "Inter", sans-serif; font-weight: 600; text-transform: none; font-size: 28px;
+  }
+  .s-system .typespec .desc {
+    font-size: 18px; opacity: .75;
+  }
+  .s-system ul { margin: 0; padding-left: 20px; font-size: 18px; line-height: 1.45; }
+  .s-system ul li { margin-bottom: 6px; }
+  .s-system .principle {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 30px; line-height: 1.05; text-transform: uppercase;
+    color: var(--magenta);
+  }
+
+  /* =========== CUSTOM LAYOUTS =========== */
+
+  /* Code block style */
+  .code-block {
+    background: var(--black); color: var(--bone);
+    border-radius: 16px; padding: 24px 28px;
+    font-family: "SF Mono", "Fira Code", Consolas, monospace;
+    font-size: 18px; line-height: 1.6;
+    overflow: hidden;
+  }
+  .code-block .keyword { color: var(--magenta); }
+  .code-block .string { color: var(--teal); }
+  .code-block .comment { color: #666; }
+  .code-block .function { color: var(--mustard); }
+  .code-block .number { color: var(--orange); }
+
+  /* Feature list */
+  .feature-list {
+    display: grid; gap: 16px;
+  }
+  .feature-item {
+    display: flex; align-items: flex-start; gap: 16px;
+    background: var(--paper); border-radius: 16px; padding: 20px 24px;
+  }
+  .feature-item .icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; flex-shrink: 0;
+  }
+  .feature-item .icon.s1 { background: var(--sienna); }
+  .feature-item .icon.s2 { background: var(--magenta); }
+  .feature-item .icon.s3 { background: var(--orange); }
+  .feature-item .icon.s4 { background: var(--teal); }
+  .feature-item h4 {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 22px; text-transform: uppercase; margin-bottom: 6px;
+  }
+  .feature-item p {
+    font-size: 18px; line-height: 1.4; opacity: .8;
+  }
+
+  /* Dimension card for AI scores */
+  .dim-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  }
+  .dim-card {
+    background: var(--paper); border-radius: 16px; padding: 24px;
+    text-align: center;
+  }
+  .dim-card .score {
+    font-family: "Stardos Stencil", serif; font-weight: 700;
+    font-size: 72px; color: var(--teal); line-height: 1;
+  }
+  .dim-card .label {
+    font-family: "Barlow Condensed", sans-serif; font-weight: 700;
+    font-size: 22px; text-transform: uppercase; letter-spacing: .04em;
+    margin-top: 8px;
+  }
+  .dim-card .desc {
+    font-size: 16px; opacity: .7; margin-top: 6px;
+  }
+
+  /* Two column layout */
+  .two-col {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+    height: 100%;
+  }
+  .col-content {
+    display: flex; flex-direction: column; gap: 20px;
+  }
+</style>
+</head>
+<body>
+
+<deck-stage>
+
+  <!-- ============ 01 COVER ============ -->
+  <section class="slide s-cover" data-label="01 封面">
+    <div class="stage">
+      <div>
+        <div class="super">课堂作业展示</div>
+      </div>
+      <div>
+        <h1>宿舍管理<br/>系统<em>×</em><br/>AI智能</h1>
+        <p class="subtitle">基于 DeepSeek 大模型的智能宿舍管理解决方案</p>
+        <div class="row">
+          <div class="lockup">
+            <div class="mark"></div>
+            <div class="who">SUSHEPRO
+              <small>Spring Boot · Vue3 · Nacos · DeepSeek</small>
+            </div>
+          </div>
+          <div class="date">2026 · 演示</div>
+        </div>
+      </div>
+    </div>
+    <svg class="shape" viewBox="0 0 100 120" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M50 0 C 80 0, 100 20, 100 40 C 100 60, 80 60, 50 60 C 20 60, 0 60, 0 80 C 0 100, 20 120, 50 120 C 80 120, 100 100, 100 80" fill="currentColor"/>
+    </svg>
+    <div class="ai-badge">AI POWERED</div>
+  </section>
+
+  <!-- ============ 02 AGENDA ============ -->
+  <section class="slide s-agenda dark" data-label="02 目录">
+    <div class="top">
+      <span>目录</span>
+      <span class="meta"><span>宿舍管理系统</span><span>AI技术展示</span></span>
+    </div>
+    <div class="grid">
+      <div class="item">
+        <svg viewBox="0 0 100 250" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M50 0 C 90 0, 100 30, 100 65 C 100 95, 70 110, 50 125 C 30 140, 0 155, 0 185 C 0 220, 10 250, 50 250 C 90 250, 100 220, 100 185 C 100 155, 70 140, 50 125 C 30 110, 0 95, 0 65 C 0 30, 10 0, 50 0 Z" fill="#EE7A2E"/>
+        </svg>
+        <span class="n">01</span>
+        <span class="lab">项目概述<br/>与技术架构</span>
+      </div>
+      <div class="item">
+        <svg viewBox="0 0 100 250" preserveAspectRatio="none" aria-hidden="true">
+          <polygon points="30,0 70,0 100,40 100,210 70,250 30,250 0,210 0,40" fill="#2D7E73"/>
+        </svg>
+        <span class="n">02</span>
+        <span class="lab">核心功能<br/>模块</span>
+      </div>
+      <div class="item">
+        <svg viewBox="0 0 100 250" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0 0 L100 0 L100 30 Q 50 125 100 220 L100 250 L0 250 L0 220 Q 50 125 0 30 Z" fill="#3F73B7"/>
+        </svg>
+        <span class="n">03</span>
+        <span class="lab">AI技术<br/>深度解析</span>
+      </div>
+      <div class="item">
+        <svg viewBox="0 0 100 250" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0 0 Q 20 0 35 20 Q 50 40 65 20 Q 80 0 100 0 L100 90 Q 70 125 100 160 L100 250 Q 80 250 65 230 Q 50 210 35 230 Q 20 250 0 250 L0 160 Q 30 125 0 90 Z" fill="#A06A3C"/>
+        </svg>
+        <span class="n">04</span>
+        <span class="lab">技术亮点<br/>与总结</span>
+      </div>
+      <div class="item">
+        <svg viewBox="0 0 100 250" preserveAspectRatio="none" aria-hidden="true">
+          <circle cx="50" cy="125" r="50" fill="#C73B7A"/>
+        </svg>
+        <span class="n">05</span>
+        <span class="lab">未来展望<br/>与Q&A</span>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>02 / 42</span></div>
+  </section>
+
+  <!-- ============ 03 项目背景 ============ -->
+  <section class="slide s-princ" data-label="03 项目背景">
+    <div class="top">
+      <span>项目背景</span>
+      <span class="meta"><span>Part 01</span></span>
+    </div>
+    <div class="row">
+      <div class="card c1">
+        <div class="n">1</div>
+        <h3>痛点<br/>分析</h3>
+        <p>传统宿舍管理依赖人工，效率低、易出错，无法考虑学生生活习惯的匹配。</p>
+      </div>
+      <div class="card c2">
+        <div class="n">2</div>
+        <h3>技术<br/>进步</h3>
+        <p>大语言模型(LLM)能力显著提升，为智能化解决方案提供可能。</p>
+      </div>
+      <div class="card c3">
+        <div class="n">3</div>
+        <h3>创新<br/>融合</h3>
+        <p>将AI技术与宿舍管理深度结合，打造智能推荐与客服系统。</p>
+      </div>
+      <div class="card c4">
+        <div class="n">4</div>
+        <h3>项目<br/>目标</h3>
+        <p>提升管理效率，优化学生体验，展示AI在垂直领域的应用价值。</p>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>03 / 42</span></div>
+  </section>
+
+  <!-- ============ 04 技术选型概览 ============ -->
+  <section class="slide s-sec dark" data-label="04 技术选型">
+    <div class="top">
+      <span>技术选型</span>
+      <span class="meta"><span>Part 01</span></span>
+    </div>
+    <div class="num">01</div>
+    <div class="label">技术架构<br/>与选型</div>
+    <h2>技术栈<br/>概览</h2>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>04 / 42</span></div>
+  </section>
+
+  <!-- ============ 05 技术栈详情 ============ -->
+  <section class="slide s-consult" data-label="05 技术栈详情">
+    <div class="top">
+      <span>技术栈 · 详情</span>
+      <span class="meta"><span>Part 01</span></span>
+    </div>
+    <div class="head">
+      <div class="tag">技术架构</div>
+      <h2>前后端分离 + 分布式架构 · 全栈技术选型</h2>
+    </div>
+    <div class="grid">
+      <div class="col a">
+        <h3>后端技术</h3>
+        <ul>
+          <li><strong>Spring Boot 3.2.5</strong> — 核心框架</li>
+          <li><strong>MyBatis 3.0.3</strong> — ORM映射</li>
+          <li><strong>Nacos 2.x</strong> — 注册中心/配置中心</li>
+          <li><strong>JWT</strong> — 身份认证</li>
+          <li><strong>Druid</strong> — 数据库连接池</li>
+        </ul>
+      </div>
+      <div class="col b">
+        <h3>前端技术</h3>
+        <div class="meta">Vue3生态</div>
+        <ul>
+          <li><strong>Vue 3.4</strong> — 核心框架</li>
+          <li><strong>Element Plus 2.6</strong> — UI组件</li>
+          <li><strong>Vite 5.2</strong> — 构建工具</li>
+          <li><strong>Pinia 2.1.7</strong> — 状态管理</li>
+          <li><strong>ECharts 5.5</strong> — 数据可视化</li>
+        </ul>
+      </div>
+      <div class="col c">
+        <h3>AI技术</h3>
+        <div class="meta">DeepSeek</div>
+        <ul>
+          <li><strong>deepseek-chat</strong> — 对话模型</li>
+          <li><strong>REST API</strong> — 接口调用</li>
+          <li><strong>知识库</strong> — 文档检索增强</li>
+        </ul>
+        <div class="src">2026年主流方案</div>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>05 / 42</span></div>
+  </section>
+
+  <!-- ============ 06 系统架构图 (占位) ============ -->
+  <section class="slide s-chart dark" data-label="06 系统架构图">
+    <div class="top">
+      <span>系统架构</span>
+      <span class="meta"><span>Part 01</span></span>
+    </div>
+    <div class="left">
+      <h2>系统<br/>架构<br/>设计</h2>
+      <p>采用前后端分离架构，通过Nacos实现服务注册与配置管理。</p>
+    </div>
+    <div class="right">
+      <div class="placeholder-img">
+        <div class="icon">📐</div>
+        <div class="text">[系统架构图]</div>
+        <div class="sub">请替换为实际架构截图</div>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>06 / 42</span></div>
+  </section>
+
+  <!-- ============ 07 分布式架构 ============ -->
+  <section class="slide s-process" data-label="07 分布式架构">
+    <div class="top">
+      <span>Nacos · 分布式架构</span>
+      <span class="meta"><span>Part 01</span></span>
+    </div>
+    <div class="head">
+      <h2>Nacos<br/>注册与<br/>配置</h2>
+      <div class="sub">服务发现 + 配置管理 · 轻量级分布式解决方案</div>
+    </div>
+    <div class="flow">
+      <div class="node n1">
+        <div class="n">1</div>
+        <h3>Nacos Server</h3>
+        <p>服务注册中心，统一管理服务地址与元数据</p>
+      </div>
+      <div class="node n2">
+        <div class="n">2</div>
+        <h3>注册服务</h3>
+        <p>后端服务启动时自动注册，支持心跳检测</p>
+      </div>
+      <div class="node n3">
+        <div class="n">3</div>
+        <h3>配置中心</h3>
+        <p>集中管理配置文件，支持热更新与版本管理</p>
+      </div>
+      <div class="node n4">
+        <div class="n">4</div>
+        <h3>客户端订阅</h3>
+        <p>前端/客户端动态获取服务地址与配置</p>
+      </div>
+      <div class="node n5">
+        <div class="n">5</div>
+        <h3>服务调用</h3>
+        <p>通过服务名发现实例，实现负载均衡</p>
+      </div>
+    </div>
+    <div class="timeline">
+      <span>服务注册</span><span>心跳保活</span><span>配置下发</span><span>动态更新</span><span>故障转移</span>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>07 / 42</span></div>
+  </section>
+
+  <!-- ============ 08 JWT认证 ============ -->
+  <section class="slide s-consult" data-label="08 JWT认证">
+    <div class="top">
+      <span>安全机制</span>
+      <span class="meta"><span>Part 01</span></span>
+    </div>
+    <div class="head">
+      <div class="tag">JWT认证</div>
+      <h2>基于JWT的身份认证与权限控制机制</h2>
+    </div>
+    <div class="grid">
+      <div class="col a">
+        <h3>Token生成</h3>
+        <ul>
+          <li><strong>用户登录</strong> → 验证身份</li>
+          <li><strong>生成Token</strong> → 包含userId, role, expireTime</li>
+          <li><strong>返回前端</strong> → 存储在localStorage</li>
+        </ul>
+      </div>
+      <div class="col b">
+        <h3>Token验证</h3>
+        <div class="meta">中间件拦截</div>
+        <ul>
+          <li><strong>请求拦截</strong> → 提取Header中的Token</li>
+          <li><strong>签名验证</strong> → 校验Token合法性</li>
+          <li><strong>权限校验</strong> → 根据role判断功能权限</li>
+        </ul>
+      </div>
+      <div class="col c">
+        <h3>安全特性</h3>
+        <ul>
+          <li><strong>签名防篡改</strong> — HMAC-SHA256</li>
+          <li><strong>时效性</strong> — 可配置过期时间</li>
+          <li><strong>角色隔离</strong> — admin/student权限分离</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>08 / 42</span></div>
+  </section>
+
+  <!-- ============ 09 前后端分离 ============ -->
+  <section class="slide s-system" data-label="09 前后端分离">
+    <div class="top">
+      <span>架构设计</span>
+      <span class="meta"><span>Part 01</span></span>
+    </div>
+    <div class="wrap">
+      <div class="card">
+        <h3>前端 (Vue3)</h3>
+        <div class="typespec">
+          <span class="name barlow">VITE</span>
+          <span class="desc">构建工具</span>
+        </div>
+        <ul>
+          <li>Vue Router 路由管理</li>
+          <li>Pinia 状态管理</li>
+          <li>Axios HTTP请求</li>
+          <li>Element Plus UI组件</li>
+          <li>ECharts 数据可视化</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>后端 (Spring Boot)</h3>
+        <div class="typespec">
+          <span class="name barlow">REST API</span>
+          <span class="desc">接口规范</span>
+        </div>
+        <ul>
+          <li>Controller 控制器层</li>
+          <li>Service 业务逻辑层</li>
+          <li>Mapper 数据访问层</li>
+          <li>JWT Token认证</li>
+          <li>Nacos 服务注册</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>通信机制</h3>
+        <div class="typespec">
+          <span class="name barlow">JSON</span>
+          <span class="desc">数据格式</span>
+        </div>
+        <ul>
+          <li>Axios 封装请求</li>
+          <li>请求拦截器注入Token</li>
+          <li>响应拦截器统一处理错误</li>
+          <li>跨域配置支持</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>09 / 42</span></div>
+  </section>
+
+  <!-- ============ 10 数据库设计 ============ -->
+  <section class="slide s-consult" data-label="10 数据库设计">
+    <div class="top">
+      <span>数据层</span>
+      <span class="meta"><span>Part 01</span></span>
+    </div>
+    <div class="head">
+      <div class="tag">数据库</div>
+      <h2>核心数据表结构 · MyBatis ORM 映射</h2>
+    </div>
+    <div class="grid">
+      <div class="col a">
+        <h3>用户表</h3>
+        <ul>
+          <li><strong>user</strong> — 登录账户</li>
+          <li><strong>student</strong> — 学生信息</li>
+        </ul>
+      </div>
+      <div class="col b">
+        <h3>业务表</h3>
+        <ul>
+          <li><strong>dormitory</strong> — 宿舍信息</li>
+          <li><strong>dormitory_allocation</strong> — 分配记录</li>
+          <li><strong>dormitory_transfer</strong> — 调换申请</li>
+        </ul>
+      </div>
+      <div class="col c">
+        <h3>扩展表</h3>
+        <ul>
+          <li><strong>repair_request</strong> — 报修记录</li>
+          <li><strong>habit_questionnaire</strong> — 生活习惯</li>
+          <li><strong>knowledge_base</strong> — AI知识库</li>
+          <li><strong>notification</strong> — 通知消息</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>10 / 42</span></div>
+  </section>
+
+  <!-- ============ 11 功能概览 ============ -->
+  <section class="slide s-sec" data-label="11 核心功能">
+    <div class="top">
+      <span>核心功能</span>
+      <span class="meta"><span>Part 02</span></span>
+    </div>
+    <div class="num" style="color: var(--magenta);">02</div>
+    <div class="label" style="color: var(--ink);">功能模块<br/>与展示</div>
+    <h2 style="color: var(--ink);">核心功能<br/>概览</h2>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>11 / 42</span></div>
+  </section>
+
+  <!-- ============ 12 学生端功能 ============ -->
+  <section class="slide s-consult" data-label="12 学生端功能">
+    <div class="top">
+      <span>学生端功能</span>
+      <span class="meta"><span>Part 02</span></span>
+    </div>
+    <div class="head">
+      <div class="tag">学生端</div>
+      <h2>学生端功能模块 · 9大核心功能</h2>
+    </div>
+    <div class="grid">
+      <div class="col a">
+        <h3>日常功能</h3>
+        <ul>
+          <li><strong>首页</strong> — 个人信息与待办</li>
+          <li><strong>宿舍分配</strong> — 查看已分配宿舍</li>
+          <li><strong>宿舍调换</strong> — 申请调换宿舍</li>
+          <li><strong>报修管理</strong> — 提交与查看报修</li>
+        </ul>
+      </div>
+      <div class="col b">
+        <h3>智能功能</h3>
+        <ul>
+          <li><strong>AI客服</strong> — 智能问答助手</li>
+          <li><strong>问卷调查</strong> — 生活习惯采集</li>
+          <li><strong>通知中心</strong> — 系统消息推送</li>
+          <li><strong>个人信息</strong> — 资料修改</li>
+        </ul>
+      </div>
+      <div class="col c">
+        <h3>技术亮点</h3>
+        <ul>
+          <li><strong>AI智能推荐</strong> — 宿舍智能匹配</li>
+          <li><strong>多轮对话</strong> — 上下文理解</li>
+          <li><strong>知识库增强</strong> — RAG检索</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>12 / 42</span></div>
+  </section>
+
+  <!-- ============ 13 管理端功能 ============ -->
+  <section class="slide s-consult" data-label="13 管理端功能">
+    <div class="top">
+      <span>管理端功能</span>
+      <span class="meta"><span>Part 02</span></span>
+    </div>
+    <div class="head">
+      <div class="tag">管理端</div>
+      <h2>管理端功能模块 · 10大核心功能</h2>
+    </div>
+    <div class="grid">
+      <div class="col a">
+        <h3>数据管理</h3>
+        <ul>
+          <li><strong>数据统计</strong> — 仪表盘概览</li>
+          <li><strong>学生管理</strong> — CRUD操作</li>
+          <li><strong>宿舍管理</strong> — 宿舍信息维护</li>
+          <li><strong>分配管理</strong> — 宿舍分配操作</li>
+        </ul>
+      </div>
+      <div class="col b">
+        <h3>审批管理</h3>
+        <ul>
+          <li><strong>调换审批</strong> — 调换申请审核</li>
+          <li><strong>报修处理</strong> — 报修单处理</li>
+          <li><strong>通知管理</strong> — 系统消息发布</li>
+          <li><strong>设置中心</strong> — 系统参数配置</li>
+        </ul>
+      </div>
+      <div class="col c">
+        <h3>AI管理</h3>
+        <ul>
+          <li><strong>AI推荐</strong> — 智能宿舍推荐</li>
+          <li><strong>知识库</strong> — 文档管理维护</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>13 / 42</span></div>
+  </section>
+
+  <!-- ============ 14 功能演示截图 (占位) ============ -->
+  <section class="slide s-chart dark" data-label="14 功能演示">
+    <div class="top">
+      <span>功能演示</span>
+      <span class="meta"><span>Part 02</span></span>
+    </div>
+    <div class="left">
+      <h2>功能<br/>演示<br/>截图</h2>
+      <p>展示系统的核心功能界面与交互流程</p>
+    </div>
+    <div class="right">
+      <div class="placeholder-img">
+        <div class="icon">🖥️</div>
+        <div class="text">[功能演示截图]</div>
+        <div class="sub">请替换为实际功能截图</div>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>14 / 42</span></div>
+  </section>
+
+  <!-- ============ 15-18 更多功能页 ============ -->
+  <section class="slide s-princ" data-label="15 更多功能">
+    <div class="top">
+      <span>更多功能</span>
+      <span class="meta"><span>Part 02</span></span>
+    </div>
+    <div class="row">
+      <div class="card c1">
+        <div class="n">3</div>
+        <h3>报修<br/>管理</h3>
+        <p>学生提交报修，管理员审核处理，状态实时更新通知。</p>
+      </div>
+      <div class="card c2">
+        <div class="n">4</div>
+        <h3>通知<br/>系统</h3>
+        <p>系统消息推送，学生可实时查看，通知分类管理。</p>
+      </div>
+      <div class="card c3">
+        <div class="n">5</div>
+        <h3>问卷<br/>调查</h3>
+        <p>采集学生生活习惯数据，为AI推荐提供数据支撑。</p>
+      </div>
+      <div class="card c4">
+        <div class="n">6</div>
+        <h3>宿舍<br/>调换</h3>
+        <p>学生发起申请，管理员审批，支持调换原因说明。</p>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>15 / 42</span></div>
+  </section>
+
+  <!-- ============ AI核心技术部分开始 ============ -->
+  <section class="slide s-sec dark" data-label="16 AI技术">
+    <div class="top">
+      <span>AI技术核心</span>
+      <span class="meta"><span>Part 03</span></span>
+    </div>
+    <div class="num" style="color: var(--mustard);">03</div>
+    <div class="label">AI深度<br/>解析</div>
+    <h2>AI技术<br/>核心</h2>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>16 / 42</span></div>
+  </section>
+
+  <!-- ============ 17 AI功能概述 ============ -->
+  <section class="slide s-princ" data-label="17 AI功能概述">
+    <div class="top">
+      <span>AI能力概览</span>
+      <span class="meta"><span>Part 03</span></span>
+    </div>
+    <div class="row">
+      <div class="card c1">
+        <div class="n">1</div>
+        <h3>智能<br/>推荐</h3>
+        <p>基于生活习惯问卷，AI智能匹配最适合的宿舍，降低冲突率。</p>
+      </div>
+      <div class="card c2">
+        <div class="n">2</div>
+        <h3>AI<br/>客服</h3>
+        <p>多轮对话智能问答，动态加载知识库，提供个性化服务。</p>
+      </div>
+      <div class="card c3">
+        <div class="n">3</div>
+        <h3>知识<br/>库系统</h3>
+        <p>文档上传与解析，为AI客服提供实时知识支撑，增强回答准确性。</p>
+      </div>
+      <div class="card c4">
+        <div class="n">6</div>
+        <h3>评分<br/>维度</h3>
+        <p>六维度匹配算法：睡眠、起床、吸烟、饮酒、噪音、整洁度。</p>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>17 / 42</span></div>
+  </section>
+
+  <!-- ============ 18 DeepSeek API集成 ============ -->
+  <section class="slide s-consult" data-label="18 DeepSeek API">
+    <div class="top">
+      <span>API集成</span>
+      <span class="meta"><span>Part 03</span></span>
+    </div>
+    <div class="head">
+      <div class="tag">DeepSeek API</div>
+      <h2>DeepSeek 大模型 API 集成架构</h2>
+    </div>
+    <div class="grid">
+      <div class="col a">
+        <h3>API配置</h3>
+        <div class="code-block" style="font-size: 16px;">
+          <span class="keyword">API_URL:</span> api.deepseek.com/v1/chat<br/>
+          <span class="keyword">MODEL:</span> deepseek-chat<br/>
+          <span class="keyword">MAX_TOKENS:</span> 2048/8096<br/>
+          <span class="keyword">TEMPERATURE:</span> 0.1~0.7
+        </div>
+      </div>
+      <div class="col b">
+        <h3>调用方式</h3>
+        <div class="code-block" style="font-size: 16px;">
+          <span class="comment">// HTTP POST 请求</span><br/>
+          <span class="keyword">POST</span> /chat/completions<br/>
+          <span class="keyword">Authorization:</span> Bearer {API_KEY}<br/>
+          <span class="keyword">Content-Type:</span> application/json
+        </div>
+      </div>
+      <div class="col c">
+        <h3>响应处理</h3>
+        <ul>
+          <li><strong>choices[0].message</strong> — AI回复内容</li>
+          <li><strong>error</strong> — 错误信息捕获</li>
+          <li><strong>usage</strong> — token使用统计</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>18 / 42</span></div>
+  </section>
+
+  <!-- ============ 19 智能宿舍推荐原理 ============ -->
+  <section class="slide s-process" data-label="19 推荐原理">
+    <div class="top">
+      <span>智能推荐 · 原理</span>
+      <span class="meta"><span>Part 03</span></span>
+    </div>
+    <div class="head">
+      <h2>智能宿舍<br/>推荐原理</h2>
+      <div class="sub">基于生活习惯问卷的多维度智能匹配算法</div>
+    </div>
+    <div class="flow">
+      <div class="node n1">
+        <div class="n">1</div>
+        <h3>数据收集</h3>
+        <p>获取学生基本信息与生活习惯问卷数据</p>
+      </div>
+      <div class="node n2">
+        <div class="n">2</div>
+        <h3>宿舍分析</h3>
+        <p>遍历所有宿舍，收集现有成员信息</p>
+      </div>
+      <div class="node n3">
+        <div class="n">3</div>
+        <h3>Prompt构建</h3>
+        <p>组装学生信息+宿舍数据，构建筑推荐Prompt</p>
+      </div>
+      <div class="node n4">
+        <div class="n">4</div>
+        <h3>AI推荐</h3>
+        <p>调用DeepSeek API获取智能推荐结果</p>
+      </div>
+      <div class="node n5">
+        <div class="n">5</div>
+        <h3>评分解析</h3>
+        <p>解析六维度匹配分数，返回推荐结果</p>
+      </div>
+    </div>
+    <div class="timeline">
+      <span>数据输入</span><span>智能分析</span><span>LLM推理</span><span>结果输出</span><span>可视化</span>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>19 / 42</span></div>
+  </section>
+
+  <!-- ============ 20 推荐实现详解 ============ -->
+  <section class="slide s-consult" data-label="20 推荐实现">
+    <div class="top">
+      <span>推荐实现 · 详解</span>
+      <span class="meta"><span>Part 03</span></span>
+    </div>
+    <div class="head">
+      <div class="tag">核心代码</div>
+      <h2>智能推荐核心算法实现流程</h2>
+    </div>
+    <div class="grid">
+      <div class="col a">
+        <h3>Step 1: 收集学生信息</h3>
+        <div class="code-block" style="font-size: 14px;">
+          <span class="comment">// 获取学生基本信息</span><br/>
+          Student student = studentService<br/>
+          <span class="indent" style="padding-left: 16px;">.findById(studentId);</span><br/>
+          <span class="comment">// 获取生活习惯问卷</span><br/>
+          HabitQuestionnaire habit = <br/>
+          habitQuestionnaireService<br/>
+          <span class="indent" style="padding-left: 16px;">.findByStudentId(studentId);</span>
+        </div>
+      </div>
+      <div class="col b">
+        <h3>Step 2: 收集宿舍信息</h3>
+        <div class="code-block" style="font-size: 14px;">
+          <span class="comment">// 获取所有宿舍及其成员</span><br/>
+          List&lt;Dormitory&gt; dormitories = <br/>
+          dormitoryService.findAll();<br/>
+          <span class="comment">// 遍历收集成员生活习惯</span><br/>
+          <span class="keyword">for</span>(Dormitory dorm : dormitories) {<br/>
+          <span class="indent" style="padding-left: 16px;">// 收集成员问卷数据...</span>
+        </div>
+      </div>
+      <div class="col c">
+        <h3>Step 3: 构建Prompt</h3>
+        <div class="code-block" style="font-size: 14px;">
+          <span class="comment">// 包含学生信息、生活习惯、</span><br/>
+          <span class="comment">// 宿舍数据、推荐要求</span><br/>
+          String prompt = buildPrompt(<br/>
+          student, habit, dormInfo, remark);
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>20 / 42</span></div>
+  </section>
+
+  <!-- ============ 21 六维度评分 ============ -->
+  <section class="slide s-stats dark" data-label="21 六维度评分">
+    <div class="top">
+      <span>六维度评分</span>
+      <span class="meta"><span>Part 03</span></span>
+    </div>
+    <div class="head">
+      <h2>六维度<br/>匹配评分</h2>
+      <div class="sub">AI从六个维度评估宿舍兼容性，返回0-100分数</div>
+    </div>
+    <div class="grid">
+      <div class="stat s1">
+        <div class="big">85<small>%</small></div>
+        <h3>入睡<br/>匹配</h3>
+        <p>评估学生入睡时间与舍友的相似度</p>
+      </div>
+      <div class="stat s2">
+        <div class="big">78<small>%</small></div>
+        <h3>起床<br/>匹配</h3>
+        <p>评估学生起床时间与舍友的相似度</p>
+      </div>
+      <div class="stat s3">
+        <div class="big">92<small>%</small></div>
+        <h3>习惯<br/>兼容</h3>
+        <p>吸烟、饮酒等生活习惯匹配度</p>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>21 / 42</span></div>
+  </section>
+
+  <!-- ============ 22 推荐演示截图 (占位) ============ -->
+  <section class="slide s-chart dark" data-label="22 推荐演示">
+    <div class="top">
+      <span>推荐演示</span>
+      <span class="meta"><span>Part 03</span></span>
+    </div>
+    <div class="left">
+      <h2>智能推荐<br/>演示</h2>
+      <p>展示AI智能推荐的实际效果界面</p>
+    </div>
+    <div class="right">
+      <div class="placeholder-img">
+        <div class="icon">🤖</div>
+        <div class="text">[智能推荐演示截图]</div>
+        <div class="sub">请替换为AI推荐实际截图</div>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>22 / 42</span></div>
+  </section>
+
+  <!-- ============ 23 AI客服原理 ============ -->
+  <section class="slide s-process" data-label="23 AI客服原理">
+    <div class="top">
+      <span>AI客服 · 原理</span>
+      <span class="meta"><span>Part 03</span></span>
+    </div>
+    <div class="head">
+      <h2>AI客服<br/>对话原理</h2>
+      <div class="sub">基于知识库的智能问答系统</div>
+    </div>
+    <div class="flow">
+      <div class="node n1">
+        <div class="n">1</div>
+        <h3>系统提示</h3>
+        <p>构建角色定义与能力范围说明</p>
+      </div>
+      <div class="node n2">
+        <div class="n">2</div>
+        <h3>知识库</h3>
+        <p>动态加载管理员上传的文档内容</p>
+      </div>
+      <div class="node n3">
+        <div class="n">3</div>
+        <h3>上下文</h3>
+        <p>多轮对话历史，保持上下文理解</p>
+      </div>
+      <div class="node n4">
+        <div class="n">4</div>
+        <h3>用户消息</h3>
+        <p>学生提问，自然语言理解意图</p>
+      </div>
+      <div class="node n5">
+        <div class="n">5</div>
+        <h3>AI回复</h3>
+        <p>结合知识库，生成个性化回答</p>
+      </div>
+    </div>
+    <div class="timeline">
+      <span>系统提示词</span><span>知识库RAG</span><span>对话历史</span><span>意图理解</span><span>生成回复</span>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>23 / 42</span></div>
+  </section>
+
+  <!-- ============ 24 AI客服代码解析 ============ -->
+  <section class="slide s-consult" data-label="24 AI客服代码">
+    <div class="top">
+      <span>AI客服 · 代码</span>
+      <span class="meta"><span>Part 03</span></span>
+    </div>
+    <div class="head">
+      <div class="tag">核心代码</div>
+      <h2>AI客服多轮对话实现解析</h2>
+    </div>
+    <div class="grid">
+      <div class="col a">
+        <h3>系统提示词构建</h3>
+        <div class="code-block" style="font-size: 14px;">
+          <span class="comment">// 角色定义 + 知识库 + 上下文</span><br/>
+          systemPrompt.append(<br/>
+          <span class="indent" style="padding-left: 16px;">"你是宿舍管理系统的AI客服");</span><br/>
+          systemPrompt.append(<br/>
+          <span class="indent" style="padding-left: 16px;">"知识库内容: " + knowledge);</span><br/>
+          systemPrompt.append(<br/>
+          <span class="indent" style="padding-left: 16px;">"学生信息: " + studentContext);
+        </div>
+      </div>
+      <div class="col b">
+        <h3>对话历史管理</h3>
+        <div class="code-block" style="font-size: 14px;">
+          <span class="comment">// 维护多轮对话历史</span><br/>
+          List&lt;JSONObject&gt; messages = <br/>
+          <span class="indent" style="padding-left: 16px;">new ArrayList&lt;&gt;();</span><br/>
+          messages.add(systemMsg);<br/>
+          <span class="comment">// 添加历史消息</span><br/>
+          <span class="keyword">for</span>(chatHistory) {<br/>
+          messages.add(historyMsg);
+        </div>
+      </div>
+      <div class="col c">
+        <h3>API调用参数</h3>
+        <div class="code-block" style="font-size: 14px;">
+          <span class="keyword">requestBody.put</span>("model", <br/>
+          <span class="indent" style="padding-left: 16px;">"deepseek-chat");</span><br/>
+          <span class="keyword">requestBody.put</span>("messages", <br/>
+          <span class="indent" style="padding-left: 16px;">messages);</span><br/>
+          <span class="keyword">requestBody.put</span>("temperature", 0.7);
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>24 / 42</span></div>
+  </section>
+
+  <!-- ============ 25 AI客服演示截图 (占位) ============ -->
+  <section class="slide s-chart dark" data-label="25 AI客服演示">
+    <div class="top">
+      <span>AI客服演示</span>
+      <span class="meta"><span>Part 03</span></span>
+    </div>
+    <div class="left">
+      <h2>AI客服<br/>对话演示</h2>
+      <p>展示AI智能客服的实际对话效果</p>
+    </div>
+    <div class="right">
+      <div class="placeholder-img">
+        <div class="icon">💬</div>
+        <div class="text">[AI客服对话截图]</div>
+        <div class="sub">请替换为AI客服实际截图</div>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>25 / 42</span></div>
+  </section>
+
+  <!-- ============ 26 知识库系统 ============ -->
+  <section class="slide s-princ" data-label="26 知识库系统">
+    <div class="top">
+      <span>知识库系统</span>
+      <span class="meta"><span>Part 03</span></span>
+    </div>
+    <div class="row">
+      <div class="card c1">
+        <div class="n">1</div>
+        <h3>文档<br/>上传</h3>
+        <p>管理员上传宿舍管理制度、常见问题解答等文档。</p>
+      </div>
+      <div class="card c2">
+        <div class="n">2</div>
+        <h3>内容<br/>提取</h3>
+        <p>FileContentExtractor自动解析文本内容，支持多种格式。</p>
+      </div>
+      <div class="card c3">
+        <div class="n">3</div>
+        <h3>存储<br/>管理</h3>
+        <p>knowledge_base表存储，支持启用/禁用状态管理。</p>
+      </div>
+      <div class="card c4">
+        <div class="n">4</div>
+        <h3>AI<br/>调用</h3>
+        <p>动态加载启用状态的知识库内容，注入AI客服Prompt。</p>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>26 / 42</span></div>
+  </section>
+
+  <!-- ============ 27 知识库增强RAG ============ -->
+  <section class="slide s-consult" data-label="27 RAG知识增强">
+    <div class="top">
+      <span>RAG · 知识增强</span>
+      <span class="meta"><span>Part 03</span></span>
+    </div>
+    <div class="head">
+      <div class="tag">RAG架构</div>
+      <h2>检索增强生成 (RAG) 技术应用</h2>
+    </div>
+    <div class="grid">
+      <div class="col a">
+        <h3>RAG流程</h3>
+        <ul>
+          <li><strong>1. 文档上传</strong> — 管理员上传PDF/TXT等</li>
+          <li><strong>2. 内容解析</strong> — FileContentExtractor提取</li>
+          <li><strong>3. 知识存储</strong> — 存入knowledge_base表</li>
+          <li><strong>4. 检索加载</strong> — AI客服动态获取</li>
+          <li><strong>5. 生成回答</strong> — 结合知识库内容回复</li>
+        </ul>
+      </div>
+      <div class="col b">
+        <h3>技术优势</h3>
+        <div class="meta">准确性↑</div>
+        <ul>
+          <li><strong>实时更新</strong> — 管理员可随时更新知识库</li>
+          <li><strong>上下文相关</strong> — AI能回答最新制度问题</li>
+          <li><strong>可追溯</strong> — 答案来源于知识库文档</li>
+        </ul>
+      </div>
+      <div class="col c">
+        <h3>应用场景</h3>
+        <ul>
+          <li><strong>宿舍规定</strong> — 作息时间、访客制度</li>
+          <li><strong>申请流程</strong> — 调换、报修流程说明</li>
+          <li><strong>费用问题</strong> — 住宿费、水电费说明</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>27 / 42</span></div>
+  </section>
+
+  <!-- ============ 28-30 更多AI技术页 ============ -->
+  <section class="slide s-consult" data-label="28 AI技术架构">
+    <div class="top">
+      <span>AI架构图</span>
+      <span class="meta"><span>Part 03</span></span>
+    </div>
+    <div class="head">
+      <div class="tag">架构设计</div>
+      <h2>AI技术整体架构图</h2>
+    </div>
+    <div class="grid">
+      <div class="col a">
+        <h3>应用层</h3>
+        <ul>
+          <li><strong>智能推荐</strong> — 宿舍匹配算法</li>
+          <li><strong>AI客服</strong> — 智能问答</li>
+          <li><strong>知识库管理</strong> — 后台维护</li>
+        </ul>
+      </div>
+      <div class="col b">
+        <h3>服务层</h3>
+        <ul>
+          <li><strong>AIService</strong> — AI业务接口</li>
+          <li><strong>KnowledgeBaseService</strong> — 知识库服务</li>
+          <li><strong>DeepSeekApiClient</strong> — API客户端</li>
+        </ul>
+      </div>
+      <div class="col c">
+        <h3>模型层</h3>
+        <div class="meta">DeepSeek API</div>
+        <ul>
+          <li><strong>deepseek-chat</strong> — 对话模型</li>
+          <li><strong>Temperature</strong> — 创造性参数</li>
+          <li><strong>MaxTokens</strong> — 响应长度</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>28 / 42</span></div>
+  </section>
+
+  <!-- ============ 29 Prompt工程 ============ -->
+  <section class="slide s-system" data-label="29 Prompt工程">
+    <div class="top">
+      <span>Prompt工程</span>
+      <span class="meta"><span>Part 03</span></span>
+    </div>
+    <div class="wrap">
+      <div class="card">
+        <h3>推荐Prompt设计</h3>
+        <div class="code-block" style="font-size: 14px; background: var(--ink); color: var(--bone);">
+          <span class="comment">// 结构化Prompt</span><br/>
+          第一部分：推荐理由<br/>
+          第二部分：[SCORES]...[/SCORES]<br/>
+          <span class="keyword">JSON</span>格式输出六维度分数
+        </div>
+      </div>
+      <div class="card">
+        <h3>客服Prompt设计</h3>
+        <div class="code-block" style="font-size: 14px; background: var(--ink); color: var(--bone);">
+          <span class="comment">// 系统提示词结构</span><br/>
+          角色定义 + 知识库内容<br/>
+          + 学生上下文 + 回答规则
+        </div>
+      </div>
+      <div class="card">
+        <h3>优化策略</h3>
+        <ul>
+          <li><strong>few-shot</strong> — 示例引导</li>
+          <li><strong>格式约束</strong> — 结构化输出</li>
+          <li><strong>温度控制</strong> — 0.1~0.7调节</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>29 / 42</span></div>
+  </section>
+
+  <!-- ============ 30 AI技术演示截图 (占位) ============ -->
+  <section class="slide s-chart dark" data-label="30 AI演示截图">
+    <div class="top">
+      <span>AI技术演示</span>
+      <span class="meta"><span>Part 03</span></span>
+    </div>
+    <div class="left">
+      <h2>AI技术<br/>综合演示</h2>
+      <p>展示AI推荐与AI客服的完整流程</p>
+    </div>
+    <div class="right">
+      <div class="placeholder-img">
+        <div class="icon">🎬</div>
+        <div class="text">[AI综合演示截图]</div>
+        <div class="sub">请替换为实际演示截图</div>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>30 / 42</span></div>
+  </section>
+
+  <!-- ============ 31-33 更多AI技术页 ============ -->
+  <section class="slide s-princ" data-label="31 评分维度详解">
+    <div class="top">
+      <span>评分维度详解</span>
+      <span class="meta"><span>Part 03</span></span>
+    </div>
+    <div class="row">
+      <div class="card c1">
+        <div class="n">1</div>
+        <h3>入睡<br/>时间</h3>
+        <p>评估学生的入睡时间是否与舍友接近，避免相互打扰。</p>
+      </div>
+      <div class="card c2">
+        <div class="n">2</div>
+        <h3>起床<br/>时间</h3>
+        <p>评估学生的起床时间是否与舍友一致，减少早晨冲突。</p>
+      </div>
+      <div class="card c3">
+        <div class="n">3</div>
+        <h3>吸烟<br/>习惯</h3>
+        <p>吸烟/不吸烟学生应尽量分开，避免二手烟影响。</p>
+      </div>
+      <div class="card c4">
+        <div class="n">4</div>
+        <h3>饮酒<br/>习惯</h3>
+        <p>评估学生对饮酒的态度是否与舍友一致。</p>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>31 / 42</span></div>
+  </section>
+
+  <section class="slide s-princ" data-label="32 更多评分维度">
+    <div class="top">
+      <span>评分维度详解</span>
+      <span class="meta"><span>Part 03</span></span>
+    </div>
+    <div class="row">
+      <div class="card c1">
+        <div class="n">5</div>
+        <h3>噪音<br/>容忍</h3>
+        <p>评估学生对环境噪音的容忍程度，寻找相近的舍友。</p>
+      </div>
+      <div class="card c2">
+        <div class="n">6</div>
+        <h3>整洁度<br/>要求</h3>
+        <p>评估学生对宿舍整洁程度的要求，减少生活习惯冲突。</p>
+      </div>
+      <div class="card c3">
+        <div class="n">7</div>
+        <h3>综合<br/>评分</h3>
+        <p>AI综合六维度给出总体兼容性评分，辅助管理员决策。</p>
+      </div>
+      <div class="card c4">
+        <div class="n">8</div>
+        <h3>推荐<br/>理由</h3>
+        <p>AI提供详细的推荐理由说明，帮助理解推荐逻辑。</p>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>32 / 42</span></div>
+  </section>
+
+  <section class="slide s-quote" data-label="33 AI价值">
+    <div class="top">
+      <span>AI价值</span>
+      <span class="meta"><span>Part 03</span></span>
+    </div>
+    <div class="panel">
+      <div class="qmark">"</div>
+      <div>
+        <blockquote>AI技术不仅提升了宿舍管理的效率，更通过智能匹配大幅降低了舍友间的潜在冲突，让科技真正服务于学生的日常生活。</blockquote>
+        <div class="who">技术愿景
+          <small>智能宿舍管理 · 2026</small>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>33 / 42</span></div>
+  </section>
+
+  <!-- ============ 技术亮点部分 ============ -->
+  <section class="slide s-sec dark" data-label="34 技术亮点">
+    <div class="top">
+      <span>技术亮点</span>
+      <span class="meta"><span>Part 04</span></span>
+    </div>
+    <div class="num" style="color: var(--teal);">04</div>
+    <div class="label">技术亮点<br/>与创新</div>
+    <h2>技术亮点<br/>总结</h2>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>34 / 42</span></div>
+  </section>
+
+  <section class="slide s-princ" data-label="35 亮点1">
+    <div class="top">
+      <span>亮点一</span>
+      <span class="meta"><span>Part 04</span></span>
+    </div>
+    <div class="row">
+      <div class="card c1">
+        <div class="n">1</div>
+        <h3>LLM<br/>赋能</h3>
+        <p>将大语言模型引入垂直领域的宿舍管理场景，实现智能化升级。</p>
+      </div>
+      <div class="card c2">
+        <div class="n">2</div>
+        <h3>DeepSeek<br/>集成</h3>
+        <p>低成本高效的国产大模型，支持快速部署与迭代。</p>
+      </div>
+      <div class="card c3">
+        <div class="n">3</div>
+        <h3>智能<br/>决策</h3>
+        <p>AI辅助管理员做出更科学的宿舍分配决策。</p>
+      </div>
+      <div class="card c4">
+        <div class="n">4</div>
+        <h3>用户<br/>体验</h3>
+        <p>24小时AI客服，随时解答学生问题，提升满意度。</p>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>35 / 42</span></div>
+  </section>
+
+  <section class="slide s-princ" data-label="36 亮点2">
+    <div class="top">
+      <span>亮点二</span>
+      <span class="meta"><span>Part 04</span></span>
+    </div>
+    <div class="row">
+      <div class="card c1">
+        <div class="n">1</div>
+        <h3>上下文<br/>感知</h3>
+        <p>AI客服理解对话上下文，提供连贯的智能问答体验。</p>
+      </div>
+      <div class="card c2">
+        <div class="n">2</div>
+        <h3>个性化<br/>服务</h3>
+        <p>结合学生个人信息，提供定制化的回答与建议。</p>
+      </div>
+      <div class="card c3">
+        <div class="n">3</div>
+        <h3>多轮<br/>对话</h3>
+        <p>支持复杂问题的深入讨论，无需重复说明背景。</p>
+      </div>
+      <div class="card c4">
+        <div class="n">4</div>
+        <h3>知识<br/>沉淀</h3>
+        <p>通过知识库系统积累和复用管理经验与制度文档。</p>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>36 / 42</span></div>
+  </section>
+
+  <section class="slide s-princ" data-label="37 亮点3">
+    <div class="top">
+      <span>亮点三</span>
+      <span class="meta"><span>Part 04</span></span>
+    </div>
+    <div class="row">
+      <div class="card c1">
+        <div class="n">1</div>
+        <h3>RAG<br/>架构</h3>
+        <p>检索增强生成技术，结合知识库与LLM能力，提升回答准确性。</p>
+      </div>
+      <div class="card c2">
+        <div class="n">2</div>
+        <h3>动态<br/>更新</h3>
+        <p>知识库支持实时更新，AI回答始终反映最新制度。</p>
+      </div>
+      <div class="card c3">
+        <div class="n">3</div>
+        <h3>可解释<br/>性</h3>
+        <p>AI推荐附带详细理由与评分，便于管理员理解与审核。</p>
+      </div>
+      <div class="card c4">
+        <div class="n">4</div>
+        <h3>可扩展<br/>性</h3>
+        <p>架构设计支持后续扩展更多AI能力与场景。</p>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>37 / 42</span></div>
+  </section>
+
+  <section class="slide s-princ" data-label="38 亮点4">
+    <div class="top">
+      <span>亮点四</span>
+      <span class="meta"><span>Part 04</span></span>
+    </div>
+    <div class="row">
+      <div class="card c1">
+        <div class="n">1</div>
+        <h3>分布式<br/>架构</h3>
+        <p>Nacos实现服务注册与配置管理，支持水平扩展。</p>
+      </div>
+      <div class="card c2">
+        <div class="n">2</div>
+        <h3>前后端<br/>分离</h3>
+        <p>Vue3 + Spring Boot解耦设计，利于独立开发与维护。</p>
+      </div>
+      <div class="card c3">
+        <div class="n">3</div>
+        <h3>现代<br/>技术栈</h3>
+        <p>使用Vite、Pinia等最新前端技术，开发体验优秀。</p>
+      </div>
+      <div class="card c4">
+        <div class="n">4</div>
+        <h3>安全<br/>认证</h3>
+        <p>JWT Token + 角色权限控制，保证系统安全。</p>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>38 / 42</span></div>
+  </section>
+
+  <!-- ============ 39 项目截图展示 (占位) ============ -->
+  <section class="slide s-chart dark" data-label="39 项目截图">
+    <div class="top">
+      <span>项目截图</span>
+      <span class="meta"><span>Part 04</span></span>
+    </div>
+    <div class="left">
+      <h2>项目截图<br/>展示</h2>
+      <p>展示系统实际运行效果与界面</p>
+    </div>
+    <div class="right">
+      <div class="placeholder-img">
+        <div class="icon">📸</div>
+        <div class="text">[项目截图]</div>
+        <div class="sub">请替换为实际项目截图</div>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>39 / 42</span></div>
+  </section>
+
+  <!-- ============ 40 未来展望 ============ -->
+  <section class="slide s-consult" data-label="40 未来展望">
+    <div class="top">
+      <span>未来展望</span>
+      <span class="meta"><span>Part 04</span></span>
+    </div>
+    <div class="head">
+      <div class="tag">未来规划</div>
+      <h2>技术迭代方向与功能扩展计划</h2>
+    </div>
+    <div class="grid">
+      <div class="col a">
+        <h3>AI能力增强</h3>
+        <ul>
+          <li><strong>多模态</strong> — 支持图片、语音交互</li>
+          <li><strong>情感分析</strong> — 识别学生情绪状态</li>
+          <li><strong>智能预警</strong> — 宿舍异常情况预测</li>
+        </ul>
+      </div>
+      <div class="col b">
+        <h3>功能扩展</h3>
+        <ul>
+          <li><strong>数据分析</strong> — 宿舍使用情况统计</li>
+          <li><strong>移动端</strong> — 小程序/App支持</li>
+          <li><strong>社区功能</strong> — 舍友互动交流</li>
+        </ul>
+      </div>
+      <div class="col c">
+        <h3>技术升级</h3>
+        <ul>
+          <li><strong>微服务</strong> — 更细粒度服务拆分</li>
+          <li><strong>容器化</strong> — Docker/K8s部署</li>
+          <li><strong>监控告警</strong> — 全链路可观测性</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>40 / 42</span></div>
+  </section>
+
+  <!-- ============ 41 技术总结 ============ -->
+  <section class="slide s-stats dark" data-label="41 技术总结">
+    <div class="top">
+      <span>技术总结</span>
+      <span class="meta"><span>Part 05</span></span>
+    </div>
+    <div class="head">
+      <h2>核心<br/>技术总结</h2>
+      <div class="sub">从架构设计到AI落地的完整技术方案</div>
+    </div>
+    <div class="grid">
+      <div class="stat s1">
+        <div class="big">3<small>+</small></div>
+        <h3>AI能力<br/>集成</h3>
+        <p>智能推荐 + AI客服 + 知识库系统</p>
+      </div>
+      <div class="stat s2">
+        <div class="big">6<small>维</small></div>
+        <h3>匹配<br/>算法</h3>
+        <p>入睡、起床、吸烟、饮酒、噪音、整洁</p>
+      </div>
+      <div class="stat s3">
+        <div class="big">2<small>端</small></div>
+        <h3>用户<br/>角色</h3>
+        <p>学生端9大功能 + 管理端10大功能</p>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>41 / 42</span></div>
+  </section>
+
+  <!-- ============ 42 感谢/Q&A ============ -->
+  <section class="slide s-cta" data-label="42 感谢">
+    <div class="top">
+      <span>感谢观看</span>
+      <span class="meta"><span>宿舍管理系统 × AI</span></span>
+    </div>
+    <div class="stage">
+      <div class="pane l">
+        <div class="super" style="font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 24px; letter-spacing: .14em; text-transform: uppercase; opacity: .8;">感谢观看</div>
+        <h2>感谢<br/>观看</h2>
+        <p>欢迎提问与交流，期待与大家探讨AI技术的更多应用场景。</p>
+      </div>
+      <div class="pane r">
+        <h3>交流与讨论</h3>
+        <div class="step">
+          <div class="n">1</div>
+          <div>
+            <h4>技术问题</h4>
+            <p>关于系统架构、AI实现等技术细节的提问</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="n">2</div>
+          <div>
+            <h4>应用场景</h4>
+            <p>探讨AI在其他垂直领域的应用可能</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="n">3</div>
+          <div>
+            <h4>未来发展</h4>
+            <p>关于技术迭代与功能扩展的讨论</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>宿舍管理系统 × AI</span><span>42 / 42</span></div>
+  </section>
+
+</deck-stage>
+
+</body>
+</html>

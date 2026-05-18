@@ -1,0 +1,2062 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧宿舍管理系统 - 宿舍Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ===========================================
+           CSS CUSTOM PROPERTIES (PASTEL GEOMETRY)
+           =========================================== */
+        :root {
+            --bg-primary: #c8d9e6;
+            --bg-secondary: #b8c9d6;
+            --card-bg: #faf9f7;
+            --text-primary: #1a1a1a;
+            --text-secondary: #555;
+            --pill-pink: #f0b4d4;
+            --pill-mint: #a8d4c4;
+            --pill-sage: #5a7c6a;
+            --pill-lavender: #9b8dc4;
+            --pill-violet: #7c6aad;
+            --pill-yellow: #ffe6a7;
+            --pill-blue: #a8d8ea;
+
+            --font-display: "Plus Jakarta Sans", sans-serif;
+            --font-body: "Plus Jakarta Sans", sans-serif;
+
+            --title-size: clamp(1.8rem, 5vw, 4rem);
+            --h2-size: clamp(1.3rem, 3.5vw, 2.5rem);
+            --h3-size: clamp(1rem, 2.5vw, 1.5rem);
+            --body-size: clamp(0.8rem, 1.5vw, 1.125rem);
+            --small-size: clamp(0.65rem, 1vw, 0.875rem);
+
+            --slide-padding: clamp(1rem, 4vw, 4rem);
+            --content-gap: clamp(0.5rem, 2vw, 2rem);
+            --element-gap: clamp(0.25rem, 1vw, 1rem);
+
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration-normal: 0.6s;
+
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 12px 48px rgba(0, 0, 0, 0.15);
+        }
+
+        /* ===========================================
+           BASE STYLES
+           =========================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        html {
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        /* Each slide = exact viewport height */
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Content container */
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-height: 100%;
+            overflow: hidden;
+            padding: var(--slide-padding);
+        }
+
+        /* ===========================================
+           ANIMATIONS
+           =========================================== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity var(--duration-normal) var(--ease-out-expo),
+                        transform var(--duration-normal) var(--ease-out-expo);
+        }
+
+        .slide.visible .reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal:nth-child(1) { transition-delay: 0.1s; }
+        .reveal:nth-child(2) { transition-delay: 0.2s; }
+        .reveal:nth-child(3) { transition-delay: 0.3s; }
+        .reveal:nth-child(4) { transition-delay: 0.4s; }
+        .reveal:nth-child(5) { transition-delay: 0.5s; }
+        .reveal:nth-child(6) { transition-delay: 0.6s; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.2s !important;
+            }
+        }
+
+        /* ===========================================
+           TYPOGRAPHY
+           =========================================== */
+        h1 { font-size: var(--title-size); font-weight: 800; }
+        h2 { font-size: var(--h2-size); font-weight: 700; }
+        h3 { font-size: var(--h3-size); font-weight: 600; }
+        p, li { font-size: var(--body-size); line-height: 1.6; }
+
+        /* ===========================================
+           PILL TAGS
+           =========================================== */
+        .pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--element-gap);
+            justify-content: center;
+        }
+
+        .pill {
+            padding: clamp(0.4rem, 1vw, 0.8rem) clamp(0.8rem, 2vw, 1.5rem);
+            border-radius: 50px;
+            font-size: var(--small-size);
+            font-weight: 600;
+            color: white;
+            white-space: nowrap;
+        }
+
+        .pill-pink { background: var(--pill-pink); }
+        .pill-mint { background: var(--pill-mint); }
+        .pill-sage { background: var(--pill-sage); color: white; }
+        .pill-lavender { background: var(--pill-lavender); }
+        .pill-violet { background: var(--pill-violet); }
+        .pill-yellow { background: var(--pill-yellow); color: var(--text-primary); }
+        .pill-blue { background: var(--pill-blue); color: var(--text-primary); }
+
+        /* ===========================================
+           CARDS
+           =========================================== */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: clamp(1rem, 3vw, 2rem);
+            box-shadow: var(--shadow-soft);
+        }
+
+        /* ===========================================
+           FEATURE GRID
+           =========================================== */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+            gap: clamp(1rem, 2vw, 1.5rem);
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: clamp(1rem, 2vw, 1.5rem);
+            box-shadow: var(--shadow-soft);
+            text-align: center;
+        }
+
+        .feature-icon {
+            width: clamp(40px, 6vw, 60px);
+            height: clamp(40px, 6vw, 60px);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            margin: 0 auto clamp(0.5rem, 1vw, 1rem);
+        }
+
+        .feature-title {
+            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+            font-weight: 700;
+            margin-bottom: var(--element-gap);
+        }
+
+        .feature-desc {
+            font-size: var(--small-size);
+            color: var(--text-secondary);
+        }
+
+        /* ===========================================
+           CODE BLOCKS
+           =========================================== */
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 12px;
+            padding: clamp(0.8rem, 2vw, 1.5rem);
+            font-family: 'Fira Code', monospace;
+            font-size: clamp(0.6rem, 1.2vw, 0.85rem);
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.5;
+        }
+
+        .code-keyword { color: #c084fc; }
+        .code-string { color: #86efac; }
+        .code-comment { color: #64748b; }
+        .code-function { color: #60a5fa; }
+        .code-number { color: #fbbf24; }
+
+        /* ===========================================
+           TITLE SLIDE
+           =========================================== */
+        .title-slide {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            text-align: center;
+            justify-content: center;
+        }
+
+        .title-slide h1 {
+            color: var(--text-primary);
+            margin-bottom: var(--content-gap);
+        }
+
+        .title-slide .subtitle {
+            color: var(--text-secondary);
+            font-size: var(--h3-size);
+            margin-bottom: var(--content-gap);
+        }
+
+        .title-slide .badge {
+            display: inline-block;
+            background: var(--pill-violet);
+            color: white;
+            padding: clamp(0.5rem, 1vw, 0.8rem) clamp(1rem, 2vw, 1.5rem);
+            border-radius: 50px;
+            font-size: var(--small-size);
+            font-weight: 600;
+        }
+
+        /* ===========================================
+           SECTION DIVIDER
+           =========================================== */
+        .section-divider {
+            background: linear-gradient(135deg, var(--pill-violet) 0%, var(--pill-lavender) 100%);
+            text-align: center;
+            justify-content: center;
+        }
+
+        .section-divider h1 {
+            color: white;
+            margin-bottom: var(--content-gap);
+        }
+
+        .section-divider .section-number {
+            font-size: clamp(4rem, 10vw, 8rem);
+            font-weight: 800;
+            opacity: 0.3;
+            color: white;
+        }
+
+        /* ===========================================
+           CONTENT SLIDE
+           =========================================== */
+        .content-slide {
+            background: var(--bg-primary);
+        }
+
+        .content-slide h2 {
+            color: var(--text-primary);
+            margin-bottom: var(--content-gap);
+            text-align: center;
+        }
+
+        .content-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--element-gap);
+        }
+
+        .content-list li {
+            background: var(--card-bg);
+            padding: clamp(0.8rem, 1.5vw, 1.2rem) clamp(1rem, 2vw, 1.5rem);
+            border-radius: 12px;
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            align-items: center;
+            gap: clamp(0.5rem, 1vw, 1rem);
+        }
+
+        .list-icon {
+            width: clamp(30px, 4vw, 40px);
+            height: clamp(30px, 4vw, 40px);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(0.9rem, 2vw, 1.2rem);
+            flex-shrink: 0;
+        }
+
+        /* ===========================================
+           TWO COLUMN LAYOUT
+           =========================================== */
+        .two-column {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: clamp(1rem, 3vw, 2rem);
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===========================================
+           STATS GRID
+           =========================================== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+            gap: clamp(0.8rem, 2vw, 1.5rem);
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: clamp(1rem, 2vw, 1.5rem);
+            text-align: center;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .stat-number {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 800;
+            color: var(--pill-violet);
+        }
+
+        .stat-label {
+            font-size: var(--small-size);
+            color: var(--text-secondary);
+        }
+
+        /* ===========================================
+           RADAR CHART PLACEHOLDER
+           =========================================== */
+        .radar-placeholder {
+            width: 100%;
+            max-width: min(80vw, 500px);
+            aspect-ratio: 1;
+            background: var(--card-bg);
+            border-radius: 50%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-medium);
+            position: relative;
+        }
+
+        .radar-center {
+            width: 60%;
+            height: 60%;
+            background: linear-gradient(135deg, var(--pill-mint) 0%, var(--pill-lavender) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--small-size);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .radar-label {
+            position: absolute;
+            font-size: clamp(0.5rem, 1vw, 0.7rem);
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* ===========================================
+           PLACEHOLDER SLIDE
+           =========================================== */
+        .placeholder-slide {
+            background: var(--card-bg);
+            text-align: center;
+            justify-content: center;
+        }
+
+        .placeholder-box {
+            width: min(80%, 600px);
+            height: min(50%, 350px);
+            border: 3px dashed var(--pill-lavender);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--element-gap);
+            margin: 0 auto;
+        }
+
+        .placeholder-icon {
+            font-size: clamp(2rem, 5vw, 3rem);
+            opacity: 0.5;
+        }
+
+        .placeholder-text {
+            font-size: var(--body-size);
+            color: var(--text-secondary);
+        }
+
+        /* ===========================================
+           NAVIGATION
+           =========================================== */
+        .nav-dots {
+            position: fixed;
+            right: clamp(1rem, 2vw, 2rem);
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active {
+            background: var(--pill-violet);
+            transform: scale(1.3);
+        }
+
+        .nav-dot:hover {
+            background: var(--pill-lavender);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: var(--pill-violet);
+            z-index: 101;
+            transition: width 0.3s ease;
+        }
+
+        /* ===========================================
+           INLINE EDITING
+           =========================================== */
+        .edit-hotzone {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 80px;
+            height: 80px;
+            z-index: 10000;
+            cursor: pointer;
+        }
+
+        .edit-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--pill-violet);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.2s ease;
+            z-index: 10001;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .edit-toggle.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .edit-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        .edit-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--pill-yellow);
+            color: var(--text-primary);
+            text-align: center;
+            padding: 0.8rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            z-index: 10001;
+        }
+
+        .edit-banner.show {
+            transform: translateY(0);
+        }
+
+        .edit-active [contenteditable="true"] {
+            outline: 2px dashed var(--pill-violet);
+            outline-offset: 4px;
+            cursor: text;
+        }
+
+        /* ===========================================
+           KEYBOARD HINT
+           =========================================== */
+        .keyboard-hint {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: var(--small-size);
+            color: rgba(0, 0, 0, 0.4);
+            z-index: 99;
+        }
+
+        /* ===========================================
+           RESPONSIVE
+           =========================================== */
+        @media (max-height: 700px) {
+            :root {
+                --slide-padding: clamp(0.75rem, 3vw, 2rem);
+                --content-gap: clamp(0.4rem, 1.5vw, 1rem);
+                --title-size: clamp(1.5rem, 4.5vw, 3rem);
+            }
+        }
+
+        @media (max-height: 600px) {
+            :root {
+                --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+                --content-gap: clamp(0.3rem, 1vw, 0.75rem);
+            }
+
+            .nav-dots, .keyboard-hint {
+                display: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            :root {
+                --title-size: clamp(1.5rem, 7vw, 3rem);
+            }
+
+            .nav-dots {
+                right: 0.5rem;
+            }
+
+            .nav-dot {
+                width: 8px;
+                height: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Navigation Dots -->
+    <nav class="nav-dots" id="navDots"></nav>
+
+    <!-- Edit Mode Toggle -->
+    <div class="edit-hotzone"></div>
+    <button class="edit-toggle" id="editToggle" title="编辑模式 (E)">编辑</button>
+    <div class="edit-banner" id="editBanner">编辑模式已开启 - 点击文字即可编辑，Ctrl+S 保存</div>
+
+    <!-- ===========================================
+         SLIDE 1: 封面
+         =========================================== -->
+    <section class="slide title-slide">
+        <div class="slide-content">
+            <div class="badge reveal">AI 智能宿舍管理系统</div>
+            <h1 class="reveal">智慧宿舍管理系统</h1>
+            <p class="subtitle reveal">宿舍Pro — 基于 DeepSeek AI 的智能解决方案</p>
+            <div class="pills reveal">
+                <span class="pill pill-violet">Spring Boot 3.2</span>
+                <span class="pill pill-mint">Vue 3</span>
+                <span class="pill pill-pink">DeepSeek AI</span>
+                <span class="pill pill-blue">Nacos</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 2: 目录
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">目录 CONTENTS</h2>
+            <div class="feature-grid">
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-violet);">01</div>
+                    <div class="feature-title">项目概述</div>
+                    <div class="feature-desc">背景、目标与团队介绍</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-mint);">02</div>
+                    <div class="feature-title">技术架构</div>
+                    <div class="feature-desc">前后端技术栈与数据库设计</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-pink);">03</div>
+                    <div class="feature-title">AI 技术核心</div>
+                    <div class="feature-desc">DeepSeek 大模型应用详解</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-blue);">04</div>
+                    <div class="feature-title">项目总结</div>
+                    <div class="feature-desc">亮点、创新与未来展望</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 3: 项目背景
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">项目背景</h2>
+            <ul class="content-list">
+                <li class="reveal">
+                    <div class="list-icon" style="background: var(--pill-violet);">🏠</div>
+                    <div>
+                        <strong>宿舍管理痛点</strong>
+                        <p style="color: var(--text-secondary); font-size: var(--small-size);">传统宿舍管理依赖人工操作，效率低、易出错</p>
+                    </div>
+                </li>
+                <li class="reveal">
+                    <div class="list-icon" style="background: var(--pill-mint);">📊</div>
+                    <div>
+                        <strong>学生需求多样</strong>
+                        <p style="color: var(--text-secondary); font-size: var(--small-size);">作息习惯、噪音偏好等个性化需求难以满足</p>
+                    </div>
+                </li>
+                <li class="reveal">
+                    <div class="list-icon" style="background: var(--pill-pink);">🤖</div>
+                    <div>
+                        <strong>AI 技术成熟</strong>
+                        <p style="color: var(--text-secondary); font-size: var(--small-size);">大模型技术快速发展，智能匹配成为可能</p>
+                    </div>
+                </li>
+                <li class="reveal">
+                    <div class="list-icon" style="background: var(--pill-blue);">💡</div>
+                    <div>
+                        <strong>解决方案</strong>
+                        <p style="color: var(--text-secondary); font-size: var(--small-size);">基于 AI 的智能宿舍管理系统，实现个性化匹配</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 4: 项目目标
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">项目目标与意义</h2>
+            <div class="two-column">
+                <div class="card reveal">
+                    <h3 style="color: var(--pill-violet); margin-bottom: var(--element-gap);">核心目标</h3>
+                    <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--element-gap);">
+                        <li>✓ 智能宿舍推荐</li>
+                        <li>✓ AI 客服智能问答</li>
+                        <li>✓ 在线宿舍调换申请</li>
+                        <li>✓ 维修请求管理</li>
+                    </ul>
+                </div>
+                <div class="card reveal">
+                    <h3 style="color: var(--pill-mint); margin-bottom: var(--element-gap);">项目意义</h3>
+                    <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--element-gap);">
+                        <li>✓ 提升管理效率 60%+</li>
+                        <li>✓ 学生满意度提升</li>
+                        <li>✓ 减少人工沟通成本</li>
+                        <li>✓ 推动智慧校园建设</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 5: 团队介绍
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">团队介绍</h2>
+            <div class="feature-grid" style="grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));">
+                <div class="card reveal" style="text-align: center;">
+                    <div style="width: clamp(60px, 10vw, 80px); height: clamp(60px, 10vw, 80px); background: linear-gradient(135deg, var(--pill-violet), var(--pill-lavender)); border-radius: 50%; margin: 0 auto var(--element-gap); display: flex; align-items: center; justify-content: center; font-size: clamp(1.5rem, 3vw, 2rem); color: white;">👨‍💻</div>
+                    <h3>组长/开发</h3>
+                    <p style="color: var(--text-secondary); font-size: var(--small-size);">架构设计与核心开发</p>
+                </div>
+                <div class="card reveal" style="text-align: center;">
+                    <div style="width: clamp(60px, 10vw, 80px); height: clamp(60px, 10vw, 80px); background: linear-gradient(135deg, var(--pill-mint), var(--pill-sage)); border-radius: 50%; margin: 0 auto var(--element-gap); display: flex; align-items: center; justify-content: center; font-size: clamp(1.5rem, 3vw, 2rem); color: white;">👩‍💻</div>
+                    <h3>前端开发</h3>
+                    <p style="color: var(--text-secondary); font-size: var(--small-size);">Vue3 界面实现</p>
+                </div>
+                <div class="card reveal" style="text-align: center;">
+                    <div style="width: clamp(60px, 10vw, 80px); height: clamp(60px, 10vw, 80px); background: linear-gradient(135deg, var(--pill-pink), var(--pill-violet)); border-radius: 50%; margin: 0 auto var(--element-gap); display: flex; align-items: center; justify-content: center; font-size: clamp(1.5rem, 3vw, 2rem); color: white;">👨‍🔬</div>
+                    <h3>AI 模块</h3>
+                    <p style="color: var(--text-secondary); font-size: var(--small-size);">DeepSeek 集成</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 6: 系统架构总览
+         =========================================== -->
+    <section class="slide section-divider">
+        <div class="slide-content">
+            <div class="section-number reveal">02</div>
+            <h1 class="reveal">技术架构</h1>
+            <p class="reveal" style="color: white; font-size: var(--body-size); opacity: 0.9;">System Architecture</p>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 7: 技术栈概览
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">技术栈概览</h2>
+            <div class="stats-grid">
+                <div class="stat-card reveal">
+                    <div class="stat-number">Java 21</div>
+                    <div class="stat-label">后端语言</div>
+                </div>
+                <div class="stat-card reveal">
+                    <div class="stat-number">Spring Boot 3.2</div>
+                    <div class="stat-label">后端框架</div>
+                </div>
+                <div class="stat-card reveal">
+                    <div class="stat-number">Vue 3</div>
+                    <div class="stat-label">前端框架</div>
+                </div>
+                <div class="stat-card reveal">
+                    <div class="stat-number">Nacos</div>
+                    <div class="stat-label">配置中心</div>
+                </div>
+                <div class="stat-card reveal">
+                    <div class="stat-number">MySQL</div>
+                    <div class="stat-label">数据库</div>
+                </div>
+                <div class="stat-card reveal">
+                    <div class="stat-number">DeepSeek</div>
+                    <div class="stat-label">AI 大模型</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 8: 后端技术详解
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">后端技术详解</h2>
+            <div class="feature-grid">
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-mint);">⚡</div>
+                    <div class="feature-title">Spring Boot 3.2.5</div>
+                    <div class="feature-desc">现代化的 Web 框架，自动配置、快速启动</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-pink);">🗄️</div>
+                    <div class="feature-title">MyBatis 3.0</div>
+                    <div class="feature-desc">轻量级 ORM 框架，SQL 可见可控</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-blue);">🔐</div>
+                    <div class="feature-title">JWT 0.12.5</div>
+                    <div class="feature-desc">无状态认证，支持分布式部署</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-violet);">📦</div>
+                    <div class="feature-title">Druid 1.2.22</div>
+                    <div class="feature-desc">阿里数据库连接池，监控能力强</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 9: 前端技术详解
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">前端技术详解</h2>
+            <div class="two-column">
+                <div class="feature-grid">
+                    <div class="feature-card reveal">
+                        <div class="feature-icon" style="background: var(--pill-violet);">🟢</div>
+                        <div class="feature-title">Vue 3</div>
+                        <div class="feature-desc">组合式 API，响应式编程</div>
+                    </div>
+                    <div class="feature-card reveal">
+                        <div class="feature-icon" style="background: var(--pill-blue);">📘</div>
+                        <div class="feature-title">TypeScript</div>
+                        <div class="feature-desc">类型安全，代码更健壮</div>
+                    </div>
+                    <div class="feature-card reveal">
+                        <div class="feature-icon" style="background: var(--pill-mint);">⚡</div>
+                        <div class="feature-title">Vite</div>
+                        <div class="feature-desc">极速开发体验，热更新</div>
+                    </div>
+                    <div class="feature-card reveal">
+                        <div class="feature-icon" style="background: var(--pill-pink);">📊</div>
+                        <div class="feature-title">ECharts</div>
+                        <div class="feature-desc">数据可视化，雷达图等</div>
+                    </div>
+                </div>
+                <div class="feature-grid">
+                    <div class="feature-card reveal">
+                        <div class="feature-icon" style="background: var(--pill-yellow);">🎨</div>
+                        <div class="feature-title">Element Plus</div>
+                        <div class="feature-desc">Vue3 UI 组件库</div>
+                    </div>
+                    <div class="feature-card reveal">
+                        <div class="feature-icon" style="background: var(--pill-sage);">🔄</div>
+                        <div class="feature-title">Pinia</div>
+                        <div class="feature-desc">状态管理解决方案</div>
+                    </div>
+                    <div class="feature-card reveal">
+                        <div class="feature-icon" style="background: var(--pill-lavender);">🌐</div>
+                        <div class="feature-title">Axios</div>
+                        <div class="feature-desc">HTTP 请求库</div>
+                    </div>
+                    <div class="feature-card reveal">
+                        <div class="feature-icon" style="background: var(--pill-violet);">🎯</div>
+                        <div class="feature-title">SCSS</div>
+                        <div class="feature-desc">CSS 预处理器</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 10: 数据库设计
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">数据库设计概览</h2>
+            <div class="feature-grid" style="grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));">
+                <div class="card reveal">
+                    <div style="font-size: clamp(1.2rem, 2vw, 1.5rem); margin-bottom: var(--element-gap);">👤</div>
+                    <h3>user</h3>
+                    <p style="color: var(--text-secondary); font-size: var(--small-size);">用户表</p>
+                </div>
+                <div class="card reveal">
+                    <div style="font-size: clamp(1.2rem, 2vw, 1.5rem); margin-bottom: var(--element-gap);">🎓</div>
+                    <h3>student</h3>
+                    <p style="color: var(--text-secondary); font-size: var(--small-size);">学生表</p>
+                </div>
+                <div class="card reveal">
+                    <div style="font-size: clamp(1.2rem, 2vw, 1.5rem); margin-bottom: var(--element-gap);">🏢</div>
+                    <h3>dormitory</h3>
+                    <p style="color: var(--text-secondary); font-size: var(--small-size);">宿舍表</p>
+                </div>
+                <div class="card reveal">
+                    <div style="font-size: clamp(1.2rem, 2vw, 1.5rem); margin-bottom: var(--element-gap);">📋</div>
+                    <h3>habit_questionnaire</h3>
+                    <p style="color: var(--text-secondary); font-size: var(--small-size);">习惯问卷表</p>
+                </div>
+                <div class="card reveal">
+                    <div style="font-size: clamp(1.2rem, 2vw, 1.5rem); margin-bottom: var(--element-gap);">🔄</div>
+                    <h3>dormitory_transfer</h3>
+                    <p style="color: var(--text-secondary); font-size: var(--small-size);">调换申请表</p>
+                </div>
+                <div class="card reveal">
+                    <div style="font-size: clamp(1.2rem, 2vw, 1.5rem); margin-bottom: var(--element-gap);">🔧</div>
+                    <h3>repair_request</h3>
+                    <p style="color: var(--text-secondary); font-size: var(--small-size);">维修表</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 11: Nacos 介绍
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">Nacos 配置中心</h2>
+            <div class="two-column">
+                <div class="reveal">
+                    <div class="card" style="margin-bottom: var(--content-gap);">
+                        <h3 style="color: var(--pill-violet); margin-bottom: var(--element-gap);">什么是 Nacos？</h3>
+                        <p style="color: var(--text-secondary);">Nacos 是阿里巴巴开源的更易于构建云原生应用的动态服务发现、配置管理和服务管理平台</p>
+                    </div>
+                    <div class="pills" style="justify-content: flex-start;">
+                        <span class="pill pill-violet">服务发现</span>
+                        <span class="pill pill-mint">配置管理</span>
+                        <span class="pill pill-pink">动态刷新</span>
+                    </div>
+                </div>
+                <div class="feature-grid reveal">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: var(--pill-violet);">🌐</div>
+                        <div class="feature-title">服务注册与发现</div>
+                        <div class="feature-desc">微服务自动注册，健康检查</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: var(--pill-mint);">⚙️</div>
+                        <div class="feature-title">配置管理</div>
+                        <div class="feature-desc">集中管理配置，版本控制</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: var(--pill-pink);">🔄</div>
+                        <div class="feature-title">动态刷新</div>
+                        <div class="feature-desc">无需重启，配置实时生效</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 12: Nacos 配置实践
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">Nacos 配置中心实践</h2>
+            <div class="two-column">
+                <div class="code-block reveal">
+<span class="code-comment"># bootstrap.yml 配置</span>
+<span class="code-keyword">spring</span>:
+  application:
+    name: sushepro-backend
+  cloud:
+    nacos:
+      discovery:
+        server-addr: <span class="code-number">127.0.0.1:8848</span>
+      config:
+        server-addr: <span class="code-number">127.0.0.1:8848</span>
+        file-extension: <span class="code-string">yaml</span>
+                </div>
+                <div class="reveal">
+                    <div class="card">
+                        <h3 style="color: var(--pill-violet); margin-bottom: var(--element-gap);">配置示例</h3>
+                        <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--element-gap);">
+                            <li>• 数据库连接配置</li>
+                            <li>• Redis 缓存配置</li>
+                            <li>• AI API 密钥配置</li>
+                            <li>• 业务规则参数配置</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="margin-top: var(--element-gap);">
+                        <h3 style="color: var(--pill-mint); margin-bottom: var(--element-gap);">优势</h3>
+                        <ul style="list-style: none;">
+                            <li>✓ 配置集中管理</li>
+                            <li>✓ 多人协作便捷</li>
+                            <li>✓ 版本可回滚</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 13: 项目目录结构
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">项目目录结构</h2>
+            <div class="two-column">
+                <div class="card reveal">
+                    <h3 style="color: var(--pill-violet); margin-bottom: var(--element-gap);">后端结构</h3>
+                    <div class="code-block" style="font-size: clamp(0.5rem, 0.9vw, 0.7rem);">
+<span class="code-comment">sushepro-backend/</span>
+├── controller/     <span class="code-comment"># 控制器层</span>
+├── service/       <span class="code-comment"># 业务逻辑层</span>
+├── mapper/        <span class="code-comment"># 数据访问层</span>
+├── pojo/          <span class="code-comment"># 实体类</span>
+├── dto/           <span class="code-comment"># 数据传输对象</span>
+├── util/          <span class="code-comment"># 工具类</span>
+└── config/        <span class="code-comment"># 配置类</span>
+                    </div>
+                </div>
+                <div class="card reveal">
+                    <h3 style="color: var(--pill-mint); margin-bottom: var(--element-gap);">前端结构</h3>
+                    <div class="code-block" style="font-size: clamp(0.5rem, 0.9vw, 0.7rem);">
+<span class="code-comment">sushepro-frontend/</span>
+├── views/         <span class="code-comment"># 页面视图</span>
+├── api/           <span class="code-comment"># API接口</span>
+├── components/   <span class="code-comment"># 组件</span>
+├── router/       <span class="code-comment"># 路由配置</span>
+├── stores/        <span class="code-comment"># 状态管理</span>
+└── assets/       <span class="code-comment"># 静态资源</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 14: 系统流程图
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">系统流程图</h2>
+            <div class="reveal" style="display: flex; flex-direction: column; align-items: center; gap: var(--element-gap);">
+                <div class="pills">
+                    <span class="pill pill-blue">管理员</span>
+                    <span class="pill pill-violet">系统</span>
+                    <span class="pill pill-pink">AI</span>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(0.5rem, 1.5vw, 1rem); max-width: 800px;">
+                    <div class="card" style="flex: 1; min-width: 120px; text-align: center; min-width: 140px;">
+                        <div>📝</div>
+                        <h3 style="font-size: var(--small-size);">登录认证</h3>
+                    </div>
+                    <div style="display: flex; align-items: center; font-size: 1.5rem; color: var(--text-secondary);">→</div>
+                    <div class="card" style="flex: 1; min-width: 140px; text-align: center;">
+                        <div>🏠</div>
+                        <h3 style="font-size: var(--small-size);">宿舍管理</h3>
+                    </div>
+                    <div style="display: flex; align-items: center; font-size: 1.5rem; color: var(--text-secondary);">→</div>
+                    <div class="card" style="flex: 1; min-width: 140px; text-align: center;">
+                        <div>🤖</div>
+                        <h3 style="font-size: var(--small-size);">AI推荐</h3>
+                    </div>
+                    <div style="display: flex; align-items: center; font-size: 1.5rem; color: var(--text-secondary);">→</div>
+                    <div class="card" style="flex: 1; min-width: 140px; text-align: center;">
+                        <div>✅</div>
+                        <h3 style="font-size: var(--small-size);">分配入住</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 15: 安全性设计
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">安全性设计 — JWT 认证</h2>
+            <div class="two-column">
+                <div class="reveal">
+                    <div class="card" style="margin-bottom: var(--content-gap);">
+                        <h3 style="color: var(--pill-violet); margin-bottom: var(--element-gap);">JWT 工作流程</h3>
+                        <ol style="list-style: decimal; padding-left: 1.2rem; display: flex; flex-direction: column; gap: var(--element-gap);">
+                            <li>用户登录，输入用户名密码</li>
+                            <li>服务端验证，生成 JWT Token</li>
+                            <li>客户端存储 Token</li>
+                            <li>后续请求携带 Token</li>
+                            <li>服务端验证 Token，鉴权通过</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="code-block reveal">
+<span class="code-comment">// JWT Token 生成</span>
+<span class="code-keyword">public</span> String <span class="code-function">generateToken</span>(String username) {
+    <span class="code-keyword">return</span> Jwts.builder()
+        .<span class="code-function">setSubject</span>(username)
+        .<span class="code-function">setIssuedAt</span>(<span class="code-keyword">new</span> Date())
+        .<span class="code-function">setExpiration</span>(<span class="code-keyword">new</span> Date(...))
+        .<span class="code-function">signWith</span>(key, HS256)
+        .<span class="code-function">compact</span>();
+}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 16: AI 技术章节封面
+         =========================================== -->
+    <section class="slide section-divider">
+        <div class="slide-content">
+            <div class="section-number reveal">03</div>
+            <h1 class="reveal">AI 技术核心</h1>
+            <p class="reveal" style="color: white; font-size: var(--body-size); opacity: 0.9;">AI Core Technology</p>
+            <div class="pills reveal" style="margin-top: var(--content-gap);">
+                <span class="pill" style="background: rgba(255,255,255,0.2);">DeepSeek</span>
+                <span class="pill" style="background: rgba(255,255,255,0.2);">智能推荐</span>
+                <span class="pill" style="background: rgba(255,255,255,0.2);">AI 客服</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 17: DeepSeek 大模型简介
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">DeepSeek 大模型简介</h2>
+            <div class="two-column">
+                <div class="card reveal">
+                    <h3 style="color: var(--pill-violet); margin-bottom: var(--element-gap);">关于 DeepSeek</h3>
+                    <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--element-gap);">
+                        <li>✓ 由深度求索公司开发</li>
+                        <li>✓ 国产顶尖大语言模型</li>
+                        <li>✓ 支持长上下文理解</li>
+                        <li>✓ API 调用简单便捷</li>
+                        <li>✓ 成本效益高</li>
+                    </ul>
+                </div>
+                <div class="card reveal">
+                    <h3 style="color: var(--pill-mint); margin-bottom: var(--element-gap);">本项目应用场景</h3>
+                    <div class="pills" style="justify-content: flex-start;">
+                        <span class="pill pill-violet">智能宿舍推荐</span>
+                        <span class="pill pill-mint">AI 客服问答</span>
+                        <span class="pill pill-pink">匹配度分析</span>
+                    </div>
+                    <p style="color: var(--text-secondary); margin-top: var(--element-gap); font-size: var(--small-size);">
+                        基于学生的作息习惯、生活偏好等数据，AI 自动分析并推荐最适合的宿舍和室友组合。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 18: DeepSeek API 调用流程
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">DeepSeek API 调用流程</h2>
+            <div class="reveal" style="display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(0.5rem, 1.5vw, 1rem); max-width: 900px; margin: 0 auto;">
+                <div class="card" style="flex: 1; min-width: 150px; text-align: center;">
+                    <div style="font-size: clamp(1.5rem, 3vw, 2rem);">1️⃣</div>
+                    <h3 style="font-size: var(--small-size);">构建请求</h3>
+                    <p style="color: var(--text-secondary); font-size: clamp(0.5rem, 0.8vw, 0.7rem);">组装 prompt 和参数</p>
+                </div>
+                <div style="display: flex; align-items: center; font-size: 1.5rem; color: var(--pill-lavender);">→</div>
+                <div class="card" style="flex: 1; min-width: 150px; text-align: center;">
+                    <div style="font-size: clamp(1.5rem, 3vw, 2rem);">2️⃣</div>
+                    <h3 style="font-size: var(--small-size);">HTTP 请求</h3>
+                    <p style="color: var(--text-secondary); font-size: clamp(0.5rem, 0.8vw, 0.7rem);">调用 DeepSeek API</p>
+                </div>
+                <div style="display: flex; align-items: center; font-size: 1.5rem; color: var(--pill-lavender);">→</div>
+                <div class="card" style="flex: 1; min-width: 150px; text-align: center;">
+                    <div style="font-size: clamp(1.5rem, 3vw, 2rem);">3️⃣</div>
+                    <h3 style="font-size: var(--small-size);">AI 处理</h3>
+                    <p style="color: var(--text-secondary); font-size: clamp(0.5rem, 0.8vw, 0.7rem);">大模型分析理解</p>
+                </div>
+                <div style="display: flex; align-items: center; font-size: 1.5rem; color: var(--pill-lavender);">→</div>
+                <div class="card" style="flex: 1; min-width: 150px; text-align: center;">
+                    <div style="font-size: clamp(1.5rem, 3vw, 2rem);">4️⃣</div>
+                    <h3 style="font-size: var(--small-size);">解析结果</h3>
+                    <p style="color: var(--text-secondary); font-size: clamp(0.5rem, 0.8vw, 0.7rem);">提取结构化数据</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 19: DeepSeek 核心代码解析
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">DeepSeek 核心代码解析</h2>
+            <div class="code-block reveal" style="max-height: min(60vh, 450px); overflow-y: auto;">
+<span class="code-comment">// DeepSeekApiClient.java</span>
+<span class="code-keyword">public class</span> DeepSeekApiClient {
+
+    <span class="code-keyword">private static final</span> String API_URL =
+        <span class="code-string">"https://api.deepseek.com/v1/chat/completions"</span>;
+    <span class="code-keyword">private static final</span> String MODEL = <span class="code-string">"deepseek-chat"</span>;
+
+    <span class="code-keyword">public</span> String <span class="code-function">chat</span>(List&lt;Map&lt;String, String&gt;&gt; messages) {
+        <span class="code-comment">// 构建请求体</span>
+        Map&lt;String, Object&gt; requestBody = <span class="code-keyword">new</span> HashMap&lt;&gt;();
+        requestBody.put(<span class="code-string">"model"</span>, MODEL);
+        requestBody.put(<span class="code-string">"messages"</span>, messages);
+        requestBody.put(<span class="code-string">"max_tokens"</span>, <span class="code-number">2000</span>);
+
+        <span class="code-comment">// HTTP 请求调用</span>
+        HttpResponse response = <span class="code-function">httpClient.send</span>(
+            <span class="code-function">buildRequest</span>(requestBody)
+        );
+
+        <span class="code-keyword">return</span> <span class="code-function">parseResponse</span>(response);
+    }
+}
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 20: DeepSeekApiClient 工具类
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">DeepSeekApiClient 工具类</h2>
+            <div class="two-column">
+                <div class="reveal">
+                    <div class="card" style="margin-bottom: var(--content-gap);">
+                        <h3 style="color: var(--pill-violet); margin-bottom: var(--element-gap);">核心功能</h3>
+                        <ul style="list-style: none;">
+                            <li>• 封装 HTTP 请求逻辑</li>
+                            <li>• 统一错误处理</li>
+                            <li>• 响应结果解析</li>
+                            <li>• Token 计数管理</li>
+                        </ul>
+                    </div>
+                    <div class="pills" style="justify-content: flex-start;">
+                        <span class="pill pill-violet">单例模式</span>
+                        <span class="pill pill-mint">线程安全</span>
+                        <span class="pill pill-pink">可复用</span>
+                    </div>
+                </div>
+                <div class="code-block reveal">
+<span class="code-comment">// 使用示例</span>
+DeepSeekApiClient client =
+    DeepSeekApiClient.<span class="code-function">getInstance</span>();
+
+List&lt;Map&lt;String, String&gt;&gt; messages =
+    <span class="code-keyword">new</span> ArrayList&lt;&gt;<>();
+messages.add(Map.of(
+    <span class="code-string">"role"</span>, <span class="code-string">"user"</span>,
+    <span class="code-string">"content"</span>, <span class="code-string">"推荐宿舍..."</span>
+));
+
+String result = client.<span class="code-function">chat</span>(messages);
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 21: AI 宿舍推荐系统介绍
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">AI 宿舍推荐系统</h2>
+            <div class="two-column">
+                <div class="reveal">
+                    <div class="card" style="margin-bottom: var(--content-gap);">
+                        <h3 style="color: var(--pill-violet); margin-bottom: var(--element-gap);">功能原理</h3>
+                        <p style="color: var(--text-secondary); line-height: 1.8;">
+                            系统收集学生的作息习惯、生活偏好等问卷数据，结合宿舍条件信息，通过 DeepSeek AI 大模型进行智能分析，计算学生与各宿舍的匹配程度，最终推荐最适合的宿舍组合。
+                        </p>
+                    </div>
+                </div>
+                <div class="feature-grid reveal">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: var(--pill-violet);">📋</div>
+                        <div class="feature-title">问卷采集</div>
+                        <div class="feature-desc">收集作息、噪音偏好等</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: var(--pill-mint);">🔍</div>
+                        <div class="feature-title">数据分析</div>
+                        <div class="feature-desc">AI 分析生活习惯</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: var(--pill-pink);">🎯</div>
+                        <div class="feature-title">智能推荐</div>
+                        <div class="feature-desc">计算匹配度并推荐</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 22: AI 宿舍推荐流程图
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">AI 宿舍推荐流程图</h2>
+            <div class="reveal" style="display: flex; flex-direction: column; align-items: center; gap: clamp(0.5rem, 1vw, 0.8rem);">
+                <div class="pills">
+                    <span class="pill pill-blue">学生</span>
+                    <span class="pill pill-violet">问卷</span>
+                    <span class="pill pill-mint">AI</span>
+                    <span class="pill pill-pink">结果</span>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(0.3rem, 1vw, 0.6rem); max-width: 800px;">
+                    <div class="card" style="flex: 1; min-width: 130px; text-align: center; padding: clamp(0.5rem, 1vw, 0.8rem);">
+                        <div style="font-size: clamp(1.2rem, 2vw, 1.5rem);">👤</div>
+                        <p style="font-size: clamp(0.5rem, 0.8vw, 0.7rem);">学生登录</p>
+                    </div>
+                    <div style="display: flex; align-items: center; font-size: 1.2rem; color: var(--pill-lavender);">→</div>
+                    <div class="card" style="flex: 1; min-width: 130px; text-align: center; padding: clamp(0.5rem, 1vw, 0.8rem);">
+                        <div style="font-size: clamp(1.2rem, 2vw, 1.5rem);">📝</div>
+                        <p style="font-size: clamp(0.5rem, 0.8vw, 0.7rem);">填写问卷</p>
+                    </div>
+                    <div style="display: flex; align-items: center; font-size: 1.2rem; color: var(--pill-lavender);">→</div>
+                    <div class="card" style="flex: 1; min-width: 130px; text-align: center; padding: clamp(0.5rem, 1vw, 0.8rem);">
+                        <div style="font-size: clamp(1.2rem, 2vw, 1.5rem);">🤖</div>
+                        <p style="font-size: clamp(0.5rem, 0.8vw, 0.7rem);">AI 分析</p>
+                    </div>
+                    <div style="display: flex; align-items: center; font-size: 1.2rem; color: var(--pill-lavender);">→</div>
+                    <div class="card" style="flex: 1; min-width: 130px; text-align: center; padding: clamp(0.5rem, 1vw, 0.8rem);">
+                        <div style="font-size: clamp(1.2rem, 2vw, 1.5rem);">📊</div>
+                        <p style="font-size: clamp(0.5rem, 0.8vw, 0.7rem);">六维评分</p>
+                    </div>
+                    <div style="display: flex; align-items: center; font-size: 1.2rem; color: var(--pill-lavender);">→</div>
+                    <div class="card" style="flex: 1; min-width: 130px; text-align: center; padding: clamp(0.5rem, 1vw, 0.8rem);">
+                        <div style="font-size: clamp(1.2rem, 2vw, 1.5rem);">✅</div>
+                        <p style="font-size: clamp(0.5rem, 0.8vw, 0.7rem);">推荐结果</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 23: 智能匹配算法详解
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">智能匹配算法详解</h2>
+            <div class="reveal">
+                <div class="card">
+                    <h3 style="color: var(--pill-violet); margin-bottom: var(--element-gap);">算法流程</h3>
+                    <ol style="list-style: decimal; padding-left: 1.2rem; display: flex; flex-direction: column; gap: var(--element-gap);">
+                        <li><strong>数据收集:</strong> 从问卷表获取学生的生活习惯数据</li>
+                        <li><strong>特征提取:</strong> 提取入睡时间、起床时间、噪音耐受等特征</li>
+                        <li><strong>Prompt 构建:</strong> 将学生数据和宿舍数据组装成 AI 理解的提示词</li>
+                        <li><strong>AI 推理:</strong> 调用 DeepSeek API 获取匹配分析结果</li>
+                        <li><strong>结果解析:</strong> 从 AI 返回中提取六维匹配度分数</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 24: 六维匹配度 - 算法设计
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">六维匹配度 — 算法设计</h2>
+            <div class="feature-grid" style="grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));">
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-violet);">🌙</div>
+                    <div class="feature-title">入睡时间匹配</div>
+                    <div class="feature-desc">23:00 vs 01:00 型室友</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-mint);">🌅</div>
+                    <div class="feature-title">起床时间匹配</div>
+                    <div class="feature-desc">早鸟 vs 夜猫子</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-pink);">🚬</div>
+                    <div class="feature-title">吸烟习惯匹配</div>
+                    <div class="feature-desc">是否介意室友吸烟</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-blue);">🍺</div>
+                    <div class="feature-title">饮酒习惯匹配</div>
+                    <div class="feature-desc">生活习惯一致性</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-yellow);">🔇</div>
+                    <div class="feature-title">噪音耐受匹配</div>
+                    <div class="feature-desc">安静 vs 热闹型</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-sage);">🧹</div>
+                    <div class="feature-title">整洁度匹配</div>
+                    <div class="feature-desc">卫生习惯一致性</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 25: 六维匹配度 - 代码实现
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">六维匹配度 — 代码实现</h2>
+            <div class="code-block reveal" style="max-height: min(65vh, 480px); overflow-y: auto;">
+<span class="code-comment">// AIServiceImpl.java - 推荐方法</span>
+<span class="code-keyword">public</span> RecommendationResult <span class="code-function">getDormitoryRecommendation</span>(
+    Integer studentId, String remark) {
+
+    <span class="code-comment">// 1. 获取学生问卷数据</span>
+    HabitQuestionnaire questionnaire =
+        questionnaireMapper.<span class="code-function">selectByStudentId</span>(studentId);
+
+    <span class="code-comment">// 2. 构建 AI Prompt</span>
+    String prompt = buildPrompt(questionnaire, remark);
+
+    <span class="code-comment">// 3. 调用 DeepSeek API</span>
+    String aiResponse = deepSeekClient.<span class="code-function">chat</span>(
+        List.of(Map.of(<span class="code-string">"role"</span>, <span class="code-string">"user"</span>, <span class="code-string">"content"</span>, prompt))
+    );
+
+    <span class="code-comment">// 4. 解析六维匹配度</span>
+    <span class="code-keyword">return</span> <span class="code-function">parseRecommendationResult</span>(aiResponse);
+}
+
+<span class="code-comment">// 解析返回的 JSON 数据</span>
+<span class="code-keyword">private</span> RecommendationResult <span class="code-function">parseRecommendationResult</span>(String json) {
+    <span class="code-comment">// 提取 scores 字段，返回结构化结果</span>
+    Map&lt;String, Integer&gt; scores = <span class="code-keyword">new</span> HashMap&lt;&gt;();
+    scores.put(<span class="code-string">"sleepCompatibility"</span>, <span class="code-function">extractScore</span>(json, <span class="code-string">"入睡时间"</span>));
+    scores.put(<span class="code-string">"wakeUpCompatibility"</span>, <span class="code-function">extractScore</span>(json, <span class="code-string">"起床时间"</span>));
+    <span class="code-comment">// ... 其他维度</span>
+    <span class="code-keyword">return new</span> RecommendationResult(text, scores);
+}
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 26: 六维匹配度 - 结果展示
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">六维匹配度 — 结果展示</h2>
+            <div class="two-column">
+                <div class="reveal" style="display: flex; flex-direction: column; align-items: center;">
+                    <div class="radar-placeholder">
+                        <span class="radar-label" style="top: 5%;">入睡</span>
+                        <span class="radar-label" style="top: 25%; right: 5%;">起床</span>
+                        <span class="radar-label" style="bottom: 25%; right: 5%;">吸烟</span>
+                        <span class="radar-label" style="bottom: 5%;">饮酒</span>
+                        <span class="radar-label" style="bottom: 25%; left: 5%;">噪音</span>
+                        <span class="radar-label" style="top: 25%; left: 5%;">整洁</span>
+                        <div class="radar-center">综合评分<br>92分</div>
+                    </div>
+                </div>
+                <div class="reveal">
+                    <div class="card" style="margin-bottom: var(--element-gap);">
+                        <h3 style="color: var(--pill-violet); margin-bottom: var(--element-gap);">雷达图展示</h3>
+                        <p style="color: var(--text-secondary); font-size: var(--small-size);">
+                            使用 ECharts 绘制六维雷达图，直观展示学生在各维度的匹配程度。
+                        </p>
+                    </div>
+                    <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+                        <div class="stat-card">
+                            <div class="stat-number" style="color: var(--pill-mint);">95%</div>
+                            <div class="stat-label">入睡</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" style="color: var(--pill-violet);">88%</div>
+                            <div class="stat-label">起床</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" style="color: var(--pill-pink);">100%</div>
+                            <div class="stat-label">吸烟</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" style="color: var(--pill-blue);">90%</div>
+                            <div class="stat-label">饮酒</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" style="color: var(--pill-yellow);">85%</div>
+                            <div class="stat-label">噪音</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" style="color: var(--pill-sage);">92%</div>
+                            <div class="stat-label">整洁</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 27: AI 客服功能介绍
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">AI 客服功能介绍</h2>
+            <div class="feature-grid">
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-violet);">💬</div>
+                    <div class="feature-title">智能问答</div>
+                    <div class="feature-desc">基于知识库的智能问答，解答学生常见问题</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-mint);">📚</div>
+                    <div class="feature-title">知识库支撑</div>
+                    <div class="feature-desc">接入宿舍管理相关文档，提供准确答案</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-pink);">🔄</div>
+                    <div class="feature-title">对话历史</div>
+                    <div class="feature-desc">支持多轮对话，记住上下文语境</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-blue);">⚡</div>
+                    <div class="feature-title">实时响应</div>
+                    <div class="feature-desc">快速响应，无需等待人工客服</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 28: AI 客服对话流程
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">AI 客服对话流程</h2>
+            <div class="two-column">
+                <div class="reveal">
+                    <div class="card" style="margin-bottom: var(--content-gap);">
+                        <h3 style="color: var(--pill-violet); margin-bottom: var(--element-gap);">对话流程</h3>
+                        <ol style="list-style: decimal; padding-left: 1.2rem; display: flex; flex-direction: column; gap: var(--element-gap);">
+                            <li>学生输入问题</li>
+                            <li>系统检索相关知识库文档</li>
+                            <li>组装 context 和历史对话</li>
+                            <li>调用 DeepSeek 生成回答</li>
+                            <li>返回答案并保存对话记录</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="code-block reveal">
+<span class="code-comment">// AI 客服核心逻辑</span>
+String <span class="code-function">chat</span>(String studentContext,
+    List&lt;Map&lt;String, String&gt;&gt; history,
+    String userMessage) {
+
+    <span class="code-comment">// 1. 检索知识库</span>
+    String context = kbService
+        .<span class="code-function">search</span>(userMessage);
+
+    <span class="code-comment">// 2. 构建 prompt</span>
+    String prompt = <span class="code-string">"基于以下知识回答:\n"</span>
+        + context + <span class="code-string">"\n\n问题:"</span> + userMessage;
+
+    <span class="code-comment">// 3. 调用 AI</span>
+    <span class="code-keyword">return</span> deepSeek.<span class="code-function">chat</span>(
+        buildMessages(prompt, history)
+    );
+}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 29: 知识库系统架构
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">知识库系统架构</h2>
+            <div class="feature-grid">
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-violet);">📄</div>
+                    <div class="feature-title">文档上传</div>
+                    <div class="feature-desc">支持 PDF、Word 等格式文档上传</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-mint);">📖</div>
+                    <div class="feature-title">内容提取</div>
+                    <div class="feature-desc">自动提取文档文本内容</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-pink);">🏷️</div>
+                    <div class="feature-title">分类管理</div>
+                    <div class="feature-desc">文档按类别组织，方便检索</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-blue);">🔍</div>
+                    <div class="feature-title">智能检索</div>
+                    <div class="feature-desc">基于关键词检索相关知识</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-yellow);">🤖</div>
+                    <div class="feature-title">AI 增强</div>
+                    <div class="feature-desc">DeepSeek 理解并整合知识</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 30: 知识库核心功能
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">知识库核心功能</h2>
+            <div class="code-block reveal">
+<span class="code-comment">// KnowledgeBaseService.java</span>
+<span class="code-keyword">public class</span> KnowledgeBaseService {
+
+    <span class="code-comment">// 上传并处理文档</span>
+    <span class="code-keyword">public void</span> <span class="code-function">uploadDocument</span>(MultipartFile file, String category) {
+        <span class="code-comment">// 1. 保存文件</span>
+        String path = <span class="code-function">saveFile</span>(file);
+
+        <span class="code-comment">// 2. 提取文本内容</span>
+        String content = FileContentExtractor
+            .<span class="code-function">extractText</span>(path);
+
+        <span class="code-comment">// 3. 存储到数据库</span>
+        KnowledgeBase kb = <span class="code-keyword">new</span> KnowledgeBase();
+        kb.setContent(content);
+        kb.setCategory(category);
+        <span class="code-function">save</span>(kb);
+    }
+
+    <span class="code-comment">// 检索相关知识</span>
+    <span class="code-keyword">public</span> String <span class="code-function">search</span>(String query) {
+        <span class="code-comment">// 返回相关文档内容</span>
+    }
+}
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 31: 系统演示占位页1
+         =========================================== -->
+    <section class="slide placeholder-slide">
+        <div class="slide-content">
+            <h2 class="reveal">系统演示 — 管理员端</h2>
+            <div class="placeholder-box reveal">
+                <div class="placeholder-icon">🖥️</div>
+                <p class="placeholder-text">[ 截图占位 — 请替换为管理员端演示截图 ]</p>
+                <p style="color: var(--text-secondary); font-size: var(--small-size);">推荐尺寸: 1920 x 1080</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 32: 系统演示占位页2
+         =========================================== -->
+    <section class="slide placeholder-slide">
+        <div class="slide-content">
+            <h2 class="reveal">系统演示 — AI 宿舍推荐</h2>
+            <div class="placeholder-box reveal">
+                <div class="placeholder-icon">🤖</div>
+                <p class="placeholder-text">[ 截图占位 — 请替换为AI推荐功能演示截图 ]</p>
+                <p style="color: var(--text-secondary); font-size: var(--small-size);">推荐尺寸: 1920 x 1080</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 33: 系统演示占位页3
+         =========================================== -->
+    <section class="slide placeholder-slide">
+        <div class="slide-content">
+            <h2 class="reveal">系统演示 — AI 客服聊天</h2>
+            <div class="placeholder-box reveal">
+                <div class="placeholder-icon">💬</div>
+                <p class="placeholder-text">[ 截图占位 — 请替换为AI客服演示截图 ]</p>
+                <p style="color: var(--text-secondary); font-size: var(--small-size);">推荐尺寸: 1920 x 1080</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 34: 系统演示占位页4
+         =========================================== -->
+    <section class="slide placeholder-slide">
+        <div class="slide-content">
+            <h2 class="reveal">系统演示 — 学生端</h2>
+            <div class="placeholder-box reveal">
+                <div class="placeholder-icon">📱</div>
+                <p class="placeholder-text">[ 截图占位 — 请替换为学生端演示截图 ]</p>
+                <p style="color: var(--text-secondary); font-size: var(--small-size);">推荐尺寸: 1920 x 1080</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 35: AI 技术应用总结
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">AI 技术应用总结</h2>
+            <div class="feature-grid">
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-violet);">🎯</div>
+                    <div class="feature-title">精准推荐</div>
+                    <div class="feature-desc">基于大数据分析的个性化宿舍推荐</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-mint);">⚡</div>
+                    <div class="feature-title">高效响应</div>
+                    <div class="feature-desc">7x24 小时 AI 客服即时响应</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-pink);">📊</div>
+                    <div class="feature-title">数据驱动</div>
+                    <div class="feature-desc">六维匹配度量化分析决策</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-blue);">🔄</div>
+                    <div class="feature-title">持续学习</div>
+                    <div class="feature-desc">AI 能力随使用不断提升</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 36: 项目亮点总结
+         =========================================== -->
+    <section class="slide section-divider">
+        <div class="slide-content">
+            <div class="section-number reveal">04</div>
+            <h1 class="reveal">项目总结</h1>
+            <p class="reveal" style="color: white; font-size: var(--body-size); opacity: 0.9;">Summary</p>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 37: 项目亮点总结
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">项目亮点总结</h2>
+            <div class="stats-grid">
+                <div class="stat-card reveal">
+                    <div class="stat-number" style="color: var(--pill-violet);">AI+</div>
+                    <div class="stat-label">智能匹配算法</div>
+                </div>
+                <div class="stat-card reveal">
+                    <div class="stat-number" style="color: var(--pill-mint);">6</div>
+                    <div class="stat-label">维度匹配分析</div>
+                </div>
+                <div class="stat-card reveal">
+                    <div class="stat-number" style="color: var(--pill-pink);">24/7</div>
+                    <div class="stat-label">AI 客服支持</div>
+                </div>
+                <div class="stat-card reveal">
+                    <div class="stat-number" style="color: var(--pill-blue);">60%</div>
+                    <div class="stat-label">效率提升</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 38: 技术创新点
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">技术创新点</h2>
+            <ul class="content-list">
+                <li class="reveal">
+                    <div class="list-icon" style="background: var(--pill-violet);">🤖</div>
+                    <div>
+                        <strong>AI 驱动的智能匹配</strong>
+                        <p style="color: var(--text-secondary); font-size: var(--small-size);">将 DeepSeek 大模型应用于宿舍分配，实现六维度的智能化匹配置</p>
+                    </div>
+                </li>
+                <li class="reveal">
+                    <div class="list-icon" style="background: var(--pill-mint);">🔧</div>
+                    <div>
+                        <strong>Nacos 配置中心</strong>
+                        <p style="color: var(--text-secondary); font-size: var(--small-size);">采用 Nacos 实现配置的集中管理和动态刷新</p>
+                    </div>
+                </li>
+                <li class="reveal">
+                    <div class="list-icon" style="background: var(--pill-pink);">📊</div>
+                    <div>
+                        <strong>可视化数据展示</strong>
+                        <p style="color: var(--text-secondary); font-size: var(--small-size);">ECharts 雷达图直观展示匹配度分析结果</p>
+                    </div>
+                </li>
+                <li class="reveal">
+                    <div class="list-icon" style="background: var(--pill-blue);">💬</div>
+                    <div>
+                        <strong>知识库增强问答</strong>
+                        <p style="color: var(--text-secondary); font-size: var(--small-size);">基于知识库的 AI 客服，提供准确的智能问答服务</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 39: 未来展望
+         =========================================== -->
+    <section class="slide content-slide">
+        <div class="slide-content">
+            <h2 class="reveal">未来展望</h2>
+            <div class="feature-grid">
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-violet);">🔮</div>
+                    <div class="feature-title">模型升级</div>
+                    <div class="feature-desc">接入更强大的 AI 模型，提升分析准确度</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-mint);">🌐</div>
+                    <div class="feature-title">多语言支持</div>
+                    <div class="feature-desc">支持国际学生使用，提供多语言界面</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-pink);">📈</div>
+                    <div class="feature-title">数据分析</div>
+                    <div class="feature-desc">引入数据看板功能，统计分析宿舍情况</div>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon" style="background: var(--pill-blue);">📱</div>
+                    <div class="feature-title">移动端</div>
+                    <div class="feature-desc">开发小程序或移动 App，提升用户体验</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 40: 致谢 + Q&A
+         =========================================== -->
+    <section class="slide title-slide">
+        <div class="slide-content">
+            <h1 class="reveal" style="color: var(--text-primary);">感谢聆听</h1>
+            <p class="subtitle reveal">Thanks for Your Attention</p>
+            <div class="reveal" style="margin-top: var(--content-gap);">
+                <div style="font-size: clamp(2rem, 5vw, 4rem); margin-bottom: var(--content-gap);">🙏</div>
+                <h2 style="color: var(--pill-violet);">Q & A</h2>
+                <p class="reveal" style="color: var(--text-secondary); font-size: var(--body-size); margin-top: var(--content-gap);">
+                    欢迎提问与交流
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // ===========================================
+        // SLIDE PRESENTATION CONTROLLER
+        // ===========================================
+        class SlidePresentation {
+            constructor() {
+                this.slides = document.querySelectorAll(".slide");
+                this.currentSlide = 0;
+                this.setupIntersectionObserver();
+                this.setupKeyboardNav();
+                this.setupTouchNav();
+                this.setupProgressBar();
+                this.setupNavDots();
+                this.makeEditable();
+            }
+
+            setupIntersectionObserver() {
+                const options = {
+                    root: null,
+                    rootMargin: "0px",
+                    threshold: 0.5
+                };
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add("visible");
+                            this.currentSlide = Array.from(this.slides).indexOf(entry.target);
+                            this.updateProgressBar();
+                            this.updateNavDots();
+                        }
+                    });
+                }, options);
+
+                this.slides.forEach(slide => observer.observe(slide));
+            }
+
+            setupKeyboardNav() {
+                document.addEventListener("keydown", (e) => {
+                    if (e.key === "ArrowDown" || e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") {
+                        e.preventDefault();
+                        this.nextSlide();
+                    } else if (e.key === "ArrowUp" || e.key === "ArrowLeft" || e.key === "PageUp") {
+                        e.preventDefault();
+                        this.prevSlide();
+                    } else if (e.key === "Home") {
+                        e.preventDefault();
+                        this.goToSlide(0);
+                    } else if (e.key === "End") {
+                        e.preventDefault();
+                        this.goToSlide(this.slides.length - 1);
+                    }
+                });
+            }
+
+            setupTouchNav() {
+                let touchStartY = 0;
+                let touchEndY = 0;
+
+                document.addEventListener("touchstart", (e) => {
+                    touchStartY = e.changedTouches[0].screenY;
+                });
+
+                document.addEventListener("touchend", (e) => {
+                    touchEndY = e.changedTouches[0].screenY;
+                    const diff = touchStartY - touchEndY;
+
+                    if (Math.abs(diff) > 50) {
+                        if (diff > 0) {
+                            this.nextSlide();
+                        } else {
+                            this.prevSlide();
+                        }
+                    }
+                });
+            }
+
+            setupProgressBar() {
+                this.progressBar = document.getElementById("progressBar");
+            }
+
+            updateProgressBar() {
+                const progress = ((this.currentSlide + 1) / this.slides.length) * 100;
+                this.progressBar.style.width = progress + "%";
+            }
+
+            setupNavDots() {
+                this.navDotsContainer = document.getElementById("navDots");
+                this.navDotsContainer.innerHTML = "";
+
+                this.slides.forEach((_, index) => {
+                    const dot = document.createElement("div");
+                    dot.className = "nav-dot" + (index === 0 ? " active" : "");
+                    dot.addEventListener("click", () => this.goToSlide(index));
+                    this.navDotsContainer.appendChild(dot);
+                });
+            }
+
+            updateNavDots() {
+                const dots = this.navDotsContainer.querySelectorAll(".nav-dot");
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle("active", index === this.currentSlide);
+                });
+            }
+
+            nextSlide() {
+                if (this.currentSlide < this.slides.length - 1) {
+                    this.goToSlide(this.currentSlide + 1);
+                }
+            }
+
+            prevSlide() {
+                if (this.currentSlide > 0) {
+                    this.goToSlide(this.currentSlide - 1);
+                }
+            }
+
+            goToSlide(index) {
+                this.slides[index].scrollIntoView({ behavior: "smooth" });
+            }
+
+            makeEditable() {
+                // Inline editing functionality
+                const editToggle = document.getElementById("editToggle");
+                const editBanner = document.getElementById("editBanner");
+                const hotzone = document.querySelector(".edit-hotzone");
+                const allText = document.querySelectorAll("h1, h2, h3, p, li");
+                let hideTimeout = null;
+
+                this.isActive = false;
+
+                this.toggleEditMode = () => {
+                    this.isActive = !this.isActive;
+                    document.body.classList.toggle("edit-active", this.isActive);
+                    editBanner.classList.toggle("show", this.isActive);
+
+                    if (this.isActive) {
+                        allText.forEach(el => el.setAttribute("contenteditable", "true"));
+                    } else {
+                        allText.forEach(el => el.removeAttribute("contenteditable"));
+                    }
+                };
+
+                editToggle.addEventListener("click", () => this.toggleEditMode());
+
+                hotzone.addEventListener("mouseenter", () => {
+                    clearTimeout(hideTimeout);
+                    editToggle.classList.add("show");
+                });
+
+                hotzone.addEventListener("mouseleave", () => {
+                    hideTimeout = setTimeout(() => {
+                        if (!this.isActive) editToggle.classList.remove("show");
+                    }, 400);
+                });
+
+                editToggle.addEventListener("mouseenter", () => {
+                    clearTimeout(hideTimeout);
+                });
+
+                editToggle.addEventListener("mouseleave", () => {
+                    hideTimeout = setTimeout(() => {
+                        if (!this.isActive) editToggle.classList.remove("show");
+                    }, 400);
+                });
+
+                hotzone.addEventListener("click", () => this.toggleEditMode());
+
+                document.addEventListener("keydown", (e) => {
+                    if ((e.key === "e" || e.key === "E") && !e.target.getAttribute("contenteditable")) {
+                        this.toggleEditMode();
+                    } else if (e.ctrlKey && e.key === "s") {
+                        e.preventDefault();
+                        if (this.isActive) {
+                            this.exportFile();
+                        }
+                    }
+                });
+
+                this.exportFile = () => {
+                    const editableEls = Array.from(document.querySelectorAll("[contenteditable]"));
+                    editableEls.forEach(el => el.removeAttribute("contenteditable"));
+                    document.body.classList.remove("edit-active");
+                    editToggle.classList.remove("active", "show");
+                    editBanner.classList.remove("active", "show");
+
+                    const html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+
+                    document.body.classList.add("edit-active");
+                    editableEls.forEach(el => el.setAttribute("contenteditable", "true"));
+                    editToggle.classList.add("active");
+
+                    const blob = new Blob([html], { type: "text/html" });
+                    const a = document.createElement("a");
+                    a.href = URL.createObjectURL(blob);
+                    a.download = "sushepro-ai-presentation.html";
+                    a.click();
+                    URL.revokeObjectURL(a.href);
+                };
+            }
+        }
+
+        // Initialize presentation
+        new SlidePresentation();
+    </script>
+</body>
+</html>
