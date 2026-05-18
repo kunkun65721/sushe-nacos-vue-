@@ -1,7 +1,10 @@
 -- ============================================
--- 数据迁移脚本：将现有业务记录回填为通知
+-- 宿舍管理系统 - 数据迁移脚本
+-- 将现有业务记录回填为通知
 -- is_read = 1 所以旧数据不会触发未读计数
 -- ============================================
+
+USE susheguanli;
 
 -- === 1. 学生报修通知 ===
 INSERT INTO notification (user_id, type, reference_id, reference_type, title, content, ref_status, related_student_id, related_student_name, is_read, create_time)
